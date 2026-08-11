@@ -1,0 +1,28 @@
+---
+description: "Project workflow, documentation source of truth, session recovery, and non-negotiable development gates."
+alwaysApply: true
+---
+
+# Project memory and operating model
+
+The `docs/` directory is the project source of truth and is designed to be an Obsidian vault. Read the relevant docs before making decisions. If code and docs disagree, stop and reconcile them; do not leave drift.
+
+## Session start
+1. Read `docs/30-state/STATUS.md`.
+2. Read `docs/10-features/_PRD-INDEX.md`.
+3. Read any in-progress feature PRD.
+4. Run the test suite using the command documented in `AGENTS.md` (if configured).
+5. Report state before writing feature code. Use `/resume` for the full recovery workflow.
+
+## Build gates
+- Master requirements in `docs/00-foundation/01-requirements.md` must be `approved` before feature implementation.
+- Every feature must have an approved PRD linked to REQ IDs.
+- Every acceptance criterion must map to tests in `docs/20-testing/TEST-MAP.md`.
+- Contract docs (data model, copy deck, design brief) are binding when marked `design-contract`.
+- Behavior changes require the appropriate docs/status/changelog synchronization.
+
+## Handoff
+Before ending a session, update `docs/30-state/STATUS.md` and `CHANGELOG.md`. The repository must be understandable without chat history.
+
+## Canonical workflow
+`/define` → approved requirements → `/new-feature` → approved PRD → `/tdd-cycle` → `/sync-docs` → `/ship`. Use `/iterate` only for changes that do not alter requirements or contract semantics.

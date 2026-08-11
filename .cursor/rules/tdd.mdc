@@ -1,0 +1,20 @@
+---
+description: "Always enforce test-driven development and verification."
+alwaysApply: true
+---
+
+# TDD enforcement rules
+
+# TDD enforcement rules (always active)
+
+- Red → Green → Refactor. Write the failing test, show it fail, write the
+  minimum code to pass, show it pass, then refactor with tests green.
+- Never edit a test to make it pass unless the PRD's acceptance criterion
+  changed — and then update the PRD in the same session.
+- Every acceptance criterion in a PRD maps to at least one named test,
+  recorded in docs/20-testing/TEST-MAP.md.
+- Run the full suite before declaring any feature done.
+- Bugs get a failing regression test before the fix.
+- Coverage is targeted, not blanket: core logic, APIs, data integrity, and
+  anything that was ever the site of a bug are always tested; thin UI glue
+  may be exempted only if TEST-MAP.md records the exemption and why.

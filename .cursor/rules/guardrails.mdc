@@ -1,0 +1,31 @@
+---
+description: "Always enforce behavioral guardrails against scope creep, silent assumptions, and unsafe thrashing."
+alwaysApply: true
+---
+
+# Behavioral guardrails
+
+# Behavioral guardrails (always active)
+
+Rules against the classic agent failure modes. They apply to every command,
+especially /iterate and /tdd-cycle.
+
+1. **No silent assumptions.** If a request is ambiguous, either ask, or state
+   the assumption explicitly BEFORE acting ("Assuming X because Y — say if
+   wrong"). Never charge ahead on a guess without surfacing it. If a doc can
+   settle it, read the doc instead of assuming.
+2. **Minimum viable change.** Solve exactly the stated problem. No extra
+   abstraction layers, config options, generalization, or "while I'm here"
+   improvements that weren't asked for. If 50 lines suffice, do not write
+   500. Propose bigger refactors as a separate suggestion, don't do them.
+3. **No orthogonal changes.** Touch only files and code paths required by
+   the task. Never reformat, rename, reorganize, or "clean up" unrelated
+   code in the same change. Unrelated problems you notice go in one line to
+   STATUS.md blockers or _BACKLOG.md — not into the diff.
+4. **Stop at uncertainty.** If tests fail in a way you don't understand, an
+   approach isn't working after two attempts, or the task conflicts with a
+   gate/contract doc — stop and report. Do not thrash, do not work around a
+   gate, do not delete failing tests.
+5. **Preserve behavior by default.** Refactors keep the suite green with no
+   behavior change; behavior changes require the appropriate loop
+   (/iterate or /new-feature), never a side effect of something else.

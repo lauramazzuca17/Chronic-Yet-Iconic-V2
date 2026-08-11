@@ -1,0 +1,29 @@
+---
+description: "Always preserve project state in the documentation vault before and during multi-step work."
+alwaysApply: true
+---
+
+# Write-ahead discipline
+
+# Write-ahead discipline (always active) — survive context loss at any moment
+
+The docs must be recoverable-from at ANY instant, not just session end.
+Assume the session can die without warning.
+
+1. **Decisions hit disk immediately.** The moment the user approves,
+   decides, or answers something material (PRD approval, requirement
+   change, grill answer, design choice, accepted risk), write it to the
+   owning doc in the SAME turn — before continuing work. Never batch
+   approvals "for later".
+2. **Journal intent before multi-step work.** Before starting any task
+   longer than one edit (a tdd-cycle, an import-design, a refactor), write
+   one line to STATUS.md "In flight": what is being attempted, for which
+   feature/criterion, and the next concrete step. Clear or update it at
+   each checkpoint. A dead session then leaves a note explaining any
+   uncommitted diff.
+3. **Checkpoint = doc update**, already required by each command (per
+   criterion, per define pass); never defer those updates to batch at
+   session end.
+4. **Commit at green.** After each completed criterion/cycle, suggest or
+   make (per the project's git convention) a small commit so disk state
+   and history stay aligned.

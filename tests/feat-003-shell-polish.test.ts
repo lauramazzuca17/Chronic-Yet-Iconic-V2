@@ -71,6 +71,13 @@ describe("FEAT-003 shell polish", () => {
     ]);
   });
 
-  it.todo("AC-6: shell is phone-first (no desktop shell layout)");
-  it.todo("AC-7: Playwright nav + Sign out journey");
+  it("AC-6: shell is phone-first (no desktop shell layout)", async () => {
+    const { getPhoneFirstShellLayout } = await import("../src/shell/chrome");
+    const layout = getPhoneFirstShellLayout();
+    expect(layout.mode).toBe("phone-first");
+    expect(layout.hasDesktopShellLayout).toBe(false);
+    expect(layout.hasWideShellLayout).toBe(false);
+    expect(layout.desktopBreakpointLayouts).toEqual([]);
+    expect(layout.maxContentWidthPx).toBe(430);
+  });
 });

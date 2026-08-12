@@ -6,28 +6,27 @@ tier: full
 # Project Status — session handoff
 
 ## Current phase
-Build — FEAT-003 **in-progress**; AC-1–5 green.
+Build — FEAT-003 **done**. Ready for next `/new-feature`.
 
 ## Active feature
-FEAT-003 — App shell polish (`in-progress`) — [[FEAT-003-shell-polish]]
+none
 
 ## Built and tested
-- **FEAT-001**, **FEAT-002** done.
-- FEAT-003 **AC-1**–**AC-5** — nav bar, active pill, header copy, scrolled header, nav href/title map (`getShellNavRoutes`).
+- **FEAT-001** — Seeded auth + app shell helpers.
+- **FEAT-002** — Sign-in UI + iron-session cookies + middleware.
+- **FEAT-003** — Phone-first shell polish: chrome tokens, `ShellChrome` (sticky header, titles/subtitles, bottom nav + active pill), Playwright nav journey.
 
 ## Not yet built (and what blocks it)
-- FEAT-003 AC-6–7 (phone-first, Playwright + UI wiring).
-- REQ-01–17, REQ-20 — later FEATs.
+- REQ-01–17, REQ-20 — need `/new-feature` PRDs (dashboard data, logging, calendar, analytics, import, etc.).
 
 ## Test suite
-Last run: 2026-08-11 — **22 passed**, 3 todo (`npm test`)
+Last run: 2026-08-11 — **23 passed**, 1 todo (`npm test`); E2E FEAT-002 + FEAT-003 green (`npm run test:e2e`).
 
 ## In flight / uncommitted
-- none (AC-5 cycle complete)
+- none
 
 ## Blockers & open questions
 - none
 
 ## Next actions
-1. `/tdd-cycle` for AC-6 (phone-first).
-2. Continue through AC-7.
+1. `/new-feature` for next requirement slice (likely dashboard / logging).

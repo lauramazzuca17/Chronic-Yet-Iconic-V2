@@ -10,7 +10,7 @@ updated: 2026-08-11
 | --- | --- | --- | --- | --- | --- |
 | FEAT-001 | Seeded auth + app shell | REQ-18, REQ-19, NFR-01, NFR-05 | done | [[FEAT-001-auth-shell]] | tests/feat-001-auth-shell.test.ts |
 | FEAT-002 | Sign-in UI + HTTP session cookies | REQ-18, REQ-19, NFR-05 | done | [[FEAT-002-signin-ui-cookies]] | tests/feat-002-signin-ui-cookies.test.ts; e2e/feat-002-signin-journey.spec.ts |
-| FEAT-003 | App shell polish (phone-first chrome) | NFR-06 | in-progress | [[FEAT-003-shell-polish]] | tests/feat-003-shell-polish.test.ts |
+| FEAT-003 | App shell polish (phone-first chrome) | NFR-06 | done | [[FEAT-003-shell-polish]] | tests/feat-003-shell-polish.test.ts; e2e/feat-003-shell-nav-journey.spec.ts |
 
 **Status values:** `draft` → `approved` → `in-progress` → `done` (or `deprecated`)
 

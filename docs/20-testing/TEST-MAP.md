@@ -31,8 +31,8 @@ updated: 2026-08-11
 | FEAT-003 | AC-3 | tests/feat-003-shell-polish.test.ts | AC-3: header exposes eyebrow, title, subtitle, Sign out | ✅ passing |
 | FEAT-003 | AC-4 | tests/feat-003-shell-polish.test.ts | AC-4: scrolled header uses #0B4041 @ 80% | ✅ passing |
 | FEAT-003 | AC-5 | tests/feat-003-shell-polish.test.ts | AC-5: nav hrefs map Home→/ title Dashboard and sibling routes | ✅ passing |
-| FEAT-003 | AC-6 | tests/feat-003-shell-polish.test.ts | AC-6: shell is phone-first (no desktop shell layout) | ⏭ todo |
-| FEAT-003 | AC-7 | e2e (TBD) | AC-7: Playwright nav + Sign out journey | ⏭ todo |
+| FEAT-003 | AC-6 | tests/feat-003-shell-polish.test.ts | AC-6: shell is phone-first (no desktop shell layout) | ✅ passing |
+| FEAT-003 | AC-7 | e2e/feat-003-shell-nav-journey.spec.ts | AC-7: Playwright nav + Sign out journey | ✅ passing |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

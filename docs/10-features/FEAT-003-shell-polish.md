@@ -1,10 +1,10 @@
 ---
 id: FEAT-003
 type: prd
-status: in-progress
+status: done
 implements: [NFR-06]
 depends_on: [FEAT-001, FEAT-002]
-tests: [tests/feat-003-shell-polish.test.ts]
+tests: [tests/feat-003-shell-polish.test.ts, e2e/feat-003-shell-nav-journey.spec.ts]
 created: 2026-08-11
 updated: 2026-08-11
 ---
@@ -21,8 +21,8 @@ As a signed-in user on my phone, I want the app chrome (header, titles, bottom n
 - [x] AC-3: Header on every shell page shows eyebrow `shell.eyebrow` (uppercase), page **title** (`shell.title.*`), page **subtitle** (`shell.subtitle.*`), and orange **Sign out** icon control (`auth.logout` accessible name).
 - [x] AC-4: When main content scrolls under the header (esp. long placeholder/content), header becomes sticky with fill `#0B4041` @ 80% opacity.
 - [x] AC-5: Each bottom-nav target navigates to `/`, `/log`, `/calendar`, `/analytics`, `/import` respectively (Home → `/` with title Dashboard).
-- [ ] AC-6: Shell layout remains **phone-first** (no dedicated desktop/wide shell layout in this FEAT).
-- [ ] AC-7: Playwright: signed-in user sees bottom nav, can open Log via nav, sees Log title; Sign out still works.
+- [x] AC-6: Shell layout remains **phone-first** (no dedicated desktop/wide shell layout in this FEAT).
+- [x] AC-7: Playwright: signed-in user sees bottom nav, can open Log via nav, sees Log title; Sign out still works.
 
 ## Out of scope
 - Dashboard summary data (REQ-01) — still placeholder body.
@@ -64,3 +64,5 @@ As a signed-in user on my phone, I want the app chrome (header, titles, bottom n
 | 2026-08-11 | AC-3 green: `getShellHeaderChrome` eyebrow/title/subtitle/Sign out | /tdd-cycle |
 | 2026-08-11 | AC-4 green: `getScrolledHeaderChrome` transparent → bar fill when scrolled | /tdd-cycle |
 | 2026-08-11 | AC-5 green: `getShellNavRoutes` Home→`/` title Dashboard + siblings | /tdd-cycle |
+| 2026-08-11 | AC-6 green: `getPhoneFirstShellLayout` max 430px; no desktop/wide shell | /tdd-cycle |
+| 2026-08-11 | AC-7 green: ShellChrome UI + Playwright nav/Log/sign-out; FEAT-003 done | /tdd-cycle |

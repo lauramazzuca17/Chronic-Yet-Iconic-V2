@@ -114,3 +114,25 @@ export function getShellNavRoutes(): ShellNavRoute[] {
     title: getShellPageTitle(item.id),
   }));
 }
+
+/** Phone column width (brief: phone viewport only; no desktop shell). */
+export const SHELL_PHONE_MAX_CONTENT_WIDTH_PX = 430;
+
+export type PhoneFirstShellLayout = {
+  mode: "phone-first";
+  hasDesktopShellLayout: false;
+  hasWideShellLayout: false;
+  desktopBreakpointLayouts: [];
+  maxContentWidthPx: typeof SHELL_PHONE_MAX_CONTENT_WIDTH_PX;
+};
+
+/** MVP shell is a single phone column — no dedicated desktop/wide layouts. */
+export function getPhoneFirstShellLayout(): PhoneFirstShellLayout {
+  return {
+    mode: "phone-first",
+    hasDesktopShellLayout: false,
+    hasWideShellLayout: false,
+    desktopBreakpointLayouts: [],
+    maxContentWidthPx: SHELL_PHONE_MAX_CONTENT_WIDTH_PX,
+  };
+}

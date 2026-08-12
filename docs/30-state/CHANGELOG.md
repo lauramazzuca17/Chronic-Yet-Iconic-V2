@@ -6,6 +6,9 @@ type: changelog
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
 ## 2026-08-11
+- **FEAT-003 done** — phone-first shell chrome (tokens AC-1–6 + ShellChrome UI); Playwright nav → Log → Sign out green (`npm run test:e2e`).
+- FEAT-003 AC-7 green: bottom nav + header titles wired; e2e journey passes.
+- FEAT-003 AC-6 green: phone-first shell (`getPhoneFirstShellLayout`, max content 430px, no desktop/wide layout).
 - FEAT-003 AC-5 green: `getShellNavRoutes` — Home→`/` title Dashboard + Log/Calendar/Analytics/Import hrefs.
 - FEAT-003 AC-4 green: scrolled header sticky + `#0B4041` @ 80% when scrolled.
 - FEAT-003 AC-3 green: shell header chrome (eyebrow, title, subtitle, Sign out).

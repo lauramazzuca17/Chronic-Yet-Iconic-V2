@@ -65,6 +65,11 @@ unless a contract doc carries its own binding log. -->
 | 2026-08-10 | Access model | Two seeded accounts only; no public signup | Owner + test; protect real data |
 | 2026-08-10 | Account deletion | No whole-account self-delete in v1; delete logs + imports | Owner Define |
 | 2026-08-10 | Symptom severity | Usual / Worse than usual / Better than usual | Owner Define |
+| 2026-08-12 | Symptom severity UI | **Normal amount** (was Usual amount); storage key still `usual` | Log Figma Frame 2 |
+| 2026-08-13 | Water Reset total | Hide in v1 (Figma has control; not REQ-06) | Owner |
+| 2026-08-13 | Electrolytes create | **Yes only**; no create-no; absence = not taken | Owner Log Figma |
+| 2026-08-13 | Electrolytes blocked copy | Short Figma string (no delete hint in message) | Owner |
+| 2026-08-13 | Manual log delete UX | Inline two-step: Delete → Confirm Delete (brand7 `#d95c1c`); no modal | Owner Log Figma |
 | 2026-08-10 | Catalogs | Fixed seeded symptom + med lists | Owner Define |
 | 2026-08-10 | Timestamps | America/New_York store + display | Owner Define |
 | 2026-08-10 | Manual log edits | Delete-only in v1 | Owner Define |

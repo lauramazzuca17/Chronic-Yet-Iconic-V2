@@ -5,7 +5,50 @@ type: changelog
 
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
+## 2026-08-13
+- **FEAT-005 done** — Home dashboard UI (Figma cards, no Health records) + Playwright AC-9; domain summary AC-1–8.
+- **FEAT-005 AC-8** — Demo summary stays empty when only Laura has today logs (account-scoped).
+- **FEAT-005 AC-7** — empty day all zeros/null/false; other calendar day’s logs excluded (regression test).
+- **FEAT-005 AC-6** — `electrolytesTaken` (today’s electrolyte row present vs absent).
+- **FEAT-005 AC-5** — `symptomsCount` for today’s symptom logs.
+- **FEAT-005 AC-4** — `waterTotalOz` via existing water sum helper.
+- **FEAT-005 AC-3** — `medsCount` for today’s medication logs.
+- **FEAT-005 AC-2** — `latestBp` sys/dia (most recent today) or `null`.
+- **FEAT-005 AC-1** — `getTodayDashboardSummary` returns today’s BP count (`src/dashboard/summary.ts`).
+- **Approved FEAT-005** (Home dashboard REQ-01 / NFR-01); next `/tdd-cycle` AC-1.
+- **FEAT-005** — Health records card **hidden in v1** (no REQ-01 amend); open questions cleared.
+- **FEAT-005 Figma walkthrough** — Home layout + copy locked; electrolytes = Taken badge (X vs check) inside Total Water; subtitle → Take a look around!
+- **FEAT-005 design brief** — Home dashboard layout brief; owner locked latest BP sys/dia only; electrolytes from Figma card.
+- **FEAT-005 draft** — Home dashboard (REQ-01); skeleton tests; dashboard copy keys drafted in copy deck.
+- **FEAT-004 done** — remaining Log create forms (symptom/BP/med/electrolyte/mood/event) + Playwright; E2E reset route gated by `ALLOW_TEST_RESET`.
+- **FEAT-004 reopened** (`in-progress`) — remaining Log create forms UI (symptom/BP/med/electrolyte/mood/event); water + domain ACs stay green.
+- **FEAT-004 done** — AC-12 Playwright water journey; Log UI chips + water form + today list + inline Delete→Confirm Delete; store on `globalThis` for Next request stability.
+- **FEAT-004 AC-11** — catalogs match [[03-data-model]]; unknown symptom/med names rejected.
+- **FEAT-004 AC-10** — Demo cannot list/sum/delete Laura’s manual logs (account-scoped store).
+- **FEAT-004 AC-9** — delete any of 7 types via `deleteManualLog`; no update/edit API (UI two-step delete still for Log UI / AC-12).
+- **FEAT-004 AC-8** — event note create + date/time (`createEventLog`).
+- **FEAT-004 AC-7** — mood create from fixed enum (`awful`/`not_great`/`okay`/`good`/`great`).
+- **FEAT-004 AC-6** — electrolytes once/day; second create throws `log.electrolytes.blocked`; delete unblocks (`deleteManualLog`).
+- **FEAT-004 AC-5** — water create + `waterTotalOzForDate` (8+8→16; other days excluded).
+- **FEAT-004 AC-4** — medication create from catalog + dose + date/time.
+- **FEAT-004 AC-3** — symptom create from catalog + severity + optional notes (`src/log/catalogs.ts` + store).
+- **FEAT-004 AC-2** — BP create (sys/dia/HR/`recorded_at`) + today list; no posture (`src/log/store` in-memory).
+- **FEAT-004 AC-1** — `getManualLogTypes` seven keys (`src/log/types.ts`).
+- **Approved FEAT-004** (manual logging REQ-02–10); Log Figma walkthrough complete; next `/tdd-cycle`.
+- Today entry delete: inline **Delete** → **Confirm Delete** (brand7 `#d95c1c`); no modal.
+- Today entry card: **Delete** text control (Figma); confirm still uses `log.delete_confirm`.
+- Today list Figma: empty (`0 logged entries`) + populated entry cards (type/time + summary).
+- Electrolytes: create **yes only** (absence = no); `log.electrolytes.blocked` = Figma short string; REQ-07 / data model updated.
+- Water form: hide **Reset total** in v1; placeholder **e.g. 32** (not Figma’s e.d.).
+
+## 2026-08-12
+- Log BP form (Figma): Systolic/Diastolic/HR one row + Date & Time; `log.field.heart_rate` = HR (bpm); `log.action.log_blood_pressure`.
+- Copy locked to Log Figma Frame 2: `log.severity.usual` → Normal amount; `log.action.log_symptom`; Notes (optional) + placeholder; Date & Time. REQ-04 / data-model UI labels synced.
+- Copy: `shell.subtitle.log` and `log.today_heading` locked from Log Figma Frame 1; chrome helper + FEAT-003 test updated.
+- FEAT-004 Frame 1 walkthrough: chips sticky clip; ship 7 log types only.
+
 ## 2026-08-11
+- Drafted FEAT-004 (manual logging REQ-02–10); awaiting PRD approval. Copy deck: log type/field/severity/mood keys.
 - **FEAT-003 done** — phone-first shell chrome (tokens AC-1–6 + ShellChrome UI); Playwright nav → Log → Sign out green (`npm run test:e2e`).
 - FEAT-003 AC-7 green: bottom nav + header titles wired; e2e journey passes.
 - FEAT-003 AC-6 green: phone-first shell (`getPhoneFirstShellLayout`, max content 430px, no desktop/wide layout).

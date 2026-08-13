@@ -14,8 +14,8 @@ const HEADER_COPY = {
   eyebrow: "Chronic Yet Iconic",
   signOutAccessibleName: "Sign out",
   subtitles: {
-    "/": "Your day at a glance.",
-    "/log": "Capture readings and notes.",
+    "/": "Take a look around!",
+    "/log": "Track symptoms, vitals, medications, water, mood and other daily events.",
     "/calendar": "Review what you logged.",
     "/analytics": "See trends and relationships.",
     "/import": "Bring in Health export files.",

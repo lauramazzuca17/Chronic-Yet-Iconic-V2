@@ -1,6 +1,6 @@
 ---
 type: test-map
-updated: 2026-08-11
+updated: 2026-08-13
 ---
 # Test Map — acceptance criteria ↔ tests
 
@@ -33,6 +33,29 @@ updated: 2026-08-11
 | FEAT-003 | AC-5 | tests/feat-003-shell-polish.test.ts | AC-5: nav hrefs map Home→/ title Dashboard and sibling routes | ✅ passing |
 | FEAT-003 | AC-6 | tests/feat-003-shell-polish.test.ts | AC-6: shell is phone-first (no desktop shell layout) | ✅ passing |
 | FEAT-003 | AC-7 | e2e/feat-003-shell-nav-journey.spec.ts | AC-7: Playwright nav + Sign out journey | ✅ passing |
+| FEAT-004 | AC-1 | tests/feat-004-manual-logging.test.ts | AC-1: /log is a single surface for all seven manual log types | ✅ passing |
+| FEAT-004 | AC-2 | tests/feat-004-manual-logging.test.ts | AC-2: create BP with systolic, diastolic, HR, date/time; no posture | ✅ passing |
+| FEAT-004 | AC-3 | tests/feat-004-manual-logging.test.ts | AC-3: create symptom from catalog + severity + optional notes | ✅ passing |
+| FEAT-004 | AC-4 | tests/feat-004-manual-logging.test.ts | AC-4: create medication from catalog + dose + date/time | ✅ passing |
+| FEAT-004 | AC-5 | tests/feat-004-manual-logging.test.ts | AC-5: water oz sums to daily total for calendar date | ✅ passing |
+| FEAT-004 | AC-6 | tests/feat-004-manual-logging.test.ts | AC-6: electrolytes once per day; second create blocked until delete | ✅ passing |
+| FEAT-004 | AC-7 | tests/feat-004-manual-logging.test.ts | AC-7: create mood from fixed enum + date/time | ✅ passing |
+| FEAT-004 | AC-8 | tests/feat-004-manual-logging.test.ts | AC-8: create event note + date/time | ✅ passing |
+| FEAT-004 | AC-9 | tests/feat-004-manual-logging.test.ts | AC-9: delete any manual log type; no edit UI | ✅ passing |
+| FEAT-004 | AC-10 | tests/feat-004-manual-logging.test.ts | AC-10: Demo cannot read or delete Laura logs | ✅ passing |
+| FEAT-004 | AC-11 | tests/feat-004-manual-logging.test.ts | AC-11: catalogs match seeded lists; unknown names rejected | ✅ passing |
+| FEAT-004 | AC-12 | e2e/feat-004-water-journey.spec.ts | Laura opens Log, creates water, sees total, deletes it | ✅ passing |
+| FEAT-004 | UI remaining forms | e2e/feat-004-remaining-forms.spec.ts | Laura can create symptom, BP, med, electrolytes, mood, and event | ✅ passing |
+| FEAT-004 | UI CTAs | tests/feat-004-manual-logging.test.ts | UI: each log type has a create CTA from the copy deck | ✅ passing |
+| FEAT-005 | AC-1 | tests/feat-005-home-dashboard.test.ts | AC-1: today BP reading count for account calendar date | ✅ passing |
+| FEAT-005 | AC-2 | tests/feat-005-home-dashboard.test.ts | AC-2: most recent BP today as systolic/diastolic; empty when none | ✅ passing |
+| FEAT-005 | AC-3 | tests/feat-005-home-dashboard.test.ts | AC-3: medication count today | ✅ passing |
+| FEAT-005 | AC-4 | tests/feat-005-home-dashboard.test.ts | AC-4: total water oz today | ✅ passing |
+| FEAT-005 | AC-5 | tests/feat-005-home-dashboard.test.ts | AC-5: symptom count today | ✅ passing |
+| FEAT-005 | AC-6 | tests/feat-005-home-dashboard.test.ts | AC-6: electrolytes yes vs not logged | ✅ passing |
+| FEAT-005 | AC-7 | tests/feat-005-home-dashboard.test.ts | AC-7: empty day shows zeros / empty / not-logged — not another day | ✅ passing |
+| FEAT-005 | AC-8 | tests/feat-005-home-dashboard.test.ts | AC-8: Demo cannot see Laura today stats | ✅ passing |
+| FEAT-005 | AC-9 | e2e/feat-005-home-journey.spec.ts | AC-9: Playwright Home summary journey | ✅ passing |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

@@ -26,7 +26,7 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 | --- | --- | --- |
 | App shell + nav | Dashboard / Log / Calendar / Analytics / Import | active, focus |
 | Sign-in form | Username + password | default, error, submitting |
-| Dashboard summary | Today’s stats | empty, populated |
+| Dashboard summary | Today’s stats (BP row, meds, water+Taken badge, symptoms) | empty zeros, populated, electrolytes taken vs not |
 | Log screen | All manual create types | validation error, success, electrolytes blocked |
 | Calendar + day detail | Pick day; list entries; delete | empty day, populated, confirm delete |
 | Analytics controls + chart | BP vs medication / HR trends | empty data, loading, populated |
@@ -48,4 +48,6 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 ## Handoff log
 | Date | Feature | Bundle path | Notes |
 | --- | --- | --- | --- |
+| 2026-08-13 | FEAT-005 | briefs/FEAT-005-brief.md | Home dashboard brief — paste to Claude Design |
+| 2026-08-12 | FEAT-004 | briefs/FEAT-004-brief.md | Log UI brief — paste to Claude Design |
 | 2026-08-10 | FEAT-001 | briefs/FEAT-001-brief.md | Design review complete — ready for PRD approval |

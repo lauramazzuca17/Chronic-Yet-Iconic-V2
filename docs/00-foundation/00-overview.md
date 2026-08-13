@@ -23,7 +23,7 @@ Chronic Yet Iconic V2 is a health stat tracker and data visualizer for someone w
 - Log **blood pressure** (systolic, diastolic, heart rate at measurement, date/time).
 - Log **medications** (name, dose, date/time).
 - Log **water** in oz, with a running **daily total**.
-- Log **electrolytes** as a once-per-day yes/no (timestamped).
+- Log **electrolytes** once per day when taken (**yes** only; absence = not taken); date/time; block a second create until delete.
 - Log **mood** via dropdown (awful / not great / okay / good / great) with date/time.
 - Log **events** (free-text note, e.g. stood in line 45m) with date/time.
 - Import Apple Health via **third-party date-ranged CSV** (summary + detailed). **No native Apple zip/XML in v1.**

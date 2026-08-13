@@ -27,7 +27,7 @@ Covers v1: accounts/auth credentials references, manual log entries, name catalo
 - **Manual logs v1:** **create + delete only** (no update/edit).
 - **Electrolytes:** at most one row per `(account_id, calendar_date)` in America/New_York; enforce in DB (unique constraint) and UI.
 - **Import dedupe:** on ingest, **skip duplicates**. Dedupe key: `(account_id, metric_key, recorded_at, value)` (same metric, time, and value for the same account = duplicate).
-- **Enums:** mood values fixed: `awful` | `not_great` | `okay` | `good` | `great`. Electrolyte value: `yes` | `no` (or boolean — pick one at scaffold; document in migration). Symptom **severity** fixed: `usual` | `worse_than_usual` | `better_than_usual` (UI labels: Usual amount / Worse than usual / Better than usual).
+- **Enums:** mood values fixed: `awful` | `not_great` | `okay` | `good` | `great`. Electrolyte rows are **taken = yes only** (v1 has no create-no UI; absence of a row for that day = not taken). Symptom **severity** fixed: `usual` | `worse_than_usual` | `better_than_usual` (UI labels: Normal amount / Worse than usual / Better than usual — `usual` storage key unchanged).
 - **Symptom name / medication name:** chosen from per-account **catalog** dropdowns. For v1, catalogs are **fixed/seeded** (no in-app add-name UX). Seed lists below.
 
 ## Decision log (binding)
@@ -145,7 +145,7 @@ erDiagram
 | --- | --- | --- | --- |
 | id | text | PK | |
 | account_id | text | FK, not null | |
-| taken | bool or enum | not null | yes/no for the day |
+| taken | bool or enum | not null | Always **yes** for stored rows in v1 (create-no not offered) |
 | recorded_at | text/datetime | not null | |
 | calendar_date | text (date) | not null | America/New_York date; **UNIQUE (account_id, calendar_date)** |
 | created_at | text/datetime | not null | |

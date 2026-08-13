@@ -25,6 +25,7 @@ export default defineConfig({
       SEED_PASSWORD_LAURA: "laura-test-secret",
       SEED_PASSWORD_DEMO: "demo-test-secret",
       SESSION_SECRET: "test-session-secret-at-least-32-chars!!",
+      ALLOW_TEST_RESET: "1",
     },
   },
 });

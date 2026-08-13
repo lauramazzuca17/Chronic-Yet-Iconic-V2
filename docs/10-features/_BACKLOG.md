@@ -20,6 +20,7 @@ updated: 2026-08-10
 ## Deferred (decided, not now)
 | Idea | Why deferred | Revisit when |
 | --- | --- | --- |
+| Home **Health records** card (Figma) | Owner hid for v1; no REQ-01 amend | After Import FEAT + if Home should surface today’s import count |
 
 ## Dropped
 | Idea | Why |

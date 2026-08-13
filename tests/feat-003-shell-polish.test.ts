@@ -39,13 +39,15 @@ describe("FEAT-003 shell polish", () => {
     expect(home.eyebrow).toBe("Chronic Yet Iconic");
     expect(home.eyebrowUppercase).toBe(true);
     expect(home.title).toBe("Dashboard");
-    expect(home.subtitle).toBe("Your day at a glance.");
+    expect(home.subtitle).toBe("Take a look around!");
     expect(home.signOutAccessibleName).toBe("Sign out");
     expect(home.signOutColor).toBe("#f08429");
 
     const log = getShellHeaderChrome("/log");
     expect(log.title).toBe("Log");
-    expect(log.subtitle).toBe("Capture readings and notes.");
+    expect(log.subtitle).toBe(
+      "Track symptoms, vitals, medications, water, mood and other daily events.",
+    );
   });
 
   it("AC-4: scrolled header uses #0B4041 @ 80%", async () => {

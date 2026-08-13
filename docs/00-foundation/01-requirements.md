@@ -33,11 +33,11 @@ Give the user the ability to log their health stats — manually or by import fr
 ### Manual log field contract (MVP)
 | Type | Fields |
 | --- | --- |
-| Symptom | **name from fixed dropdown** (seeded catalog), severity (`Usual amount` / `Worse than usual` / `Better than usual`), date/time, optional notes |
+| Symptom | **name from fixed dropdown** (seeded catalog), severity (`Normal amount` / `Worse than usual` / `Better than usual`), date/time, optional notes |
 | Blood pressure | systolic, diastolic, heart rate (at time of BP), date/time |
 | Medication | **name from fixed dropdown** (seeded catalog), dose, date/time |
 | Water | amount in oz; contribute to **total water drank that day** |
-| Electrolytes | once-per-day yes/no with date/time; **block** a second create for that day until the existing entry is deleted |
+| Electrolytes | once-per-day **taken = yes** with date/time (no “log no” UI — absence means not taken); **block** a second create for that day until the existing entry is deleted |
 | Mood | dropdown: awful \| not great \| okay \| good \| great; date/time |
 | Event | event note (textarea), date/time |
 
@@ -177,10 +177,10 @@ For the current America/New_York calendar day, show:
 | REQ-01 | Home dashboard summarizes **today** (America/New_York) with: (1) **count of BP readings** today, (2) **most recent BP** today as systolic/diastolic, (3) **count of meds logged** today, (4) **total water oz** today, (5) **count of symptoms** today, (6) **electrolytes Y/N** for today (or not-logged state) | Given known today logs, dashboard shows those six summary fields; with no logs, empty/zero/not-logged states — not another day's data |
 | REQ-02 | All manual log types are entered from a **single log screen** | UI exposes one log surface that can create symptom, BP, med, water, electrolyte, mood, and event entries (no separate apps/screens required per type for create) |
 | REQ-03 | User can log a blood pressure reading: systolic, diastolic, HR at measurement, date/time | After submit, entry with those four fields appears in today's data and that day's calendar detail |
-| REQ-04 | User can log a symptom: name from **fixed** dropdown, severity (Usual amount / Worse than usual / Better than usual), date/time, optional notes | Name from seeded catalog only; severity one of the three labels; saved entry shows fields on calendar day detail |
+| REQ-04 | User can log a symptom: name from **fixed** dropdown, severity (Normal amount / Worse than usual / Better than usual), date/time, optional notes | Name from seeded catalog only; severity one of the three labels; saved entry shows fields on calendar day detail |
 | REQ-05 | User can log a medication: name from **fixed** dropdown, dose, date/time | Name from seeded catalog only; saved entry shows correct name, dose, timestamp on calendar day detail |
 | REQ-06 | User can log water in oz and see total water for that day | Logging 8 oz then 8 oz yields daily total 16 oz for that date |
-| REQ-07 | User can log electrolytes once per calendar day as yes/no; further creates that day are blocked until delete | First save visible on day detail; second create attempt is rejected/blocked; after delete, create succeeds again |
+| REQ-07 | User can log electrolytes **taken (yes)** once per calendar day with date/time; there is **no create-no** path (no row = not taken); further creates that day are blocked until delete | First save is a taken=yes row; second create attempt is rejected/blocked with `log.electrolytes.blocked`; after delete, create succeeds again |
 | REQ-08 | User can log mood from dropdown (awful, not great, okay, good, great) with date/time | Saved mood value and timestamp appear on calendar day detail |
 | REQ-09 | User can log an event note (textarea) with date/time | Note text and timestamp appear on that day's calendar detail |
 | REQ-10 | User can delete any manually logged entry (no edit in v1) | After delete, entry no longer appears on dashboard/calendar/analytics; no edit UI required in v1 |
@@ -228,4 +228,6 @@ For the current America/New_York calendar day, show:
 | 2026-08-10 | BP never imported — manual only; no BP posture field | Grill-me Q1–Q2 |
 | 2026-08-10 | Med chart: med + HR/BP; X −2h…+2h; Y systolic/HR; ≤1 dose; nearest BP-log within ±15m else blank | Grill-me Q3–Q5 |
 | 2026-08-10 | Dashboard six-field today summary; import batch-delete; med chart date picker | Grill-me Q6–Q8 |
+| 2026-08-12 | Symptom severity UI label Usual → **Normal amount**; matches Log Figma | Owner Frame 2 |
+| 2026-08-13 | REQ-07: electrolytes create **yes only** (absence = no); blocked copy shortened to Figma string | Owner Log Figma |
 | 2026-08-11 | NFR-06 phone-first app shell chrome (design-brief fidelity) | FEAT-003 shell polish — **approved** with FEAT-003 |

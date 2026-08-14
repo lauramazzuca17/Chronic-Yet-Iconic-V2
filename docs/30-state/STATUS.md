@@ -6,32 +6,28 @@ tier: full
 # Project Status — session handoff
 
 ## Current phase
-Build — **FEAT-005 done**. Next feature TBD (Import / Calendar / Analytics from deferred REQs).
+Build — **FEAT-006** `done`. Next feature not started (REQ-12+).
 
 ## Active feature
-none — last completed: FEAT-005 Home dashboard (`done`) — [[FEAT-005-home-dashboard]]
+_(none)_ — last completed: FEAT-006 Calendar ([[FEAT-006-calendar]])
 
 ## Built and tested
-- **FEAT-001** — Seeded auth + app shell helpers.
-- **FEAT-002** — Sign-in UI + iron-session cookies + middleware.
-- **FEAT-003** — Phone-first shell polish + Playwright nav journey.
-- **FEAT-004** — Manual logging (all 7 types UI + domain + E2E).
-- **FEAT-005** — Home dashboard today summary (domain + Figma cards sans Health records + Playwright).
+- **FEAT-001**–**FEAT-005** — as before.
+- **FEAT-006** — Calendar: day list domain, UI (month grid + entries + delete), Playwright past-day journey.
 
 ## Not yet built (and what blocks it)
-- REQ-11–17, REQ-20 — later FEATs (Import, Calendar, Analytics, etc.).
+- REQ-12–17, REQ-20 — next FEATs via `/new-feature`.
 - Turso persistence (still in-memory store).
-- Home Health records card — deferred ([[_BACKLOG]]).
 
 ## Test suite
-Unit: 43 passed. FEAT-005 E2E Home journey green. Full E2E not re-run this turn (run in /ship).
+FEAT-006 AC-1–8 green (unit + Playwright AC-8). Full unit suite green.
 
 ## In flight / uncommitted
-- FEAT-005 complete implementation + docs; shell subtitle sync from earlier session.
+- FEAT-006 Calendar implementation + docs (ready to commit when asked).
 
 ## Blockers & open questions
 - none
 
 ## Next actions
-1. Owner: pick next FEAT via `/new-feature` (or commit FEAT-005).
-2. Optional: `/ship` when ready to tag.
+1. Commit FEAT-006 when ready (ask).
+2. `/new-feature` for next REQ (Import / analytics — see deferred list).

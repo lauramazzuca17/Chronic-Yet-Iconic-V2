@@ -16,7 +16,7 @@ const HEADER_COPY = {
   subtitles: {
     "/": "Take a look around!",
     "/log": "Track symptoms, vitals, medications, water, mood and other daily events.",
-    "/calendar": "Review what you logged.",
+    "/calendar": "Select a day to review everything you logged.",
     "/analytics": "See trends and relationships.",
     "/import": "Bring in Health export files.",
   },

@@ -28,7 +28,7 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 | Sign-in form | Username + password | default, error, submitting |
 | Dashboard summary | Today’s stats (BP row, meds, water+Taken badge, symptoms) | empty zeros, populated, electrolytes taken vs not |
 | Log screen | All manual create types | validation error, success, electrolytes blocked |
-| Calendar + day detail | Pick day; list entries; delete | empty day, populated, confirm delete |
+| Calendar + day detail | Pick day; list entries; delete | empty day (`0 logged entries`), populated, today heading, Confirm Delete |
 | Analytics controls + chart | BP vs medication / HR trends | empty data, loading, populated |
 | Import uploader | zip/CSV/XML | idle, parsing, success, error |
 | Confirm dialog | Delete manual or imported data | open, confirming |
@@ -40,14 +40,14 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 - Charts must have a text/table fallback or equivalent summary for critical BP/HR views (detail at analytics FEAT).
 
 ## Claude Design round-trip
-- Outbound: run `/design-brief [FEAT-ID]` → paste the generated brief from
-  `briefs/` into Claude Design (optionally point it at the codebase/tokens).
-- Inbound: save the handoff bundle to `handoffs/<feature>/` → run
-  `/import-design` → contracts reconciled → built via /tdd-cycle.
+- **Not used for this project** (owner decision 2026-08-13). Design source of truth is **Figma** + this brief / FEAT briefs; implement via `/tdd-cycle` (and Figma MCP when importing visuals).
+- Outbound `/design-brief` still produces paste-ready briefs for humans / Figma — not Claude Design.
+- Inbound `/import-design` remains available if a handoff bundle appears later; default path is Figma → build.
 
 ## Handoff log
 | Date | Feature | Bundle path | Notes |
 | --- | --- | --- | --- |
+| 2026-08-13 | FEAT-006 | briefs/FEAT-006-brief.md | Calendar states: past day list, today, empty, scroll header |
 | 2026-08-13 | FEAT-005 | briefs/FEAT-005-brief.md | Home dashboard brief — paste to Claude Design |
 | 2026-08-12 | FEAT-004 | briefs/FEAT-004-brief.md | Log UI brief — paste to Claude Design |
 | 2026-08-10 | FEAT-001 | briefs/FEAT-001-brief.md | Design review complete — ready for PRD approval |

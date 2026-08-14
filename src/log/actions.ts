@@ -186,5 +186,6 @@ export async function deleteManualLogAction(
     return { ok: false, error: "Could not delete that entry." };
   }
   revalidatePath("/log");
+  revalidatePath("/calendar");
   return { ok: true };
 }

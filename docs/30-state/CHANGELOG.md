@@ -6,6 +6,18 @@ type: changelog
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
 ## 2026-08-13
+- **FEAT-006 done** — Calendar (REQ-11): day list + UI + Playwright past-day review/delete (`e2e/feat-006-calendar-journey.spec.ts`).
+- **FEAT-006 AC-7** — Calendar UI: month/year picker, day grid, day list + delete; default today; `?date=` selection.
+- **FEAT-006 AC-6** — delete via `deleteManualLog` removes entry from that day’s list.
+- **FEAT-006 AC-5** — Demo day list stays empty when only Laura has logs (account-scoped).
+- **FEAT-006 AC-4** — Calendar day list reads `log/store` only; filters to manual log types.
+- **FEAT-006 AC-3** — empty selected day returns `[]` (not another day’s logs).
+- **FEAT-006 AC-2** — selecting another date never mixes day lists (regression).
+- **FEAT-006 AC-1** — `listManualLogsForDate` via manual-log store (`src/calendar/day-entries.ts`).
+- **Approved FEAT-006** (Calendar REQ-11 / NFR-01); next `/tdd-cycle` AC-1.
+- **Decision:** no Claude Design for this project — Figma + `/design-brief` + `/tdd-cycle` only ([[50-design-brief]]).
+- **FEAT-006 design brief** — Calendar Figma states (past list, today, empty, scroll); subtitle locked; delete on entry cards.
+- **FEAT-006 draft** — Calendar (REQ-11); skeleton tests; calendar empty/day-heading copy drafted.
 - **FEAT-005 done** — Home dashboard UI (Figma cards, no Health records) + Playwright AC-9; domain summary AC-1–8.
 - **FEAT-005 AC-8** — Demo summary stays empty when only Laura has today logs (account-scoped).
 - **FEAT-005 AC-7** — empty day all zeros/null/false; other calendar day’s logs excluded (regression test).

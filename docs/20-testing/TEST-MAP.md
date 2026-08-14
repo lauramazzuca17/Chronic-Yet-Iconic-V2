@@ -56,6 +56,14 @@ updated: 2026-08-13
 | FEAT-005 | AC-7 | tests/feat-005-home-dashboard.test.ts | AC-7: empty day shows zeros / empty / not-logged — not another day | ✅ passing |
 | FEAT-005 | AC-8 | tests/feat-005-home-dashboard.test.ts | AC-8: Demo cannot see Laura today stats | ✅ passing |
 | FEAT-005 | AC-9 | e2e/feat-005-home-journey.spec.ts | AC-9: Playwright Home summary journey | ✅ passing |
+| FEAT-006 | AC-1 | tests/feat-006-calendar.test.ts | AC-1: calendar lists manual entries for selected date | ✅ passing |
+| FEAT-006 | AC-2 | tests/feat-006-calendar.test.ts | AC-2: selecting another date swaps the list — never mixes days | ✅ passing |
+| FEAT-006 | AC-3 | tests/feat-006-calendar.test.ts | AC-3: empty selected day returns no entries | ✅ passing |
+| FEAT-006 | AC-4 | tests/feat-006-calendar.test.ts | AC-4: calendar listing uses manual-log store only | ✅ passing |
+| FEAT-006 | AC-5 | tests/feat-006-calendar.test.ts | AC-5: Demo cannot see Laura day entries | ✅ passing |
+| FEAT-006 | AC-6 | tests/feat-006-calendar.test.ts | AC-6: delete from selected day removes entry | ✅ passing |
+| FEAT-006 | AC-7 | tests/feat-006-calendar.test.ts | AC-7: /calendar shell + default today + day picker | ✅ passing |
+| FEAT-006 | AC-8 | e2e/feat-006-calendar-journey.spec.ts | AC-8: Playwright Calendar past-day review + delete | ✅ passing |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

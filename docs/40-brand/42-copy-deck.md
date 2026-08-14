@@ -45,7 +45,10 @@ updated: 2026-08-12
 | shell.placeholder.body | This section is next. | Placeholder routes until their FEATs |
 | shell.subtitle.dashboard | Take a look around! | Locked from Home Figma header |
 | shell.subtitle.log | Track symptoms, vitals, medications, water, mood and other daily events. | Log header subtitle — locked from Figma Frame 1 |
-| shell.subtitle.calendar | Review what you logged. | Draft — refine with owner |
+| shell.subtitle.calendar | Select a day to review everything you logged. | Locked from Calendar Figma |
+| calendar.empty_day | _(unused)_ | Empty = heading + `0 logged entries` only (Figma 62910-6163); no separate empty blurb |
+| calendar.day_heading | {weekday} · {Month} {D}, {YYYY} | Locked pattern e.g. Thursday · August 6, 2026 |
+| calendar.day_heading_today | Today | When selected day is today (Figma) |
 | shell.subtitle.analytics | See trends and relationships. | Draft — refine with owner |
 | shell.subtitle.import | Bring in Health export files. | Draft — refine with owner |
 | dashboard.empty | No stats for today yet. Add a log or import data. | Unused on Figma Home (zeros on cards); keep until confirmed drop |

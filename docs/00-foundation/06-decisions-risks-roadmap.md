@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: planning
 status: living-document
-updated: 2026-08-10
+updated: 2026-08-13
 ---
 
 # Decisions, Risks, and Roadmap
@@ -10,7 +10,7 @@ updated: 2026-08-10
 [[00-overview|← Overview]]
 
 ## Recommended next move
-FEAT-003 in progress (AC-1–4 done). Run `/tdd-cycle` for AC-5 (nav hrefs).
+`/tdd-cycle` FEAT-006 AC-1 (`listManualLogsForDate`).
 
 ## Decisions needing an owner
 | Decision | Why it matters | Proposed owner | Status |
@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-13 | Design tooling | **No Claude Design** — Figma + `/design-brief` + `/tdd-cycle` | Owner |
 | 2026-08-10 | Active nav style | Icon pill #082E33@80% radius ~16px; label below pill | Design review |
 | 2026-08-10 | Home vs Dashboard | Nav label Home; page title Dashboard | Design review |
 | 2026-08-10 | App shell chrome | Sticky header + bottom nav #0B4041@80%; sign-out icon; scroll-under on Dashboard/Calendar | Design review |

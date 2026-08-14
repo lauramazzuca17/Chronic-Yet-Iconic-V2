@@ -30,8 +30,9 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 | Log screen | All manual create types | validation error, success, electrolytes blocked |
 | Calendar + day detail | Pick day; list entries; delete | empty day (`0 logged entries`), populated, today heading, Confirm Delete |
 | Analytics controls + chart | BP vs medication / HR trends | empty data, loading, populated |
-| Import uploader | zip/CSV/XML | idle, parsing, success, error |
-| Confirm dialog | Delete manual or imported data | open, confirming |
+| Import uploader | CSV pair (summary + detailed) | idle, error under Start import, success |
+| Import history | Database summary + batch list | Completed / Processing / Failed; Delete → Delete this import? |
+| Confirm dialog | Delete manual or imported data | open, confirming (Import uses inline confirm link) |
 
 ## Accessibility rules (non-negotiable)
 - Contrast ≥ WCAG AA; visible focus states; full keyboard operability;

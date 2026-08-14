@@ -64,6 +64,14 @@ updated: 2026-08-13
 | FEAT-006 | AC-6 | tests/feat-006-calendar.test.ts | AC-6: delete from selected day removes entry | ✅ passing |
 | FEAT-006 | AC-7 | tests/feat-006-calendar.test.ts | AC-7: /calendar shell + default today + day picker | ✅ passing |
 | FEAT-006 | AC-8 | e2e/feat-006-calendar-journey.spec.ts | AC-8: Playwright Calendar past-day review + delete | ✅ passing |
+| FEAT-007 | AC-1 | tests/feat-007-import.test.ts | AC-1: both CSVs required — no partial commit | ✅ passing |
+| FEAT-007 | AC-2 | tests/feat-007-import.test.ts | AC-2: detailed Metric → metric_key + NY recorded_at | ✅ passing |
+| FEAT-007 | AC-3 | tests/feat-007-import.test.ts | AC-3: summary rows stored; BP never imported | ✅ passing |
+| FEAT-007 | AC-4 | tests/feat-007-import.test.ts | AC-4: skip duplicates; new + skipped counts | ✅ passing |
+| FEAT-007 | AC-5 | tests/feat-007-import.test.ts | AC-5: Demo cannot access Laura imports | ✅ passing |
+| FEAT-007 | AC-6 | tests/feat-007-import.test.ts | AC-6: batch-delete removes ImportBatch samples | ✅ passing |
+| FEAT-007 | AC-7 | tests/feat-007-import.test.ts | AC-7: /import shell + upload + batch list | ✅ passing |
+| FEAT-007 | AC-8 | e2e/feat-007-import-journey.spec.ts | AC-8: Playwright upload pair then batch-delete | ✅ passing |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

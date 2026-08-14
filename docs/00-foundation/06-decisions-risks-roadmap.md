@@ -25,6 +25,11 @@ unless a contract doc carries its own binding log. -->
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
 | 2026-08-13 | Design tooling | **No Claude Design** — Figma + `/design-brief` + `/tdd-cycle` | Owner |
+| 2026-08-13 | Import UI | Figma `62939:4277`: Upload Files + Import History (Database Summary + Completed/Processing/Failed); Delete → Delete this import?; scroll-behind header like Calendar | Owner |
+| 2026-08-13 | Import summary ingest | Persist **all non-BP** summary columns (not chart-subset only) | Owner |
+| 2026-08-13 | Import Processing status | In-flight only during request; then Completed/Failed | Owner |
+| 2026-08-13 | Import history filename | Display **detailed** CSV filename on batch row | Owner |
+| 2026-08-14 | Summary metric keys | Store summary columns as `summary_*` keys (not detailed `heart_rate`) so charts stay detailed-only | FEAT-007 AC-3 |
 | 2026-08-10 | Active nav style | Icon pill #082E33@80% radius ~16px; label below pill | Design review |
 | 2026-08-10 | Home vs Dashboard | Nav label Home; page title Dashboard | Design review |
 | 2026-08-10 | App shell chrome | Sticky header + bottom nav #0B4041@80%; sign-out icon; scroll-under on Dashboard/Calendar | Design review |

@@ -18,7 +18,7 @@ const HEADER_COPY = {
     "/log": "Track symptoms, vitals, medications, water, mood and other daily events.",
     "/calendar": "Select a day to review everything you logged.",
     "/analytics": "See trends and relationships.",
-    "/import": "Bring in Health export files.",
+    "/import": "Upload Apple Health export files to populate your health database.",
   },
 } as const;
 

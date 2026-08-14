@@ -5,7 +5,21 @@ type: changelog
 
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
+## 2026-08-14
+- **FEAT-007 done** — Import (REQ-12/15): CSV pair ingest, history UI, Playwright upload + batch-delete (`e2e/feat-007-import-journey.spec.ts`); import store on `globalThis` for Next action/RSC sharing.
+- **FEAT-007 AC-7** — Import UI: Upload Files + Import History (Database Summary, batch cards); copy helpers; shell subtitle already locked.
+- **FEAT-007 AC-6** — owner `deleteImportBatch` removes batch and all its samples.
+- **FEAT-007 AC-5** — Demo cannot list or delete Laura import batches (`deleteImportBatch` ownership check).
+- **FEAT-007 AC-4** — re-import skips duplicates by (account, metric_key, recorded_at, value); reports inserted/skipped.
+- **FEAT-007 AC-3** — summary CSV day aggregates stored as `summary_*` samples; BP systolic/diastolic columns skipped.
+
 ## 2026-08-13
+- **FEAT-007 AC-2** — detailed CSV Metric → binding metric_key; NY wall-clock `recorded_at` from Timestamp.
+- **FEAT-007 AC-1** — `importHealthCsvPair` requires both CSVs; no partial commit (`src/import/store.ts`).
+- **Approved FEAT-007** (Import REQ-12 / REQ-15); next `/tdd-cycle` AC-1.
+- **FEAT-007 decisions** — all non-BP summary columns; Processing = in-flight only; history shows detailed CSV filename.
+- **FEAT-007 Figma lock** — Import frame `62939:4277`: Upload Files + Import History (Database Summary, batch states); subtitle + copy deck keys; scroll-behind header like Calendar.
+- **FEAT-007 draft** — Import (REQ-12, REQ-15): CSV pair + batch-delete; skeleton tests; awaiting PRD approval.
 - **FEAT-006 done** — Calendar (REQ-11): day list + UI + Playwright past-day review/delete (`e2e/feat-006-calendar-journey.spec.ts`).
 - **FEAT-006 AC-7** — Calendar UI: month/year picker, day grid, day list + delete; default today; `?date=` selection.
 - **FEAT-006 AC-6** — delete via `deleteManualLog` removes entry from that day’s list.

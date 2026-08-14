@@ -14,6 +14,7 @@ updated: 2026-08-13
 | FEAT-004 | Manual logging (single Log screen) | REQ-02–10, NFR-01 | done | [[FEAT-004-manual-logging]] | tests/feat-004-manual-logging.test.ts; e2e/feat-004-water-journey.spec.ts; e2e/feat-004-remaining-forms.spec.ts |
 | FEAT-005 | Home dashboard (today's summary) | REQ-01, NFR-01 | done | [[FEAT-005-home-dashboard]] | tests/feat-005-home-dashboard.test.ts; e2e/feat-005-home-journey.spec.ts |
 | FEAT-006 | Calendar (manual day detail) | REQ-11, NFR-01 | done | [[FEAT-006-calendar]] | tests/feat-006-calendar.test.ts · e2e/feat-006-calendar-journey.spec.ts |
+| FEAT-007 | Import (third-party CSV pair) | REQ-12, REQ-15, NFR-01, NFR-02, NFR-06 | done | [[FEAT-007-import]] | tests/feat-007-import.test.ts · e2e/feat-007-import-journey.spec.ts |
 
 **Status values:** `draft` → `approved` → `in-progress` → `done` (or `deprecated`)
 
@@ -21,4 +22,4 @@ updated: 2026-08-13
 > Every REQ-ID in [[01-requirements]] must appear in some feature's
 > Implements column, or be listed here as explicitly deferred:
 >
-> **Deferred requirements:** REQ-12–REQ-17, REQ-20 (and remaining NFRs not listed on FEAT-001–006). **Done:** REQ-01–REQ-11 via FEAT-001–006.
+> **Deferred requirements:** REQ-16–REQ-17, REQ-20 (and remaining NFRs not listed on FEAT-001–007). **Done:** REQ-01–REQ-12, REQ-15 via FEAT-001–007.

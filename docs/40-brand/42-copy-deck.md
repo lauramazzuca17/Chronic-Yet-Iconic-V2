@@ -50,7 +50,7 @@ updated: 2026-08-12
 | calendar.day_heading | {weekday} · {Month} {D}, {YYYY} | Locked pattern e.g. Thursday · August 6, 2026 |
 | calendar.day_heading_today | Today | When selected day is today (Figma) |
 | shell.subtitle.analytics | See trends and relationships. | Draft — refine with owner |
-| shell.subtitle.import | Bring in Health export files. | Draft — refine with owner |
+| shell.subtitle.import | Upload Apple Health export files to populate your health database. | Locked from Import Figma 62939-4277 |
 | dashboard.empty | No stats for today yet. Add a log or import data. | Unused on Figma Home (zeros on cards); keep until confirmed drop |
 | dashboard.metric.bp_count | BP Readings | Home Figma |
 | dashboard.metric.bp_count_helper | Manual BP entries | Home Figma |
@@ -123,9 +123,25 @@ updated: 2026-08-12
 | log.electrolyte.no | No | Implied by **no row** for that day — not a create option in v1 |
 | import.success | Import finished — {count} new samples. | `{count}` = integer |
 | import.duplicate_skipped | Skipped {count} duplicates. | |
-| import.pair_required | Upload both the summary and detailed CSV files. | |
-| import.error_missing_pair | Need both summary and detailed CSV files. | Blunt |
-| import.delete_confirm | Delete this import? All samples from that upload will be removed. It can’t be undone. | Batch delete |
+| import.pair_required | Upload both the summary and detailed CSV files. | Guidance (upload card uses Figma instructions) |
+| import.error_missing_pair | Need both summary and detailed CSV files. | Locked under Start import (Figma) |
+| import.delete_confirm | _(superseded)_ | Use `import.entry.confirm_delete` |
+| import.upload.title | Upload Files | Locked Import Figma |
+| import.upload.instructions | On your iphone goto My Health Export App → Select your date range → fetch data and export both summary and detailed. | Locked Figma casing |
+| import.field.summary | Summary CSV | Locked |
+| import.field.detailed | Detailed CSV | Locked |
+| import.choose_file | Choose File | Locked |
+| import.no_file_selected | No file selected | Locked |
+| import.start | Start import | Locked |
+| import.history.title | Import History | Locked |
+| import.database_summary.title | Database Summary | Locked |
+| import.database_summary.count | {count} health records stored. | `{count}` emphasized in UI |
+| import.status.completed | Completed | Badge |
+| import.status.processing | Processing | Badge |
+| import.status.failed | Failed | Badge |
+| import.batch.meta | {count} Records · {datetime} | Locked pattern |
+| import.entry.delete | Delete | Default (gray) |
+| import.entry.confirm_delete | Delete this import? | Armed (brand7); supersedes longer delete_confirm |
 
 ## Placeholders & formatting rules
 - Variables use `{name}` (e.g. `{count}`).

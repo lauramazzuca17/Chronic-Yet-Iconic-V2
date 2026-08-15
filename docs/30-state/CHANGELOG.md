@@ -5,34 +5,26 @@ type: changelog
 
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
-## 2026-08-15
+## v0.1.1 — 2026-08-15
+- **Ship** — FEAT-001–009 MVP on Turso/libSQL persistence; full suite green; security-audit recorded (npm audit Next/postcss/sharp highs **accepted** for private NFR-05).
+- **Ship fixes** — Analytics client no longer value-imports `medication-impact`→`log/store` (`node:crypto` client break); login returns `{ok:true}` + `router.push`; FEAT-002 E2E warms DB before first login.
 - **FEAT-009 done** — Turso/libSQL persistence + per-file Import History (AC-1–11); Playwright water reload + two cards + delete one file.
-- **FEAT-009 AC-11** — `e2e/feat-009-persistence-journey.spec.ts`: water survives reload; pair → 2 cards; delete detailed leaves summary.
-- **FEAT-009 AC-10** — `resolveDbMode`: Vitest/memory → `:memory:`; local → file libSQL; Turso when URL+token set; Vercel without Turso throws.
-- **FEAT-009 AC-9** — Demo cannot read/delete Laura water or import rows on the shared libSQL DB (store APIs + failed cross-account deletes).
-- **FEAT-009 AC-8** — Import History lists one card per file (`originalFilename`); FEAT-007 tests/E2E updated for two cards + per-file delete.
-- **FEAT-009 AC-7** — `deleteImportBatch` by file id removes only that file’s samples; sibling remains (pair_id delete still removes both for FEAT-007 compat).
-- **FEAT-009 AC-6** — pair import locks two `ImportBatch` rows (`detailed_csv` + `summary_csv`) sharing `pair_id`; samples attach per file.
-- **FEAT-009 AC-5** — `createFileDb`: water row survives close + new client on same file path.
-- **FEAT-009 AC-4** — manual log + import stores on Drizzle (async); pair import writes two file batches; FEAT-007 UI still groups by `pair_id`.
-- **FEAT-009 AC-3** — `signIn` verifies DB `password_hash` (env change after seed does not affect login).
-- **FEAT-009 AC-2** — `src/db/seed` + `createTestDb` (in-memory migrate); Laura/Demo hashes + catalogs; Demo health empty.
-- **FEAT-009 AC-1** — `src/db/schema`: Drizzle tables for Account, catalogs, manual logs, ImportBatch (`pair_id`), ImportedSample.
-- **FEAT-009 draft** — Turso/Drizzle persistence PRD + NFR-07; REQ-15 per-file import history; grill locks recorded; skeleton `tests/feat-009-turso-persistence.test.ts`. Awaiting PRD approve.
 - **FEAT-008 Analytics UI finish** — Recharts on Medication + Cardio/Recovery charts; Cardiovascular, Recovery, Electrolytes tabs wired; electrolytes empty copy; E2E covers all tabs + With/Without cards.
 - **FEAT-008 done** — AC-12 Playwright Medication journey; domain AC-1–11; Medication Impact UI.
-- **FEAT-008 AC-11** — `src/analytics/electrolytes`: With/Without cohort averages (HR/resting/walking/BP); window from first electrolytes yes.
-- **FEAT-008 AC-10** — `src/analytics/recovery`: Chart 4 HRV (Today/7/30) + Chart 5 walking HR (7/30 only).
-- **FEAT-008 AC-9** — `src/analytics/cardiovascular`: Chart 2 BP/HR overlay (Today/7/30, Y 50–190); Chart 3 tachycardia ≥100 (7 bars).
-- **FEAT-008 AC-8** — Demo cannot read Laura analytics series/options (account scoping regression lock).
-- **FEAT-008 AC-7** — tooltips `120/80 · 8:07 AM` / `105 bpm · 8:07 AM`; slots carry `tooltip`.
-- **FEAT-008 AC-6** — `getMedicationImpactMedOptions`: catalog + `#8E8E93` disabled untaken; multi-dose uses most recent take-time.
-- **FEAT-008 AC-5** — BP = manual systolic only; HR = manual BP-log HR + detailed `heart_rate` (resting/summary excluded).
-- **FEAT-008 AC-4** — ±15 min closest slot fill (`pickClosestInWindow`); no interpolation; BP systolic candidates.
-- **FEAT-008 AC-3** — `buildMedicationImpactSeries`: slots `-2h | -1h | Dose | +1h | +2h` with absolute targets from take-time.
-- **FEAT-008 AC-2** — Medication Impact card contract (`src/analytics/medication-impact`): title/helper, Compare/with, Heart Rate|BP, date `MM/DD/YYYY` + prev/next, Recharts chart-area flag.
-- **FEAT-008 AC-1** — approved → in-progress; `src/analytics/tabs` (Medication default); shell Analytics subtitle locked; AC-1 green.
-- **FEAT-008 Electrolytes Figma** — full page `62967:5991` locked (With/Without cards; Avg HR / Resting / Walking / BP); all Analytics tab Figma now in hand; awaiting PRD approve.
+
+## 2026-08-15 (detail)
+- **FEAT-009 AC-11** — `e2e/feat-009-persistence-journey.spec.ts`: water survives reload; pair → 2 cards; delete detailed leaves summary.
+- **FEAT-009 AC-10** — `resolveDbMode`: Vitest/memory → `:memory:`; local → file libSQL; Turso when URL+token set; Vercel without Turso throws.
+- **FEAT-009 AC-9** — Demo cannot read/delete Laura water or import rows on the shared libSQL DB.
+- **FEAT-009 AC-8** — Import History one card per file; FEAT-007 tests/E2E updated for two cards + per-file delete.
+- **FEAT-009 AC-7** — `deleteImportBatch` by file id leaves sibling; pair_id delete still removes both.
+- **FEAT-009 AC-6** — pair import → two ImportBatch rows sharing pair_id.
+- **FEAT-009 AC-5** — `createFileDb`: water survives close + new client.
+- **FEAT-009 AC-4** — log + import stores on Drizzle (async).
+- **FEAT-009 AC-3** — signIn verifies Account.password_hash.
+- **FEAT-009 AC-2** — seedDatabase + createTestDb; Demo health empty.
+- **FEAT-009 AC-1** — Drizzle schema for Account, catalogs, logs, ImportBatch, ImportedSample.
+- **Security audit** — pre-ship 2026-08-15; npm audit highs accepted for private NFR-05 v0.1.1.
 
 ## 2026-08-14
 - **FEAT-008 Chart 5 walking HR** — Figma `62959:4803` locked; range **Last 7 / Last 30 only** (no Today); copy deck keys added.

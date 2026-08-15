@@ -6,25 +6,31 @@ tier: full
 # Project Status — session handoff
 
 ## Current phase
-FEAT-009 complete. Ready for `/ship` or next feature from backlog.
+**v0.1.1 shipped** (docs/version ready to commit + tag). Deploy Turso/Vercel next.
 
 ## Active feature
-_(none)_ — last completed: [[FEAT-009-turso-persistence]]
+_(none)_ — MVP FEAT-001–009 complete.
 
 ## Built and tested
 - **FEAT-001**–**FEAT-009** — auth through Turso persistence + per-file Import History.
-- **FEAT-009** — Drizzle/libSQL schema, seed, DB auth, durable log/import stores, file reconnect, pair_id batches, per-file delete UI, isolation, connection policy, Playwright persistence journey.
+- Ship fixes: Analytics client/store boundary; login `router.push`; FEAT-002 E2E DB warm-up.
 
 ## Not yet built (and what blocks it)
-- Next feature TBD (`docs/10-features/_BACKLOG.md` or `/new-feature`).
+- Health records Home card (deferred backlog).
+- Next 16 upgrade (clears accepted npm audit highs).
+- Privacy doc formal sign-off (`04-privacy` requires-review).
 
 ## Test suite
-`npm test` — 78 passed | 1 todo (FEAT-002).  
-`e2e/feat-009-persistence-journey.spec.ts` — passing.
+`npm test` — 78 passed | 1 todo.  
+`CI=1 npx playwright test` — 10 passed.
+
+## Security
+Pre-ship audit 2026-08-15: npm audit Next→postcss/sharp **high** — **accepted** by owner for private NFR-05 v0.1.1 ([[06-decisions-risks-roadmap]]).
 
 ## In flight / uncommitted
-- FEAT-009 full (AC-1–11) — ready for commit when asked.
+- v0.1.1 bump + ship fixes + decision log — use printed git commands below.
 
 ## Next actions
-1. Commit FEAT-009 when ready.
-2. `/ship` or pick next feature.
+1. Commit + tag `v0.1.1` (commands printed by `/ship`).
+2. Deploy Vercel with `TURSO_*`, `SESSION_SECRET`, `SEED_PASSWORD_*`.
+3. Optional: Next 16 upgrade FEAT when ready.

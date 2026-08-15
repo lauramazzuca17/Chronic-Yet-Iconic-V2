@@ -21,7 +21,6 @@ import {
 } from "@/analytics/actions";
 import type { AnalyticsTabId } from "@/analytics/tabs";
 import type { MedicationImpactMetricId } from "@/analytics/medication-impact";
-import { MEDICATION_UNAVAILABLE_COLOR } from "@/analytics/medication-impact";
 import type { CardioRangeId } from "@/analytics/cardiovascular";
 import type { HrvRangeId, WalkingHrRangeId } from "@/analytics/recovery";
 import { RangeChips } from "@/analytics/RangeChips";
@@ -31,6 +30,9 @@ import {
   RecoveryLineChart,
   TachycardiaBurdenChart,
 } from "@/analytics/charts";
+
+/** Figma lock — keep local so client never imports medication-impact → log/store. */
+const MEDICATION_UNAVAILABLE_COLOR = "#8E8E93";
 
 const CARD_RADIUS = "10px";
 const CARD_SX = {

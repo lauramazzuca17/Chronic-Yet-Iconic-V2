@@ -30,7 +30,7 @@ export async function loginAction(formData: FormData): Promise<LoginActionResult
   ironSession.username = result.session.username;
   await ironSession.save();
 
-  redirect("/");
+  return { ok: true };
 }
 
 export async function logoutAction(): Promise<void> {

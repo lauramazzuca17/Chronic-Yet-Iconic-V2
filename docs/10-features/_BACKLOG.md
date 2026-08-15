@@ -15,7 +15,8 @@ updated: 2026-08-10
 > whenever you ask.
 
 ## Ideas
-- [ ] _(empty — add ideas anytime)_
+- [ ] Upgrade Next.js to clear npm audit postcss/sharp highs (accepted for v0.1.1)
+- [ ] _(add more anytime)_
 
 ## Deferred (decided, not now)
 | Idea | Why deferred | Revisit when |

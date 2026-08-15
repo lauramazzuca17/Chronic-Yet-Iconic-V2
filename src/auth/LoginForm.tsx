@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button, TextField, Box, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 import {
@@ -12,6 +13,7 @@ import { loginAction } from "@/auth/actions";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function LoginForm() {
+  const router = useRouter();
   const copy = getLoginPageCopy();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +50,16 @@ export function LoginForm() {
     setSubmitting(true);
     setError(null);
     const formData = new FormData(event.currentTarget);
-    const result = await loginAction(formData);
-    if (result && !result.ok) {
+    try {
+      const result = await loginAction(formData);
+      if (!result.ok) {
+        setError(copy.errorInvalid);
+        setSubmitting(false);
+        return;
+      }
+      router.push("/");
+      router.refresh();
+    } catch {
       setError(copy.errorInvalid);
       setSubmitting(false);
     }

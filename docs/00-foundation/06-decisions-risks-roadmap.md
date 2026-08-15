@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: planning
 status: living-document
-updated: 2026-08-13
+updated: 2026-08-15
 ---
 
 # Decisions, Risks, and Roadmap
@@ -10,7 +10,7 @@ updated: 2026-08-13
 [[00-overview|← Overview]]
 
 ## Recommended next move
-`/tdd-cycle` FEAT-006 AC-1 (`listManualLogsForDate`).
+Deploy v0.1.1 to Vercel with Turso (`TURSO_*` + seed passwords); backlog Next 16 when ready to clear npm audit highs.
 
 ## Decisions needing an owner
 | Decision | Why it matters | Proposed owner | Status |
@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-15 | `/ship` npm audit highs (Next→postcss/sharp) | **Accepted** for private v0.1.1 (NFR-05); revisit on Next 16 upgrade | Owner |
 | 2026-08-13 | Design tooling | **No Claude Design** — Figma + `/design-brief` + `/tdd-cycle` | Owner |
 | 2026-08-13 | Import UI | Figma `62939:4277`: Upload Files + Import History (Database Summary + Completed/Processing/Failed); Delete → Delete this import?; scroll-behind header like Calendar | Owner |
 | 2026-08-13 | Import summary ingest | Persist **all non-BP** summary columns (not chart-subset only) | Owner |
@@ -122,3 +123,4 @@ unless a contract doc carries its own binding log. -->
 | Cross-account data leak | Account-scoped queries; tests for REQ-19 / NFR-01 |
 | Large Apple Health zip imports | CSV/XML alternate path (NFR-02); size limits decided at import FEAT |
 | Public Vercel URL + password-only auth | Strong unique passwords; don’t broadly publish URL; consider Vercel Deployment Protection later if needed |
+| Next.js transitive postcss/sharp **high** CVEs (`npm audit`) | **Accepted** for private v0.1.1 (NFR-05); no public signup; upgrade Next 16 when ready |

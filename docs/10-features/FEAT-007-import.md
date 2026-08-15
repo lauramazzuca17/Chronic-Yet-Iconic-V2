@@ -102,3 +102,4 @@ Composition (owner):
 | 2026-08-14 | AC-6 green — owner batch-delete removes batch + samples (reuse deleteImportBatch) | /tdd-cycle |
 | 2026-08-14 | AC-7 green — Import UI Upload Files + History (Figma 62939-4277) | /tdd-cycle |
 | 2026-08-14 | AC-8 green — Playwright upload + batch-delete; feature **done** | /tdd-cycle |
+| 2026-08-15 | REQ-15 semantics superseded by [[FEAT-009-turso-persistence]] (per-file history/delete); pair upload REQ-12 unchanged | Owner grill |

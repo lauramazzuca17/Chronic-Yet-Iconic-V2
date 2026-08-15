@@ -12,7 +12,30 @@ import {
   buildMedicationImpactSeries,
   type MedicationImpactSeries,
 } from "@/analytics/medication-series";
-import { getAnalyticsTabs, type AnalyticsTabId } from "@/analytics/tabs";
+import {
+  buildBpHrOverlaySeries,
+  buildTachycardiaBurdenSeries,
+  getChart2Card,
+  getChart3Card,
+  type BpHrOverlaySeries,
+  type CardioRangeId,
+  type TachycardiaBurdenSeries,
+} from "@/analytics/cardiovascular";
+import {
+  buildHrvSeries,
+  buildWalkingHrSeries,
+  getHrvCard,
+  getWalkingHrCard,
+  type HrvRangeId,
+  type RecoverySeries,
+  type WalkingHrRangeId,
+} from "@/analytics/recovery";
+import {
+  buildElectrolytesComparison,
+  getElectrolytesSection,
+  type ElectrolytesComparison,
+} from "@/analytics/electrolytes";
+import { getAnalyticsTabs } from "@/analytics/tabs";
 import { calendarDateInNewYork } from "@/log/timezone";
 
 export type MedicationImpactView = {
@@ -20,10 +43,32 @@ export type MedicationImpactView = {
   tabs: ReturnType<typeof getAnalyticsTabs>;
   calendarDate: string;
   dateDisplay: string;
-  options: ReturnType<typeof getMedicationImpactMedOptions>;
+  options: Awaited<ReturnType<typeof getMedicationImpactMedOptions>>;
   selectedMed: string | null;
   metric: MedicationImpactMetricId;
   series: MedicationImpactSeries | null;
+};
+
+export type CardiovascularView = {
+  chart2: ReturnType<typeof getChart2Card>;
+  chart3: ReturnType<typeof getChart3Card>;
+  range: CardioRangeId;
+  overlay: BpHrOverlaySeries;
+  burden: TachycardiaBurdenSeries;
+};
+
+export type RecoveryView = {
+  hrvCard: ReturnType<typeof getHrvCard>;
+  walkingCard: ReturnType<typeof getWalkingHrCard>;
+  hrvRange: HrvRangeId;
+  walkingRange: WalkingHrRangeId;
+  hrv: RecoverySeries;
+  walking: RecoverySeries;
+};
+
+export type ElectrolytesView = {
+  section: ReturnType<typeof getElectrolytesSection>;
+  comparison: ElectrolytesComparison | null;
 };
 
 export async function loadMedicationImpactView(input?: {
@@ -35,7 +80,7 @@ export async function loadMedicationImpactView(input?: {
   const card = getMedicationImpactCard();
   const calendarDate =
     input?.calendarDate ?? calendarDateInNewYork();
-  const options = getMedicationImpactMedOptions(
+  const options = await getMedicationImpactMedOptions(
     session.accountId,
     calendarDate
   );
@@ -49,7 +94,7 @@ export async function loadMedicationImpactView(input?: {
   const series =
     selectedMed == null
       ? null
-      : buildMedicationImpactSeries({
+      : await buildMedicationImpactSeries({
           accountId: session.accountId,
           calendarDate,
           medicationName: selectedMed,
@@ -80,4 +125,63 @@ export async function shiftMedicationImpactDateAction(
     medicationName,
     metric,
   });
+}
+
+export async function loadCardiovascularView(input?: {
+  range?: CardioRangeId;
+}): Promise<CardiovascularView> {
+  const session = await requireSession();
+  const today = calendarDateInNewYork();
+  const range = input?.range ?? "today";
+  return {
+    chart2: getChart2Card(),
+    chart3: getChart3Card(),
+    range,
+    overlay: await buildBpHrOverlaySeries({
+      accountId: session.accountId,
+      range,
+      today,
+    }),
+    burden: await buildTachycardiaBurdenSeries({
+      accountId: session.accountId,
+      today,
+    }),
+  };
+}
+
+export async function loadRecoveryView(input?: {
+  hrvRange?: HrvRangeId;
+  walkingRange?: WalkingHrRangeId;
+}): Promise<RecoveryView> {
+  const session = await requireSession();
+  const today = calendarDateInNewYork();
+  const hrvRange = input?.hrvRange ?? "today";
+  const walkingRange = input?.walkingRange ?? "last_7";
+  return {
+    hrvCard: getHrvCard(),
+    walkingCard: getWalkingHrCard(),
+    hrvRange,
+    walkingRange,
+    hrv: await buildHrvSeries({
+      accountId: session.accountId,
+      range: hrvRange,
+      today,
+    }),
+    walking: await buildWalkingHrSeries({
+      accountId: session.accountId,
+      range: walkingRange,
+      today,
+    }),
+  };
+}
+
+export async function loadElectrolytesView(): Promise<ElectrolytesView> {
+  const session = await requireSession();
+  return {
+    section: getElectrolytesSection(),
+    comparison: await buildElectrolytesComparison({
+      accountId: session.accountId,
+      asOf: calendarDateInNewYork(),
+    }),
+  };
 }

@@ -3,7 +3,7 @@ project: "Chronic Yet Iconic V2"
 type: data-model
 status: design-contract
 created: 2026-08-10
-updated: 2026-08-10
+updated: 2026-08-15
 ---
 
 # Data Model
@@ -44,6 +44,7 @@ Covers v1: accounts/auth credentials references, manual log entries, name catalo
 | 9 | Blood pressure source | Manual log only; never Apple Health / import | Grill-me 2026-08-10 |
 | 10 | BP posture | Never capture lying/sitting/standing | Grill-me 2026-08-10 |
 | 13 | Import pair | Both summary + detailed CSV required; reject if either missing | Grill-me 2026-08-10 |
+| 14 | Import history / delete | One `ImportBatch` **per file**; pair upload creates two batches sharing `pair_id`; delete removes one file’s batch + samples only | Owner + Figma 62946:4447 (FEAT-009 grill) |
 
 ## v1 seeded catalogs (binding)
 ### Symptom names
@@ -169,12 +170,16 @@ erDiagram
 | created_at | text/datetime | not null | |
 
 ### ImportBatch
+One row **per imported file**. A successful pair upload (REQ-12) inserts **two** batches that share the same `pair_id`.
+
 | Column | Type | Constraints | Notes |
 | --- | --- | --- | --- |
 | id | text | PK | |
 | account_id | text | FK, not null | |
+| pair_id | text | not null | Shared by the detailed + summary rows from one upload |
 | source_format | text | not null | `detailed_csv` \| `summary_csv` |
-| original_filename | text | nullable | |
+| original_filename | text | nullable | Display name on history card |
+| status | text | not null | `completed` \| `processing` \| `failed` |
 | imported_at | text/datetime | not null | |
 | created_at | text/datetime | not null | |
 
@@ -183,7 +188,7 @@ erDiagram
 | --- | --- | --- | --- |
 | id | text | PK | |
 | account_id | text | FK, not null | |
-| import_batch_id | text | FK → ImportBatch, not null | |
+| import_batch_id | text | FK → ImportBatch, not null | Samples belong to **one file** batch |
 | metric_key | text | not null | Stable key from metric contract (see below) |
 | value | real | not null | Numeric value in contract unit |
 | unit | text | not null | min, %, count/min, ms, hr, count, mi |

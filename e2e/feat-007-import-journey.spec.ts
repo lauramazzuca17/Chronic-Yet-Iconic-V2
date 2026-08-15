@@ -49,19 +49,25 @@ test.describe("FEAT-007 AC-8 Import journey", () => {
     await expect(page.getByTestId("import-record-count")).not.toHaveText(
       "0 health records stored."
     );
-    const batch = page.getByTestId("import-batch").first();
-    await expect(batch).toBeVisible();
-    await expect(batch.getByTestId("import-batch-filename")).toHaveText(
-      "health_export_detailed_20260810.csv"
-    );
-    await expect(batch.getByTestId("import-batch-status")).toHaveText(
-      "Completed"
-    );
+    await expect(page.getByTestId("import-batch")).toHaveCount(2);
+    await expect(
+      page.getByTestId("import-batch-filename").filter({
+        hasText: "health_export_detailed_20260810.csv",
+      })
+    ).toBeVisible();
+    await expect(
+      page.getByTestId("import-batch-filename").filter({
+        hasText: "health_export_summary_20260810.csv",
+      })
+    ).toBeVisible();
 
-    await batch.getByRole("button", { name: "Delete" }).click();
-    await batch.getByRole("button", { name: "Delete this import?" }).click();
-
-    await expect(page.getByTestId("import-batch")).toHaveCount(0);
+    // Per-file delete: remove both cards (wait for refresh between each)
+    for (let remaining = 2; remaining >= 1; remaining -= 1) {
+      const batch = page.getByTestId("import-batch").first();
+      await batch.getByRole("button", { name: "Delete" }).click();
+      await batch.getByRole("button", { name: "Delete this import?" }).click();
+      await expect(page.getByTestId("import-batch")).toHaveCount(remaining - 1);
+    }
     await expect(page.getByTestId("import-record-count")).toHaveText(
       "0 health records stored."
     );

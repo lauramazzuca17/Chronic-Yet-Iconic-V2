@@ -1,5 +1,9 @@
-/** In-memory import batches + samples (FEAT-007). Turso later. */
+/** Import batches + samples — Drizzle/Turso (FEAT-009). */
 
+import { and, eq, inArray } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
+import { getDb } from "@/db/client";
+import { importBatches, importedSamples } from "@/db/schema";
 import { wallClockNowInNewYork } from "../log/timezone";
 
 export type ImportPairInput = {
@@ -16,11 +20,13 @@ export type ImportPairResult =
 
 export type ImportBatchStatus = "completed" | "processing" | "failed";
 
+/** One history card per imported file (REQ-15 / Figma 62946:4447). */
 export type ImportBatch = {
   id: string;
   accountId: string;
-  detailedFilename: string | null;
-  summaryFilename: string | null;
+  pairId: string;
+  sourceFormat: "detailed_csv" | "summary_csv";
+  originalFilename: string | null;
   status: ImportBatchStatus;
   importedAt: string;
   createdAt: string;
@@ -146,69 +152,122 @@ const DETAILED_HEADERS = [
   "Unit",
 ] as const;
 
-type ImportGlobal = typeof globalThis & {
-  __cyiImportBatches?: ImportBatch[];
-  __cyiImportedSamples?: ImportedSample[];
-  __cyiImportIdSeq?: number;
-};
-
-function getGlobal(): ImportGlobal {
-  return globalThis as ImportGlobal;
+export async function resetImports(): Promise<void> {
+  const db = await getDb();
+  await db.delete(importedSamples);
+  await db.delete(importBatches);
 }
 
-function getBatches(): ImportBatch[] {
-  const g = getGlobal();
-  if (!g.__cyiImportBatches) g.__cyiImportBatches = [];
-  return g.__cyiImportBatches;
+export async function listImportedSamples(
+  accountId: string
+): Promise<ImportedSample[]> {
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(importedSamples)
+    .where(eq(importedSamples.accountId, accountId));
+  return rows.map((r) => ({
+    id: r.id,
+    accountId: r.accountId,
+    importBatchId: r.importBatchId,
+    metricKey: r.metricKey,
+    value: r.value,
+    unit: r.unit,
+    recordedAt: r.recordedAt,
+    createdAt: r.createdAt,
+  }));
 }
 
-function getSamples(): ImportedSample[] {
-  const g = getGlobal();
-  if (!g.__cyiImportedSamples) g.__cyiImportedSamples = [];
-  return g.__cyiImportedSamples;
+/** One row per file batch (Import History cards). */
+export async function listImportBatches(
+  accountId: string
+): Promise<ImportBatch[]> {
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(importBatches)
+    .where(eq(importBatches.accountId, accountId));
+
+  return rows
+    .map((row) => ({
+      id: row.id,
+      accountId: row.accountId,
+      pairId: row.pairId,
+      sourceFormat: row.sourceFormat as "detailed_csv" | "summary_csv",
+      originalFilename: row.originalFilename,
+      status: row.status as ImportBatchStatus,
+      importedAt: row.importedAt,
+      createdAt: row.createdAt,
+    }))
+    .sort((a, b) => {
+      const byTime = b.importedAt.localeCompare(a.importedAt);
+      if (byTime !== 0) return byTime;
+      // detailed before summary when same pair/time
+      return a.sourceFormat.localeCompare(b.sourceFormat);
+    });
 }
 
-function nextId(prefix: string): string {
-  const g = getGlobal();
-  g.__cyiImportIdSeq = (g.__cyiImportIdSeq ?? 0) + 1;
-  return `${prefix}-${g.__cyiImportIdSeq}`;
+export async function countImportedRecords(accountId: string): Promise<number> {
+  const samples = await listImportedSamples(accountId);
+  return samples.length;
 }
 
-export function resetImports(): void {
-  const g = getGlobal();
-  g.__cyiImportBatches = [];
-  g.__cyiImportedSamples = [];
-  g.__cyiImportIdSeq = 0;
-}
-
-export function listImportedSamples(accountId: string): ImportedSample[] {
-  return getSamples().filter((s) => s.accountId === accountId);
-}
-
-export function listImportBatches(accountId: string): ImportBatch[] {
-  return getBatches().filter((b) => b.accountId === accountId);
-}
-
-export function countImportedRecords(accountId: string): number {
-  return getSamples().filter((s) => s.accountId === accountId).length;
-}
-
-export function countSamplesInBatch(batchId: string): number {
-  return getSamples().filter((s) => s.importBatchId === batchId).length;
+export async function countSamplesInBatch(batchId: string): Promise<number> {
+  const db = await getDb();
+  // batchId may be pair_id (FEAT-007) or a single file batch id
+  const files = await db
+    .select()
+    .from(importBatches)
+    .where(eq(importBatches.pairId, batchId));
+  const ids =
+    files.length > 0
+      ? files.map((f) => f.id)
+      : (
+          await db
+            .select()
+            .from(importBatches)
+            .where(eq(importBatches.id, batchId))
+        ).map((f) => f.id);
+  if (ids.length === 0) return 0;
+  const samples = await db
+    .select()
+    .from(importedSamples)
+    .where(inArray(importedSamples.importBatchId, ids));
+  return samples.length;
 }
 
 /**
- * Delete one import batch and its samples. Returns false if missing or wrong account.
+ * Delete one import (pair_id or file batch id) and its samples.
+ * FEAT-007: UI passes pair_id → removes both files.
  */
-export function deleteImportBatch(accountId: string, batchId: string): boolean {
-  const batches = getBatches();
-  const batch = batches.find((b) => b.id === batchId);
-  if (!batch || batch.accountId !== accountId) return false;
-  const g = getGlobal();
-  g.__cyiImportBatches = batches.filter((b) => b.id !== batchId);
-  g.__cyiImportedSamples = getSamples().filter(
-    (s) => s.importBatchId !== batchId
-  );
+export async function deleteImportBatch(
+  accountId: string,
+  batchId: string
+): Promise<boolean> {
+  const db = await getDb();
+  let files = await db
+    .select()
+    .from(importBatches)
+    .where(
+      and(
+        eq(importBatches.accountId, accountId),
+        eq(importBatches.pairId, batchId)
+      )
+    );
+  if (files.length === 0) {
+    files = await db
+      .select()
+      .from(importBatches)
+      .where(
+        and(eq(importBatches.accountId, accountId), eq(importBatches.id, batchId))
+      );
+  }
+  if (files.length === 0) return false;
+  const ids = files.map((f) => f.id);
+  await db
+    .delete(importedSamples)
+    .where(inArray(importedSamples.importBatchId, ids));
+  await db.delete(importBatches).where(inArray(importBatches.id, ids));
   return true;
 }
 
@@ -229,12 +288,15 @@ function parseCsvLines(csv: string): string[][] {
     .map((line) => line.split(","));
 }
 
+type ParsedSample = Omit<ImportedSample, "id" | "importBatchId"> & {
+  sourceFormat: "detailed_csv" | "summary_csv";
+};
+
 function parseDetailedSamples(
   detailedCsv: string,
   accountId: string,
-  batchId: string,
   createdAt: string
-): ImportedSample[] {
+): ParsedSample[] {
   const rows = parseCsvLines(detailedCsv);
   if (rows.length < 2) return [];
 
@@ -242,7 +304,7 @@ function parseDetailedSamples(
   const headerOk = DETAILED_HEADERS.every((h, i) => header[i] === h);
   if (!headerOk) return [];
 
-  const out: ImportedSample[] = [];
+  const out: ParsedSample[] = [];
   for (let i = 1; i < rows.length; i += 1) {
     const [timestamp, , , metric, valueRaw, unitRaw] = rows[i];
     const mapped = DETAILED_METRIC_MAP[metric];
@@ -251,14 +313,13 @@ function parseDetailedSamples(
     if (!Number.isFinite(value)) continue;
     const unit = unitRaw?.trim() ? unitRaw.trim() : mapped.unit;
     out.push({
-      id: nextId("sample"),
       accountId,
-      importBatchId: batchId,
       metricKey: mapped.metricKey,
       value,
       unit,
       recordedAt: recordedAtFromImportTimestamp(timestamp),
       createdAt,
+      sourceFormat: "detailed_csv",
     });
   }
   return out;
@@ -267,16 +328,15 @@ function parseDetailedSamples(
 function parseSummarySamples(
   summaryCsv: string,
   accountId: string,
-  batchId: string,
   createdAt: string
-): ImportedSample[] {
+): ParsedSample[] {
   const rows = parseCsvLines(summaryCsv);
   if (rows.length < 2) return [];
 
   const header = rows[0];
   if (header[0] !== "Date") return [];
 
-  const out: ImportedSample[] = [];
+  const out: ParsedSample[] = [];
   for (let i = 1; i < rows.length; i += 1) {
     const row = rows[i];
     const date = row[0]?.trim();
@@ -293,14 +353,13 @@ function parseSummarySamples(
       const value = Number(raw);
       if (!Number.isFinite(value)) continue;
       out.push({
-        id: nextId("sample"),
         accountId,
-        importBatchId: batchId,
         metricKey: mapped.metricKey,
         value,
         unit: mapped.unit,
         recordedAt,
         createdAt,
+        sourceFormat: "summary_csv",
       });
     }
   }
@@ -316,22 +375,12 @@ function dedupeKey(
   return `${accountId}|${metricKey}|${recordedAt}|${value}`;
 }
 
-function existingKeysForAccount(accountId: string): Set<string> {
-  const keys = new Set<string>();
-  for (const s of getSamples()) {
-    if (s.accountId !== accountId) continue;
-    keys.add(dedupeKey(s.accountId, s.metricKey, s.recordedAt, s.value));
-  }
-  return keys;
-}
-
 /**
- * Ingest summary + detailed CSV pair.
- * AC-1: both required. AC-2: detailed Metric → metric_key + NY recorded_at.
- * AC-3: summary day aggregates (all non-BP columns); BP never imported.
- * AC-4: skip duplicates by (account_id, metric_key, recorded_at, value).
+ * Ingest summary + detailed CSV pair into two file batches sharing pair_id.
  */
-export function importHealthCsvPair(input: ImportPairInput): ImportPairResult {
+export async function importHealthCsvPair(
+  input: ImportPairInput
+): Promise<ImportPairResult> {
   const summaryOk =
     typeof input.summaryCsv === "string" && input.summaryCsv.trim().length > 0;
   const detailedOk =
@@ -341,35 +390,55 @@ export function importHealthCsvPair(input: ImportPairInput): ImportPairResult {
     return { ok: false, errorKey: "import.error_missing_pair" };
   }
 
+  const db = await getDb();
   const now = wallClockNowInNewYork();
-  const batchId = nextId("batch");
-  const batch: ImportBatch = {
-    id: batchId,
-    accountId: input.accountId,
-    detailedFilename: input.detailedFilename,
-    summaryFilename: input.summaryFilename,
-    status: "completed",
-    importedAt: now,
-    createdAt: now,
-  };
+  const pairId = randomUUID();
+  const detailedBatchId = randomUUID();
+  const summaryBatchId = randomUUID();
+
+  await db.insert(importBatches).values([
+    {
+      id: detailedBatchId,
+      accountId: input.accountId,
+      pairId,
+      sourceFormat: "detailed_csv",
+      originalFilename: input.detailedFilename,
+      status: "completed",
+      importedAt: now,
+      createdAt: now,
+    },
+    {
+      id: summaryBatchId,
+      accountId: input.accountId,
+      pairId,
+      sourceFormat: "summary_csv",
+      originalFilename: input.summaryFilename,
+      status: "completed",
+      importedAt: now,
+      createdAt: now,
+    },
+  ]);
 
   const candidates = [
     ...parseDetailedSamples(
       input.detailedCsv as string,
       input.accountId,
-      batchId,
       now
     ),
-    ...parseSummarySamples(
-      input.summaryCsv as string,
-      input.accountId,
-      batchId,
-      now
-    ),
+    ...parseSummarySamples(input.summaryCsv as string, input.accountId, now),
   ];
 
-  const seen = existingKeysForAccount(input.accountId);
-  const insertedSamples: ImportedSample[] = [];
+  const existing = await db
+    .select()
+    .from(importedSamples)
+    .where(eq(importedSamples.accountId, input.accountId));
+  const seen = new Set(
+    existing.map((s) =>
+      dedupeKey(s.accountId, s.metricKey, s.recordedAt, s.value)
+    )
+  );
+
+  let inserted = 0;
   let skipped = 0;
   for (const sample of candidates) {
     const key = dedupeKey(
@@ -383,16 +452,29 @@ export function importHealthCsvPair(input: ImportPairInput): ImportPairResult {
       continue;
     }
     seen.add(key);
-    insertedSamples.push(sample);
+    const batchId =
+      sample.sourceFormat === "detailed_csv" ? detailedBatchId : summaryBatchId;
+    try {
+      await db.insert(importedSamples).values({
+        id: randomUUID(),
+        accountId: sample.accountId,
+        importBatchId: batchId,
+        metricKey: sample.metricKey,
+        value: sample.value,
+        unit: sample.unit,
+        recordedAt: sample.recordedAt,
+        createdAt: sample.createdAt,
+      });
+      inserted += 1;
+    } catch {
+      skipped += 1;
+    }
   }
-
-  getBatches().push(batch);
-  getSamples().push(...insertedSamples);
 
   return {
     ok: true,
-    batchId,
-    inserted: insertedSamples.length,
+    batchId: pairId,
+    inserted,
     skipped,
   };
 }

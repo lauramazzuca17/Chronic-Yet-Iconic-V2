@@ -29,7 +29,18 @@ unless a contract doc carries its own binding log. -->
 | 2026-08-13 | Import summary ingest | Persist **all non-BP** summary columns (not chart-subset only) | Owner |
 | 2026-08-13 | Import Processing status | In-flight only during request; then Completed/Failed | Owner |
 | 2026-08-13 | Import history filename | Display **detailed** CSV filename on batch row | Owner |
-| 2026-08-14 | Analytics scope | FEAT-008 covers REQ-16+17+20 (all tabs); Medication Figma first | Owner |
+| 2026-08-15 | Turso FEAT scope | FEAT-009 persists full data model in one shot: Account (+ hashes), catalogs, all manual logs, import batches/samples | Owner |
+| 2026-08-15 | Turso client stack | Drizzle ORM + `@libsql/client` (migrations via Drizzle) | Owner |
+| 2026-08-15 | Test DB | Unit tests use in-process libSQL (file/memory) + same Drizzle schema; cloud Turso for app/dev/prod only | Owner |
+| 2026-08-15 | Auth passwords | Account.password_hash in DB; Laura/Demo upserted from SEED_PASSWORD_* on migrate/boot; sign-in verifies DB hash | Owner |
+| 2026-08-15 | Import delete UX | REQ-15 per-file history cards + delete; pair upload still atomic (REQ-12); ImportBatch per file + `pair_id` | Owner + Figma 62946:4447 |
+| 2026-08-15 | FEAT-009 scope | Turso/Drizzle full schema + Import History per-file UI (Figma 62946:4447) in same FEAT | Owner |
+| 2026-08-15 | Local DB | `next dev` / Playwright: local file libSQL if TURSO_* unset; unit tests in-process; Vercel/prod require Turso | Owner |
+
+
+
+
+
 | 2026-08-14 | Analytics charts | **Recharts** | Owner |
 | 2026-08-14 | Analytics subtitle | Compare how different factors impact your health over time. (Figma) | Owner |
 | 2026-08-14 | Analytics tab labels | Medication / Cardiovascular / Recovery / Electrolytes (Figma) | Owner |

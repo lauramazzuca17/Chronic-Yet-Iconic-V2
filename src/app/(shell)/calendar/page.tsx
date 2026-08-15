@@ -17,7 +17,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
     requested && /^\d{4}-\d{2}-\d{2}$/.test(requested)
       ? requested
       : getDefaultSelectedCalendarDate();
-  const entries = listManualLogsForDate(session.accountId, selectedDate);
+  const entries = await listManualLogsForDate(session.accountId, selectedDate);
 
   return (
     <CalendarScreen

@@ -109,14 +109,14 @@ function sortPoints(points: RecoveryPoint[]): RecoveryPoint[] {
   );
 }
 
-function importPointsInRange(
+async function importPointsInRange(
   accountId: string,
   metricKey: string,
   startDate: string,
   endDate: string
-): RecoveryPoint[] {
+): Promise<RecoveryPoint[]> {
   return sortPoints(
-    listImportedSamples(accountId)
+    (await listImportedSamples(accountId))
       .filter(
         (s) =>
           s.metricKey === metricKey &&
@@ -128,11 +128,11 @@ function importPointsInRange(
 }
 
 /** Chart 4 — imported `heart_rate_variability` only. */
-export function buildHrvSeries(input: {
+export async function buildHrvSeries(input: {
   accountId: string;
   range: HrvRangeId;
   today: string;
-}): RecoverySeries {
+}): Promise<RecoverySeries> {
   const { startDate, endDate } = rangeWindow(input.range, input.today);
   return {
     accountId: input.accountId,
@@ -140,7 +140,7 @@ export function buildHrvSeries(input: {
     today: input.today,
     startDate,
     endDate,
-    points: importPointsInRange(
+    points: await importPointsInRange(
       input.accountId,
       "heart_rate_variability",
       startDate,
@@ -150,11 +150,11 @@ export function buildHrvSeries(input: {
 }
 
 /** Chart 5 — imported `walking_heart_rate_average` only. */
-export function buildWalkingHrSeries(input: {
+export async function buildWalkingHrSeries(input: {
   accountId: string;
   range: WalkingHrRangeId;
   today: string;
-}): RecoverySeries {
+}): Promise<RecoverySeries> {
   const { startDate, endDate } = rangeWindow(input.range, input.today);
   return {
     accountId: input.accountId,
@@ -162,7 +162,7 @@ export function buildWalkingHrSeries(input: {
     today: input.today,
     startDate,
     endDate,
-    points: importPointsInRange(
+    points: await importPointsInRange(
       input.accountId,
       "walking_heart_rate_average",
       startDate,

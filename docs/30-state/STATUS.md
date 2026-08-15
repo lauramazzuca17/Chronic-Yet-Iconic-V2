@@ -6,28 +6,25 @@ tier: full
 # Project Status — session handoff
 
 ## Current phase
-`/tdd-cycle` complete for FEAT-008. Ready for next FEAT or `/ship` when ready.
+FEAT-009 complete. Ready for `/ship` or next feature from backlog.
 
 ## Active feature
-_(none)_ — FEAT-008 Analytics is **done**.
+_(none)_ — last completed: [[FEAT-009-turso-persistence]]
 
 ## Built and tested
-- **FEAT-001**–**FEAT-007** — auth through Import.
-- **FEAT-008** — Analytics (domain AC-1–11 + Medication UI + AC-12 Playwright).
+- **FEAT-001**–**FEAT-009** — auth through Turso persistence + per-file Import History.
+- **FEAT-009** — Drizzle/libSQL schema, seed, DB auth, durable log/import stores, file reconnect, pair_id batches, per-file delete UI, isolation, connection policy, Playwright persistence journey.
 
 ## Not yet built (and what blocks it)
-- Cardiovascular / Recovery / Electrolytes **UI tabs** (domain green; Medication tab is the only wired Analytics screen).
-- Recharts rendering (Medication chart area is a slot list for now).
-- Turso persistence.
+- Next feature TBD (`docs/10-features/_BACKLOG.md` or `/new-feature`).
 
 ## Test suite
-`npm test` — 68 passed | 1 todo.  
-AC-12 E2E: `e2e/feat-008-analytics-journey.spec.ts` — passing.
+`npm test` — 78 passed | 1 todo (FEAT-002).  
+`e2e/feat-009-persistence-journey.spec.ts` — passing.
 
 ## In flight / uncommitted
-- FEAT-008 AC-12 completion + FEAT-008 done docs (uncommitted session work).
+- FEAT-009 full (AC-1–11) — ready for commit when asked.
 
 ## Next actions
-1. Optional: wire Cardiovascular / Recovery / Electrolytes UI tabs + Recharts.
-2. Persist stores to Turso.
-3. `/ship` when ready for a release cut.
+1. Commit FEAT-009 when ready.
+2. `/ship` or pick next feature.

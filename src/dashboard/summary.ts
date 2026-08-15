@@ -19,11 +19,11 @@ export type TodayDashboardSummary = {
 };
 
 /** Today’s Home metrics for an account on an America/New_York calendar date. */
-export function getTodayDashboardSummary(
+export async function getTodayDashboardSummary(
   accountId: string,
   calendarDate: string
-): TodayDashboardSummary {
-  const today = listTodayEntries(accountId, calendarDate);
+): Promise<TodayDashboardSummary> {
+  const today = await listTodayEntries(accountId, calendarDate);
   const bpEntries = today.filter(
     (e): e is BloodPressureLogEntry => e.type === "blood_pressure"
   );
@@ -37,7 +37,7 @@ export function getTodayDashboardSummary(
       ? { systolic: latest.systolic, diastolic: latest.diastolic }
       : null,
     medsCount: today.filter((e) => e.type === "medication").length,
-    waterTotalOz: waterTotalOzForDate(accountId, calendarDate),
+    waterTotalOz: await waterTotalOzForDate(accountId, calendarDate),
     symptomsCount: today.filter((e) => e.type === "symptom").length,
     electrolytesTaken: today.some((e) => e.type === "electrolyte"),
   };

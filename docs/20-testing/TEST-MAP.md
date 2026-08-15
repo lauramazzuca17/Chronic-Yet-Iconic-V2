@@ -71,7 +71,7 @@ updated: 2026-08-13
 | FEAT-007 | AC-5 | tests/feat-007-import.test.ts | AC-5: Demo cannot access Laura imports | ✅ passing |
 | FEAT-007 | AC-6 | tests/feat-007-import.test.ts | AC-6: batch-delete removes ImportBatch samples | ✅ passing |
 | FEAT-007 | AC-7 | tests/feat-007-import.test.ts | AC-7: /import shell + upload + batch list | ✅ passing |
-| FEAT-007 | AC-8 | e2e/feat-007-import-journey.spec.ts | AC-8: Playwright upload pair then batch-delete | ✅ passing |
+| FEAT-007 | AC-8 | e2e/feat-007-import-journey.spec.ts | AC-8: Playwright upload pair then per-file delete (2 cards) | ✅ passing |
 | FEAT-008 | AC-1 | tests/feat-008-analytics.test.ts | AC-1: /analytics shell + four tabs; default Medication | ✅ passing |
 | FEAT-008 | AC-2 | tests/feat-008-analytics.test.ts | AC-2: Medication Impact card + date/Compare controls (Figma) | ✅ passing |
 | FEAT-008 | AC-3 | tests/feat-008-analytics.test.ts | AC-3: Medication impact series slots -2h…+2h | ✅ passing |
@@ -83,7 +83,18 @@ updated: 2026-08-13
 | FEAT-008 | AC-9 | tests/feat-008-analytics.test.ts | AC-9: Cardiovascular Chart 2 + Chart 3 | ✅ passing |
 | FEAT-008 | AC-10 | tests/feat-008-analytics.test.ts | AC-10: Recovery Chart 4 + Chart 5 | ✅ passing |
 | FEAT-008 | AC-11 | tests/feat-008-analytics.test.ts | AC-11: Electrolytes Lifestyle cards | ✅ passing |
-| FEAT-008 | AC-12 | e2e/feat-008-analytics-journey.spec.ts | Laura opens Analytics Medication, date/metric, chart area | ✅ passing |
+| FEAT-008 | AC-12 | e2e/feat-008-analytics-journey.spec.ts | Laura opens Analytics Medication, date/metric, chart area; visits Cardio/Recovery/Electrolytes tabs; electrolytes With/Without cards | ✅ passing |
+| FEAT-009 | AC-1 | tests/feat-009-turso-persistence.test.ts | AC-1: Drizzle schema exposes Account + health tables | ✅ passing |
+| FEAT-009 | AC-2 | tests/feat-009-turso-persistence.test.ts | AC-2: seed Laura/Demo hashes + catalogs; Demo health empty | ✅ passing |
+| FEAT-009 | AC-3 | tests/feat-009-turso-persistence.test.ts | AC-3: sign-in verifies Account.password_hash | ✅ passing |
+| FEAT-009 | AC-4 | tests/feat-009-turso-persistence.test.ts | AC-4: stores use DB (no durable globalThis) | ✅ passing |
+| FEAT-009 | AC-5 | tests/feat-009-turso-persistence.test.ts | AC-5: data survives new DB client | ✅ passing |
+| FEAT-009 | AC-6 | tests/feat-009-turso-persistence.test.ts | AC-6: pair import → two ImportBatch + pair_id | ✅ passing |
+| FEAT-009 | AC-7 | tests/feat-009-turso-persistence.test.ts | AC-7: per-file delete leaves sibling | ✅ passing |
+| FEAT-009 | AC-8 | tests/feat-009-turso-persistence.test.ts | AC-8: Import History one card per file | ✅ passing |
+| FEAT-009 | AC-9 | tests/feat-009-turso-persistence.test.ts | AC-9: Demo cannot read/delete Laura DB rows | ✅ passing |
+| FEAT-009 | AC-10 | tests/feat-009-turso-persistence.test.ts | AC-10: connection policy (test/file/Turso) | ✅ passing |
+| FEAT-009 | AC-11 | e2e/feat-009-persistence-journey.spec.ts | AC-11: Playwright persistence + per-file delete | ✅ passing |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

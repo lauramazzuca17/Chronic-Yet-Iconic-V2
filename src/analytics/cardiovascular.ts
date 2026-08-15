@@ -135,15 +135,15 @@ function inRange(
 }
 
 /** Entries for account across an inclusive calendar window. */
-function listEntriesInWindow(
+async function listEntriesInWindow(
   accountId: string,
   startDate: string,
   endDate: string
-): ManualLogEntry[] {
+): Promise<ManualLogEntry[]> {
   const out: ManualLogEntry[] = [];
   let cursor = startDate;
   while (cursor <= endDate) {
-    out.push(...listTodayEntries(accountId, cursor));
+    out.push(...(await listTodayEntries(accountId, cursor)));
     cursor = shiftCalendarDate(cursor, 1);
   }
   return out;
@@ -179,13 +179,13 @@ function sortByTime(points: OverlayPoint[]): OverlayPoint[] {
   );
 }
 
-export function buildBpHrOverlaySeries(input: {
+export async function buildBpHrOverlaySeries(input: {
   accountId: string;
   range: CardioRangeId;
   today: string;
-}): BpHrOverlaySeries {
+}): Promise<BpHrOverlaySeries> {
   const { startDate, endDate } = rangeWindow(input.range, input.today);
-  const entries = listEntriesInWindow(input.accountId, startDate, endDate);
+  const entries = await listEntriesInWindow(input.accountId, startDate, endDate);
   const bpLogs = entries.filter(
     (e): e is BloodPressureLogEntry => e.type === "blood_pressure"
   );
@@ -198,7 +198,7 @@ export function buildBpHrOverlaySeries(input: {
     recordedAt: e.recordedAt,
     value: e.heartRate,
   }));
-  const hrImport = listImportedSamples(input.accountId)
+  const hrImport = (await listImportedSamples(input.accountId))
     .filter(
       (s) =>
         s.metricKey === "heart_rate" &&
@@ -227,11 +227,14 @@ function weekdayShort(calendarDate: string): string {
   }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }
 
-function hrReadingsForDay(accountId: string, calendarDate: string): number[] {
-  const manual = listTodayEntries(accountId, calendarDate)
+async function hrReadingsForDay(
+  accountId: string,
+  calendarDate: string
+): Promise<number[]> {
+  const manual = (await listTodayEntries(accountId, calendarDate))
     .filter((e): e is BloodPressureLogEntry => e.type === "blood_pressure")
     .map((e) => e.heartRate);
-  const imported = listImportedSamples(accountId)
+  const imported = (await listImportedSamples(accountId))
     .filter(
       (s) =>
         s.metricKey === "heart_rate" &&
@@ -242,14 +245,14 @@ function hrReadingsForDay(accountId: string, calendarDate: string): number[] {
 }
 
 /** Last 6 days + today (7 bars). Percent of HR readings ≥ 100; null if none. */
-export function buildTachycardiaBurdenSeries(input: {
+export async function buildTachycardiaBurdenSeries(input: {
   accountId: string;
   today: string;
-}): TachycardiaBurdenSeries {
+}): Promise<TachycardiaBurdenSeries> {
   const days: TachycardiaDay[] = [];
   for (let i = 6; i >= 0; i -= 1) {
     const calendarDate = shiftCalendarDate(input.today, -i);
-    const readings = hrReadingsForDay(input.accountId, calendarDate);
+    const readings = await hrReadingsForDay(input.accountId, calendarDate);
     const denominator = readings.length;
     const numerator = readings.filter(
       (v) => v >= TACHYCARDIA_THRESHOLD_BPM

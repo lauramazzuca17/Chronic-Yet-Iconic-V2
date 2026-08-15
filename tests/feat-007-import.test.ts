@@ -12,14 +12,14 @@ describe("FEAT-007 import", () => {
   it("AC-1: import requires both summary and detailed CSVs — no partial commit", async () => {
     const { importHealthCsvPair, listImportedSamples, resetImports } =
       await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const detailed = readFileSync(
       join(fixtures, "health_export_detailed_20260810.csv"),
       "utf8"
     );
 
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId,
       summaryCsv: null,
       detailedCsv: detailed,
@@ -30,13 +30,13 @@ describe("FEAT-007 import", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.errorKey).toBe("import.error_missing_pair");
-    expect(listImportedSamples(accountId)).toHaveLength(0);
+    expect(await listImportedSamples(accountId)).toHaveLength(0);
   });
 
   it("AC-2: valid fixture pair maps detailed Metric → metric_key and NY recorded_at", async () => {
     const { importHealthCsvPair, listImportedSamples, resetImports } =
       await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const summary = readFileSync(
       join(fixtures, "health_export_summary_20260810.csv"),
@@ -47,7 +47,7 @@ describe("FEAT-007 import", () => {
       "utf8"
     );
 
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId,
       summaryCsv: summary,
       detailedCsv: detailed,
@@ -58,7 +58,7 @@ describe("FEAT-007 import", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    const samples = listImportedSamples(accountId);
+    const samples = await listImportedSamples(accountId);
     expect(samples.length).toBeGreaterThan(0);
 
     const firstHr = samples.find(
@@ -94,7 +94,7 @@ describe("FEAT-007 import", () => {
   it("AC-3: summary day rows stored; BP columns never imported", async () => {
     const { importHealthCsvPair, listImportedSamples, resetImports } =
       await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const detailed = readFileSync(
       join(fixtures, "health_export_detailed_20260810.csv"),
@@ -109,7 +109,7 @@ describe("FEAT-007 import", () => {
       "2026-07-15,2486,98.7,,,,,,1.1,1325.9,91.0,23.4,19.6,,127.5,3.0,1240.8,2.0,,,98.40,120,80,,"
     );
 
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId,
       summaryCsv: summary,
       detailedCsv: detailed,
@@ -118,7 +118,7 @@ describe("FEAT-007 import", () => {
     });
     expect(result.ok).toBe(true);
 
-    const samples = listImportedSamples(accountId);
+    const samples = await listImportedSamples(accountId);
 
     const summarySteps = samples.find(
       (s) =>
@@ -160,7 +160,7 @@ describe("FEAT-007 import", () => {
   it("AC-4: re-import skips duplicates; reports new + skipped counts", async () => {
     const { importHealthCsvPair, listImportedSamples, resetImports } =
       await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const summary = readFileSync(
       join(fixtures, "health_export_summary_20260810.csv"),
@@ -178,20 +178,20 @@ describe("FEAT-007 import", () => {
       detailedFilename: "health_export_detailed_20260810.csv",
     };
 
-    const first = importHealthCsvPair(input);
+    const first = await importHealthCsvPair(input);
     expect(first.ok).toBe(true);
     if (!first.ok) return;
     expect(first.inserted).toBeGreaterThan(0);
     // Fixture can contain same metric/value within one NY second after normalize.
-    const afterFirst = listImportedSamples(accountId).length;
+    const afterFirst = (await listImportedSamples(accountId)).length;
     expect(afterFirst).toBe(first.inserted);
 
-    const second = importHealthCsvPair(input);
+    const second = await importHealthCsvPair(input);
     expect(second.ok).toBe(true);
     if (!second.ok) return;
     expect(second.inserted).toBe(0);
     expect(second.skipped).toBe(first.inserted + first.skipped);
-    expect(listImportedSamples(accountId)).toHaveLength(afterFirst);
+    expect(await listImportedSamples(accountId)).toHaveLength(afterFirst);
   });
 
   it("AC-5: Demo cannot read or delete Laura import batches", async () => {
@@ -202,7 +202,7 @@ describe("FEAT-007 import", () => {
       deleteImportBatch,
       resetImports,
     } = await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const laura = "acct-laura";
     const demo = "acct-demo";
     const summary = readFileSync(
@@ -214,7 +214,7 @@ describe("FEAT-007 import", () => {
       "utf8"
     );
 
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId: laura,
       summaryCsv: summary,
       detailedCsv: detailed,
@@ -224,14 +224,14 @@ describe("FEAT-007 import", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
 
-    expect(listImportedSamples(laura).length).toBeGreaterThan(0);
-    expect(listImportBatches(laura)).toHaveLength(1);
-    expect(listImportedSamples(demo)).toHaveLength(0);
-    expect(listImportBatches(demo)).toHaveLength(0);
+    expect((await listImportedSamples(laura)).length).toBeGreaterThan(0);
+    expect(await listImportBatches(laura)).toHaveLength(2);
+    expect(await listImportedSamples(demo)).toHaveLength(0);
+    expect(await listImportBatches(demo)).toHaveLength(0);
 
-    expect(deleteImportBatch(demo, result.batchId)).toBe(false);
-    expect(listImportedSamples(laura).length).toBeGreaterThan(0);
-    expect(listImportBatches(laura)).toHaveLength(1);
+    expect(await deleteImportBatch(demo, result.batchId)).toBe(false);
+    expect((await listImportedSamples(laura)).length).toBeGreaterThan(0);
+    expect(await listImportBatches(laura)).toHaveLength(2);
   });
 
   it("AC-6: batch-delete removes all samples from that ImportBatch", async () => {
@@ -242,7 +242,7 @@ describe("FEAT-007 import", () => {
       deleteImportBatch,
       resetImports,
     } = await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const summary = readFileSync(
       join(fixtures, "health_export_summary_20260810.csv"),
@@ -253,7 +253,7 @@ describe("FEAT-007 import", () => {
       "utf8"
     );
 
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId,
       summaryCsv: summary,
       detailedCsv: detailed,
@@ -262,12 +262,13 @@ describe("FEAT-007 import", () => {
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(listImportedSamples(accountId).length).toBeGreaterThan(0);
-    expect(listImportBatches(accountId)).toHaveLength(1);
+    expect((await listImportedSamples(accountId)).length).toBeGreaterThan(0);
+    expect(await listImportBatches(accountId)).toHaveLength(2);
 
-    expect(deleteImportBatch(accountId, result.batchId)).toBe(true);
-    expect(listImportBatches(accountId)).toHaveLength(0);
-    expect(listImportedSamples(accountId)).toHaveLength(0);
+    // pair_id still deletes both files (compat); per-file delete is FEAT-009 AC-7
+    expect(await deleteImportBatch(accountId, result.batchId)).toBe(true);
+    expect(await listImportBatches(accountId)).toHaveLength(0);
+    expect(await listImportedSamples(accountId)).toHaveLength(0);
   });
 
   it("AC-7: /import shell title + subtitle + upload + batch list helpers", async () => {
@@ -301,7 +302,7 @@ describe("FEAT-007 import", () => {
       listImportBatches,
       resetImports,
     } = await import("../src/import/store");
-    resetImports();
+    await resetImports();
     const summary = readFileSync(
       join(fixtures, "health_export_summary_20260810.csv"),
       "utf8"
@@ -310,7 +311,7 @@ describe("FEAT-007 import", () => {
       join(fixtures, "health_export_detailed_20260810.csv"),
       "utf8"
     );
-    const result = importHealthCsvPair({
+    const result = await importHealthCsvPair({
       accountId: "acct-laura",
       summaryCsv: summary,
       detailedCsv: detailed,
@@ -319,14 +320,16 @@ describe("FEAT-007 import", () => {
     });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    const total = countImportedRecords("acct-laura");
+    const total = await countImportedRecords("acct-laura");
     expect(total).toBeGreaterThan(0);
-    expect(countSamplesInBatch(result.batchId)).toBe(total);
-    const batches = listImportBatches("acct-laura");
-    expect(batches).toHaveLength(1);
-    expect(batches[0].detailedFilename).toBe(
-      "health_export_detailed_20260810.csv"
-    );
+    expect(await countSamplesInBatch(result.batchId)).toBe(total);
+    const batches = await listImportBatches("acct-laura");
+    expect(batches).toHaveLength(2);
+    const names = batches.map((b) => b.originalFilename).sort();
+    expect(names).toEqual([
+      "health_export_detailed_20260810.csv",
+      "health_export_summary_20260810.csv",
+    ]);
   });
 
 });

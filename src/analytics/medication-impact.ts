@@ -133,12 +133,12 @@ export type MedicationImpactMedOption = {
 };
 
 /** Catalog dropdown options for a day — logged names selectable; others gray/disabled. */
-export function getMedicationImpactMedOptions(
+export async function getMedicationImpactMedOptions(
   accountId: string,
   calendarDate: string
-): MedicationImpactMedOption[] {
+): Promise<MedicationImpactMedOption[]> {
   const logged = new Set(
-    listTodayEntries(accountId, calendarDate)
+    (await listTodayEntries(accountId, calendarDate))
       .filter((e) => e.type === "medication")
       .map((e) => e.medicationName)
   );

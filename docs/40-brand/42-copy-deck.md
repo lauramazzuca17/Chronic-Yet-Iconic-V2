@@ -92,6 +92,7 @@ updated: 2026-08-15
 | analytics.electrolytes.metric.avg_walking | Avg Walking | Figma |
 | analytics.electrolytes.metric.avg_bp | Avg BP | Figma |
 | analytics.electrolytes.unit.bpm | bpm | Unit suffix for HR metrics |
+| analytics.electrolytes.empty | Log electrolytes to unlock this comparison. | Empty state when no electrolytes-yes day |
 | shell.subtitle.import | Upload Apple Health export files to populate your health database. | Locked from Import Figma 62939-4277 |
 | dashboard.empty | No stats for today yet. Add a log or import data. | Unused on Figma Home (zeros on cards); keep until confirmed drop |
 | dashboard.metric.bp_count | BP Readings | Home Figma |

@@ -6,6 +6,6 @@ export async function POST() {
   if (process.env.ALLOW_TEST_RESET !== "1") {
     return new NextResponse("Forbidden", { status: 403 });
   }
-  resetManualLogs();
+  await resetManualLogs();
   return NextResponse.json({ ok: true });
 }

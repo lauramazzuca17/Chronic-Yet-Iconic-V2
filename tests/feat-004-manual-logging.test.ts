@@ -24,11 +24,11 @@ describe("FEAT-004 manual logging", () => {
       createBloodPressureLog,
       listTodayEntries,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T10:30:00";
-    const entry = createBloodPressureLog({
+    const entry = await createBloodPressureLog({
       accountId,
       systolic: 120,
       diastolic: 80,
@@ -47,7 +47,7 @@ describe("FEAT-004 manual logging", () => {
     expect(entry).not.toHaveProperty("posture");
     expect(Object.keys(entry)).not.toContain("posture");
 
-    const today = listTodayEntries(accountId, "2026-08-13");
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(1);
     expect(today[0]).toMatchObject({
       id: entry.id,
@@ -66,13 +66,13 @@ describe("FEAT-004 manual logging", () => {
       listTodayEntries,
     } = await import("../src/log/store");
     const { SYMPTOM_CATALOG_NAMES } = await import("../src/log/catalogs");
-    resetManualLogs();
+    await resetManualLogs();
 
     expect(SYMPTOM_CATALOG_NAMES).toContain("Fatigue");
 
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T14:00:00";
-    const withNotes = createSymptomLog({
+    const withNotes = await createSymptomLog({
       accountId,
       symptomName: "Fatigue",
       severity: "usual",
@@ -89,7 +89,7 @@ describe("FEAT-004 manual logging", () => {
       recordedAt,
     });
 
-    const withoutNotes = createSymptomLog({
+    const withoutNotes = await createSymptomLog({
       accountId,
       symptomName: "Dizzy",
       severity: "worse_than_usual",
@@ -98,7 +98,7 @@ describe("FEAT-004 manual logging", () => {
     expect(withoutNotes.notes).toBeNull();
     expect(withoutNotes.severity).toBe("worse_than_usual");
 
-    const today = listTodayEntries(accountId, "2026-08-13");
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(2);
     expect(today.map((e) => e.type)).toEqual(["symptom", "symptom"]);
   });
@@ -110,13 +110,13 @@ describe("FEAT-004 manual logging", () => {
       listTodayEntries,
     } = await import("../src/log/store");
     const { MEDICATION_CATALOG_NAMES } = await import("../src/log/catalogs");
-    resetManualLogs();
+    await resetManualLogs();
 
     expect(MEDICATION_CATALOG_NAMES).toContain("Midodrine");
 
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T09:00:00";
-    const entry = createMedicationLog({
+    const entry = await createMedicationLog({
       accountId,
       medicationName: "Midodrine",
       dose: "10 mg",
@@ -131,7 +131,7 @@ describe("FEAT-004 manual logging", () => {
       recordedAt,
     });
 
-    const today = listTodayEntries(accountId, "2026-08-13");
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(1);
     expect(today[0]).toMatchObject({
       id: entry.id,
@@ -148,30 +148,30 @@ describe("FEAT-004 manual logging", () => {
       listTodayEntries,
       waterTotalOzForDate,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const accountId = "acct-laura";
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: "2026-08-13T08:00:00",
     });
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: "2026-08-13T12:00:00",
     });
     // Different calendar day — must not affect today's total
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 32,
       recordedAt: "2026-08-12T20:00:00",
     });
 
-    expect(waterTotalOzForDate(accountId, "2026-08-13")).toBe(16);
-    expect(waterTotalOzForDate(accountId, "2026-08-12")).toBe(32);
+    expect(await waterTotalOzForDate(accountId, "2026-08-13")).toBe(16);
+    expect(await waterTotalOzForDate(accountId, "2026-08-12")).toBe(32);
 
-    const today = listTodayEntries(accountId, "2026-08-13");
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(2);
     expect(today.every((e) => e.type === "water")).toBe(true);
   });
@@ -183,10 +183,10 @@ describe("FEAT-004 manual logging", () => {
       deleteManualLog,
       listTodayEntries,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const accountId = "acct-laura";
-    const first = createElectrolyteLog({
+    const first = await createElectrolyteLog({
       accountId,
       recordedAt: "2026-08-13T07:00:00",
     });
@@ -198,24 +198,25 @@ describe("FEAT-004 manual logging", () => {
       recordedAt: "2026-08-13T07:00:00",
     });
 
-    expect(() =>
-      createElectrolyteLog({
-        accountId,
-        recordedAt: "2026-08-13T18:00:00",
-      })
-    ).toThrowError(/log\.electrolytes\.blocked/);
+    await expect(
+      (async () =>
+        await createElectrolyteLog({
+          accountId,
+          recordedAt: "2026-08-13T18:00:00",
+        }))()
+    ).rejects.toThrowError(/log\.electrolytes\.blocked/);
 
     // Different day still allowed
-    const otherDay = createElectrolyteLog({
+    const otherDay = await createElectrolyteLog({
       accountId,
       recordedAt: "2026-08-12T07:00:00",
     });
     expect(otherDay.calendarDate).toBe("2026-08-12");
 
-    deleteManualLog(accountId, first.id);
-    expect(listTodayEntries(accountId, "2026-08-13")).toHaveLength(0);
+    await deleteManualLog(accountId, first.id);
+    expect(await listTodayEntries(accountId, "2026-08-13")).toHaveLength(0);
 
-    const again = createElectrolyteLog({
+    const again = await createElectrolyteLog({
       accountId,
       recordedAt: "2026-08-13T19:00:00",
     });
@@ -228,11 +229,11 @@ describe("FEAT-004 manual logging", () => {
       createMoodLog,
       listTodayEntries,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T16:30:00";
-    const entry = createMoodLog({
+    const entry = await createMoodLog({
       accountId,
       mood: "okay",
       recordedAt,
@@ -252,8 +253,8 @@ describe("FEAT-004 manual logging", () => {
       "good",
       "great",
     ] as const) {
-      resetManualLogs();
-      const row = createMoodLog({
+      await resetManualLogs();
+      const row = await createMoodLog({
         accountId,
         mood,
         recordedAt: "2026-08-13T10:00:00",
@@ -261,17 +262,18 @@ describe("FEAT-004 manual logging", () => {
       expect(row.mood).toBe(mood);
     }
 
-    expect(() =>
-      createMoodLog({
-        accountId,
-        mood: "meh" as "okay",
-        recordedAt: "2026-08-13T11:00:00",
-      })
-    ).toThrow(/unknown mood/i);
+    await expect(
+      (async () =>
+        await createMoodLog({
+          accountId,
+          mood: "meh" as "okay",
+          recordedAt: "2026-08-13T11:00:00",
+        }))()
+    ).rejects.toThrow(/unknown mood/i);
 
-    resetManualLogs();
-    createMoodLog({ accountId, mood: "good", recordedAt });
-    const today = listTodayEntries(accountId, "2026-08-13");
+    await resetManualLogs();
+    await createMoodLog({ accountId, mood: "good", recordedAt });
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(1);
     expect(today[0]).toMatchObject({ type: "mood", mood: "good" });
   });
@@ -282,11 +284,11 @@ describe("FEAT-004 manual logging", () => {
       createEventLog,
       listTodayEntries,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T17:00:00";
-    const entry = createEventLog({
+    const entry = await createEventLog({
       accountId,
       note: "Walked 10 miles",
       recordedAt,
@@ -299,7 +301,7 @@ describe("FEAT-004 manual logging", () => {
       recordedAt,
     });
 
-    const today = listTodayEntries(accountId, "2026-08-13");
+    const today = await listTodayEntries(accountId, "2026-08-13");
     expect(today).toHaveLength(1);
     expect(today[0]).toMatchObject({
       id: entry.id,
@@ -322,7 +324,7 @@ describe("FEAT-004 manual logging", () => {
       deleteManualLog,
       listTodayEntries,
     } = store;
-    resetManualLogs();
+    await resetManualLogs();
 
     // No edit/update API in v1
     expect(store).not.toHaveProperty("updateManualLog");
@@ -331,61 +333,61 @@ describe("FEAT-004 manual logging", () => {
     const accountId = "acct-laura";
     const day = "2026-08-13";
     const ids = [
-      createBloodPressureLog({
+      (await createBloodPressureLog({
         accountId,
         systolic: 118,
         diastolic: 76,
         heartRate: 70,
         recordedAt: `${day}T08:00:00`,
-      }).id,
-      createSymptomLog({
+      })).id,
+      (await createSymptomLog({
         accountId,
         symptomName: "Fatigue",
         severity: "usual",
         recordedAt: `${day}T09:00:00`,
-      }).id,
-      createMedicationLog({
+      })).id,
+      (await createMedicationLog({
         accountId,
         medicationName: "Midodrine",
         dose: "5 mg",
         recordedAt: `${day}T10:00:00`,
-      }).id,
-      createWaterLog({
+      })).id,
+      (await createWaterLog({
         accountId,
         amountOz: 8,
         recordedAt: `${day}T11:00:00`,
-      }).id,
-      createElectrolyteLog({
+      })).id,
+      (await createElectrolyteLog({
         accountId,
         recordedAt: `${day}T12:00:00`,
-      }).id,
-      createMoodLog({
+      })).id,
+      (await createMoodLog({
         accountId,
         mood: "good",
         recordedAt: `${day}T13:00:00`,
-      }).id,
-      createEventLog({
+      })).id,
+      (await createEventLog({
         accountId,
         note: "Appointment",
         recordedAt: `${day}T14:00:00`,
-      }).id,
+      })).id,
     ];
 
-    expect(listTodayEntries(accountId, day)).toHaveLength(7);
+    expect(await listTodayEntries(accountId, day)).toHaveLength(7);
 
     for (const id of ids) {
-      expect(deleteManualLog(accountId, id)).toBe(true);
+      expect(await deleteManualLog(accountId, id)).toBe(true);
     }
-    expect(listTodayEntries(accountId, day)).toHaveLength(0);
+    expect(await listTodayEntries(accountId, day)).toHaveLength(0);
 
     // Wrong account cannot delete (preview of isolation; AC-10 owns full case)
-    const orphan = createEventLog({
+    const orphan = await createEventLog({
       accountId,
       note: "Still here",
       recordedAt: `${day}T15:00:00`,
     });
-    expect(deleteManualLog("acct-demo", orphan.id)).toBe(false);
-    expect(listTodayEntries(accountId, day)).toHaveLength(1);
+    expect(await deleteManualLog("acct-demo", orphan.id)).toBe(false);
+    expect(await listTodayEntries(accountId, day)).toHaveLength(1);
   });
 
   it("AC-10: Demo cannot read or delete Laura logs", async () => {
@@ -398,48 +400,48 @@ describe("FEAT-004 manual logging", () => {
       waterTotalOzForDate,
       deleteManualLog,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     const laura = "acct-laura";
     const demo = "acct-demo";
     const day = "2026-08-13";
 
-    const lauraBp = createBloodPressureLog({
+    const lauraBp = await createBloodPressureLog({
       accountId: laura,
       systolic: 120,
       diastolic: 80,
       heartRate: 72,
       recordedAt: `${day}T08:00:00`,
     });
-    createWaterLog({
+    await createWaterLog({
       accountId: laura,
       amountOz: 16,
       recordedAt: `${day}T09:00:00`,
     });
-    createEventLog({
+    await createEventLog({
       accountId: laura,
       note: "Laura only",
       recordedAt: `${day}T10:00:00`,
     });
 
-    expect(listTodayEntries(laura, day)).toHaveLength(3);
-    expect(listTodayEntries(demo, day)).toHaveLength(0);
-    expect(waterTotalOzForDate(laura, day)).toBe(16);
-    expect(waterTotalOzForDate(demo, day)).toBe(0);
+    expect(await listTodayEntries(laura, day)).toHaveLength(3);
+    expect(await listTodayEntries(demo, day)).toHaveLength(0);
+    expect(await waterTotalOzForDate(laura, day)).toBe(16);
+    expect(await waterTotalOzForDate(demo, day)).toBe(0);
 
-    expect(deleteManualLog(demo, lauraBp.id)).toBe(false);
-    expect(listTodayEntries(laura, day)).toHaveLength(3);
+    expect(await deleteManualLog(demo, lauraBp.id)).toBe(false);
+    expect(await listTodayEntries(laura, day)).toHaveLength(3);
 
     // Demo can own their own rows without seeing Laura's
-    createWaterLog({
+    await createWaterLog({
       accountId: demo,
       amountOz: 8,
       recordedAt: `${day}T11:00:00`,
     });
-    expect(listTodayEntries(demo, day)).toHaveLength(1);
-    expect(waterTotalOzForDate(demo, day)).toBe(8);
-    expect(listTodayEntries(laura, day)).toHaveLength(3);
-    expect(waterTotalOzForDate(laura, day)).toBe(16);
+    expect(await listTodayEntries(demo, day)).toHaveLength(1);
+    expect(await waterTotalOzForDate(demo, day)).toBe(8);
+    expect(await listTodayEntries(laura, day)).toHaveLength(3);
+    expect(await waterTotalOzForDate(laura, day)).toBe(16);
   });
 
   it("AC-11: catalogs match seeded lists; unknown names rejected", async () => {
@@ -452,7 +454,7 @@ describe("FEAT-004 manual logging", () => {
       createSymptomLog,
       createMedicationLog,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
 
     expect([...SYMPTOM_CATALOG_NAMES]).toEqual([
       "Fatigue",
@@ -479,32 +481,34 @@ describe("FEAT-004 manual logging", () => {
     const accountId = "acct-laura";
     const recordedAt = "2026-08-13T12:00:00";
 
-    expect(() =>
-      createSymptomLog({
-        accountId,
-        symptomName: "Headache",
-        severity: "usual",
-        recordedAt,
-      })
-    ).toThrow(/unknown symptom/i);
+    await expect(
+      (async () =>
+        await createSymptomLog({
+          accountId,
+          symptomName: "Headache",
+          severity: "usual",
+          recordedAt,
+        }))()
+    ).rejects.toThrow(/unknown symptom/i);
 
-    expect(() =>
-      createMedicationLog({
-        accountId,
-        medicationName: "Ibuprofen",
-        dose: "200 mg",
-        recordedAt,
-      })
-    ).toThrow(/unknown medication/i);
+    await expect(
+      (async () =>
+        await createMedicationLog({
+          accountId,
+          medicationName: "Ibuprofen",
+          dose: "200 mg",
+          recordedAt,
+        }))()
+    ).rejects.toThrow(/unknown medication/i);
 
     // Valid catalog names still succeed
-    createSymptomLog({
+    await createSymptomLog({
       accountId,
       symptomName: "Syncope",
       severity: "better_than_usual",
       recordedAt,
     });
-    createMedicationLog({
+    await createMedicationLog({
       accountId,
       medicationName: "Vitamin D",
       dose: "2000 IU",

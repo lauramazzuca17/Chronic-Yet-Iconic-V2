@@ -6,7 +6,21 @@ type: changelog
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
 ## 2026-08-15
-- **FEAT-008 done** — AC-12 Playwright Medication journey; `AnalyticsScreen` + `/analytics` UI (tabs + Medication Impact card); domain AC-1–11 remain green. Cardiovascular/Recovery/Electrolytes UI tabs still deferred to a later iterate.
+- **FEAT-009 done** — Turso/libSQL persistence + per-file Import History (AC-1–11); Playwright water reload + two cards + delete one file.
+- **FEAT-009 AC-11** — `e2e/feat-009-persistence-journey.spec.ts`: water survives reload; pair → 2 cards; delete detailed leaves summary.
+- **FEAT-009 AC-10** — `resolveDbMode`: Vitest/memory → `:memory:`; local → file libSQL; Turso when URL+token set; Vercel without Turso throws.
+- **FEAT-009 AC-9** — Demo cannot read/delete Laura water or import rows on the shared libSQL DB (store APIs + failed cross-account deletes).
+- **FEAT-009 AC-8** — Import History lists one card per file (`originalFilename`); FEAT-007 tests/E2E updated for two cards + per-file delete.
+- **FEAT-009 AC-7** — `deleteImportBatch` by file id removes only that file’s samples; sibling remains (pair_id delete still removes both for FEAT-007 compat).
+- **FEAT-009 AC-6** — pair import locks two `ImportBatch` rows (`detailed_csv` + `summary_csv`) sharing `pair_id`; samples attach per file.
+- **FEAT-009 AC-5** — `createFileDb`: water row survives close + new client on same file path.
+- **FEAT-009 AC-4** — manual log + import stores on Drizzle (async); pair import writes two file batches; FEAT-007 UI still groups by `pair_id`.
+- **FEAT-009 AC-3** — `signIn` verifies DB `password_hash` (env change after seed does not affect login).
+- **FEAT-009 AC-2** — `src/db/seed` + `createTestDb` (in-memory migrate); Laura/Demo hashes + catalogs; Demo health empty.
+- **FEAT-009 AC-1** — `src/db/schema`: Drizzle tables for Account, catalogs, manual logs, ImportBatch (`pair_id`), ImportedSample.
+- **FEAT-009 draft** — Turso/Drizzle persistence PRD + NFR-07; REQ-15 per-file import history; grill locks recorded; skeleton `tests/feat-009-turso-persistence.test.ts`. Awaiting PRD approve.
+- **FEAT-008 Analytics UI finish** — Recharts on Medication + Cardio/Recovery charts; Cardiovascular, Recovery, Electrolytes tabs wired; electrolytes empty copy; E2E covers all tabs + With/Without cards.
+- **FEAT-008 done** — AC-12 Playwright Medication journey; domain AC-1–11; Medication Impact UI.
 - **FEAT-008 AC-11** — `src/analytics/electrolytes`: With/Without cohort averages (HR/resting/walking/BP); window from first electrolytes yes.
 - **FEAT-008 AC-10** — `src/analytics/recovery`: Chart 4 HRV (Today/7/30) + Chart 5 walking HR (7/30 only).
 - **FEAT-008 AC-9** — `src/analytics/cardiovascular`: Chart 2 BP/HR overlay (Today/7/30, Y 50–190); Chart 3 tachycardia ≥100 (7 bars).

@@ -129,12 +129,12 @@ export function formatMedicationImpactTooltip(
   return `${input.value} bpm · ${time}`;
 }
 
-function mostRecentTake(
+async function mostRecentTake(
   accountId: string,
   calendarDate: string,
   medicationName: string
-): MedicationLogEntry | null {
-  const takes = listTodayEntries(accountId, calendarDate).filter(
+): Promise<MedicationLogEntry | null> {
+  const takes = (await listTodayEntries(accountId, calendarDate)).filter(
     (e): e is MedicationLogEntry =>
       e.type === "medication" &&
       e.medicationName === medicationName &&
@@ -146,11 +146,11 @@ function mostRecentTake(
   );
 }
 
-function bpCandidates(
+async function bpCandidates(
   accountId: string,
   calendarDate: string
-): SlotCandidate[] {
-  return listTodayEntries(accountId, calendarDate)
+): Promise<SlotCandidate[]> {
+  return (await listTodayEntries(accountId, calendarDate))
     .filter(
       (e): e is BloodPressureLogEntry =>
         e.type === "blood_pressure" && e.accountId === accountId
@@ -165,11 +165,11 @@ function bpCandidates(
 }
 
 /** Manual BP-log HR + detailed import `heart_rate` only (never resting / summary). */
-function hrCandidates(
+async function hrCandidates(
   accountId: string,
   calendarDate: string
-): SlotCandidate[] {
-  const fromManual = listTodayEntries(accountId, calendarDate)
+): Promise<SlotCandidate[]> {
+  const fromManual = (await listTodayEntries(accountId, calendarDate))
     .filter(
       (e): e is BloodPressureLogEntry =>
         e.type === "blood_pressure" && e.accountId === accountId
@@ -180,7 +180,7 @@ function hrCandidates(
       metric: "heart_rate" as const,
     }));
 
-  const fromImport = listImportedSamples(accountId)
+  const fromImport = (await listImportedSamples(accountId))
     .filter(
       (s) =>
         s.metricKey === "heart_rate" &&
@@ -229,11 +229,11 @@ function tooltipForCandidate(candidate: SlotCandidate): string {
   });
 }
 
-function candidatesForMetric(
+async function candidatesForMetric(
   accountId: string,
   calendarDate: string,
   metric: MedicationImpactMetricId
-): SlotCandidate[] {
+): Promise<SlotCandidate[]> {
   if (metric === "bp") {
     return bpCandidates(accountId, calendarDate);
   }
@@ -241,17 +241,17 @@ function candidatesForMetric(
 }
 
 /** Build five relative slots around Dose (take-time). Null if no take that day. */
-export function buildMedicationImpactSeries(
+export async function buildMedicationImpactSeries(
   input: BuildMedicationImpactSeriesInput
-): MedicationImpactSeries | null {
-  const take = mostRecentTake(
+): Promise<MedicationImpactSeries | null> {
+  const take = await mostRecentTake(
     input.accountId,
     input.calendarDate,
     input.medicationName
   );
   if (!take) return null;
 
-  const candidates = candidatesForMetric(
+  const candidates = await candidatesForMetric(
     input.accountId,
     input.calendarDate,
     input.metric

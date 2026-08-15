@@ -26,6 +26,8 @@ const COPY = {
   "analytics.electrolytes.metric.avg_walking": "Avg Walking",
   "analytics.electrolytes.metric.avg_bp": "Avg BP",
   "analytics.electrolytes.unit.bpm": "bpm",
+  "analytics.electrolytes.empty":
+    "Log electrolytes to unlock this comparison.",
 } as const;
 
 export type ElectrolytesSection = {
@@ -40,6 +42,7 @@ export type ElectrolytesSection = {
   metricAvgWalking: string;
   metricAvgBp: string;
   unitBpm: string;
+  empty: string;
 };
 
 export type ElectrolytesCohortCard = {
@@ -73,6 +76,7 @@ export function getElectrolytesSection(): ElectrolytesSection {
     metricAvgWalking: COPY["analytics.electrolytes.metric.avg_walking"],
     metricAvgBp: COPY["analytics.electrolytes.metric.avg_bp"],
     unitBpm: COPY["analytics.electrolytes.unit.bpm"],
+    empty: COPY["analytics.electrolytes.empty"],
   };
 }
 
@@ -95,11 +99,11 @@ function roundAvg(n: number): number {
   return Math.round(n);
 }
 
-function cohortCard(
+async function cohortCard(
   accountId: string,
   cohortDays: Set<string>
-): ElectrolytesCohortCard {
-  const logs = listManualLogsForAccount(accountId);
+): Promise<ElectrolytesCohortCard> {
+  const logs = await listManualLogsForAccount(accountId);
   const bpLogs = logs.filter(
     (e): e is BloodPressureLogEntry =>
       e.type === "blood_pressure" &&
@@ -108,7 +112,7 @@ function cohortCard(
 
   const hrValues = [
     ...bpLogs.map((e) => e.heartRate),
-    ...listImportedSamples(accountId)
+    ...(await listImportedSamples(accountId))
       .filter(
         (s) =>
           s.metricKey === "heart_rate" &&
@@ -117,7 +121,7 @@ function cohortCard(
       .map((s) => s.value),
   ];
 
-  const resting = listImportedSamples(accountId)
+  const resting = (await listImportedSamples(accountId))
     .filter(
       (s) =>
         s.metricKey === "resting_heart_rate" &&
@@ -125,7 +129,7 @@ function cohortCard(
     )
     .map((s) => s.value);
 
-  const walking = listImportedSamples(accountId)
+  const walking = (await listImportedSamples(accountId))
     .filter(
       (s) =>
         s.metricKey === "walking_heart_rate_average" &&
@@ -154,11 +158,11 @@ function cohortCard(
  * Comparison from first electrolytes=yes day through `asOf`.
  * Null when the account has never logged electrolytes yes.
  */
-export function buildElectrolytesComparison(input: {
+export async function buildElectrolytesComparison(input: {
   accountId: string;
   asOf: string;
-}): ElectrolytesComparison | null {
-  const electrolytes = listManualLogsForAccount(input.accountId).filter(
+}): Promise<ElectrolytesComparison | null> {
+  const electrolytes = (await listManualLogsForAccount(input.accountId)).filter(
     (e): e is ElectrolyteLogEntry => e.type === "electrolyte"
   );
   if (electrolytes.length === 0) return null;
@@ -172,13 +176,18 @@ export function buildElectrolytesComparison(input: {
   const withDays = allDays.filter((d) => withDaySet.has(d));
   const withoutDays = allDays.filter((d) => !withDaySet.has(d));
 
+  const [withCard, withoutCard] = await Promise.all([
+    cohortCard(input.accountId, new Set(withDays)),
+    cohortCard(input.accountId, new Set(withoutDays)),
+  ]);
+
   return {
     accountId: input.accountId,
     windowStart,
     windowEnd,
     withDays,
     withoutDays,
-    withCard: cohortCard(input.accountId, new Set(withDays)),
-    withoutCard: cohortCard(input.accountId, new Set(withoutDays)),
+    withCard,
+    withoutCard,
   };
 }

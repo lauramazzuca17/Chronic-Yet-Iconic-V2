@@ -26,8 +26,8 @@ User browser → Vercel (Next.js app + API/server actions)
                  Turso (libSQL) — per-account health + auth tables
 GitHub repo → Vercel deploy hooks (preview + production)
 ```
-- **Local:** `next dev` + Turso (dev database URL/token in `.env`).
-- **Production:** Vercel project linked to GitHub; Turso production credentials via Vercel env vars.
+- **Local:** `next dev` + Turso **or** local file libSQL fallback when `TURSO_*` unset (FEAT-009).
+- **Production / Vercel preview:** Turso URL + token required (no file DB on serverless).
 
 ## Key surfaces
 | Surface | Required behavior |
@@ -48,9 +48,13 @@ GitHub repo → Vercel deploy hooks (preview + production)
 | 2026-08-10 | App framework | Next.js App Router + React + TS | Native Vercel fit; strong Turso examples |
 | 2026-08-10 | UI library | MUI with MD3-oriented theme | Faster multi-screen build; design file uses MD3 |
 | 2026-08-10 | Database / host | Turso + Vercel + GitHub | Owner constraint |
+| 2026-08-15 | DB access layer | **Drizzle** + `@libsql/client` (FEAT-009) | Owner grill |
+
 | 2026-08-10 | Auth | Username + password sessions; **two seeded accounts only**; no public registration | Simpler than email signup; owner + isolated test |
 | 2026-08-10 | Test runner | Vitest (`npm test`) | Matches FEAT-001 skeleton; fast unit loop |
 | 2026-08-10 | Session gate (AC-1) | `src/auth/session.getProtectedDashboard` returns 401 without session | Minimum green before cookie library choice |
 | 2026-08-10 | Seed passwords (AC-2) | `SEED_PASSWORD_LAURA` / `SEED_PASSWORD_DEMO` env; scrypt at runtime | No plaintext in repo; Turso hashes later |
+| 2026-08-15 | Seed passwords (FEAT-009) | Env seeds → `Account.password_hash` in Turso; verify against DB | Owner grill |
+
 | 2026-08-11 | Session cookie (FEAT-002) | **iron-session** HTTP-only cookie | Owner approved with FEAT-002 PRD |
 | 2026-08-11 | E2E runner | Playwright (`npm run test:e2e`) | FEAT-002 AC-8 journey |

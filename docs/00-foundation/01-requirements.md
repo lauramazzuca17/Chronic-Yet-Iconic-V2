@@ -3,7 +3,7 @@ project: "Chronic Yet Iconic V2"
 type: product-requirements
 status: approved
 approved: 2026-08-10
-updated: 2026-08-10
+updated: 2026-08-15
 ---
 
 # Product Requirements (master)
@@ -22,7 +22,7 @@ Give the user the ability to log their health stats — manually or by import fr
 ## MVP scope
 - One **log screen** for all manual entry types listed below.
 - Logging: symptom, BP (with HR), meds, water (oz + daily total), electrolytes (daily Y/N), mood, event notes.
-- **Delete** any manually logged entry; **batch-delete** imported CSV batches; electrolytes allow only one entry per day (block further creates until deleted).
+- **Delete** any manually logged entry; **per-file delete** of imported CSV history cards; electrolytes allow only one entry per day (block further creates until deleted).
 - Home dashboard summarizing today's stats.
 - Calendar: select a day and see **manual** logs for that day.
 - Import via **third-party date-ranged CSV pair** (summary + detailed); **not** native Apple zip/XML.
@@ -173,7 +173,7 @@ For the current America/New_York calendar day, show:
 5. Open app → import → upload **both** third-party CSVs (summary + detailed) together.
 6. Sign in with password; use a separate test account that cannot access owner health data.
 7. Delete a manual log entry (including electrolytes, which then allows logging electrolytes again that day).
-8. Delete an **import batch** (removes all samples from that upload).
+8. Delete an **imported file** from Import History (removes only that file’s samples; the pair’s other file can remain).
 
 ## Functional requirements
 
@@ -191,7 +191,7 @@ For the current America/New_York calendar day, show:
 | REQ-10 | User can delete any manually logged entry (no edit in v1) | After delete, entry no longer appears on dashboard/calendar/analytics; no edit UI required in v1 |
 | REQ-11 | Calendar lets user pick a past day and see **manual logs only** for that day (not Apple Health / CSV / XML imports — imports feed analytics) | Selecting a date shows that day’s manual entries only; imported samples do not appear on calendar |
 | REQ-12 | User must import **both** third-party CSVs together (**detailed** + **summary**) in one import operation; map detailed `Metric` values to binding `metric_key`s; store summary day rows | Import succeeds only when both files present and parse; analytics can use imported data; missing either file → blunt error, no partial commit |
-| REQ-15 | User can **batch-delete** an import (one upload = one `ImportBatch`): deleting the batch removes all its imported rows | After batch delete, those samples no longer appear in analytics; no per-sample import delete required in v1 |
+| REQ-15 | After a successful pair import, Import History shows **one card per file** (detailed + summary). User can **delete one file** at a time: that file’s `ImportBatch` and its samples are removed; the other file from the same upload (if still present) is unchanged. No per-sample delete in v1 | History lists two cards after a pair upload; deleting detailed leaves summary (and vice versa); analytics lose only the deleted file’s metrics |
 | REQ-16 | Analytics four tabs; six views. **Medication** — Medication impact chart (single-day date + prev/next; multi-dose → most recent take; untaken meds gray/disabled in dropdown). Imported HR for Charts 1–3 and Lifestyle from **detailed CSV only** (never summary HR aggregates) | Per binding contracts |
 | REQ-17 | **Heart Trends** charts 2–3; **Recovery** charts 4–5 (as previously specified) | Per binding contracts |
 | REQ-20 | **Lifestyle** tab (v1): With vs Without electrolytes cards from first electrolytes-yes day; Without = not explicitly yes; each card: avg HR (manual HR + detailed **`heart_rate`**), avg resting (detailed **`resting_heart_rate`**), avg BP as **avg sys / avg dia**, avg walking (detailed **`walking_heart_rate_average`**). Imported HR metrics from **detailed CSV only** | Cards match binding contract |
@@ -207,6 +207,7 @@ For the current America/New_York calendar day, show:
 | NFR-03 | No AI diagnosis features | Product surfaces contain no diagnosis or AI-diagnosis capability |
 | NFR-05 | v1 deploy treated as private: seeded accounts + strong passwords; URL not published broadly; no extra IdP/allowlist required for Define | Documented in privacy/ops; no public signup |
 | NFR-06 | Authenticated **phone-first app shell** matches the approved design brief: bottom nav (Home/Log/Calendar/Analytics/Import), sticky scroll header treatment, page title + subtitle, Sign out control | Shell chrome matches FEAT-001 brief / Figma; nav reaches each primary route; phone viewport primary |
+| NFR-07 | Durable account + health data lives in **Turso** (libSQL) per [[03-data-model]]; data survives process/deploy restarts; local `next dev`/Playwright may use a **gitignored file** libSQL when `TURSO_*` unset; Vercel/prod require Turso URL+token | After restart (or new DB client), previously saved logs/imports/accounts still load for the owning account; Demo cannot read Laura |
 
 ## Open items (Define)
 - [x] Exact Apple Health metrics for v1 — **replaced** by third-party summary+detailed CSV contract + fixtures.
@@ -215,7 +216,7 @@ For the current America/New_York calendar day, show:
 - [x] Delete for all manual log types — REQ-10.
 - [x] Symptom/med catalogs + severity — seeded fixed lists; three-way severity.
 - [x] Auth population — two seeded accounts; no public registration.
-- [x] Delete imported data — REQ-15 (**batch-delete**).
+- [x] Delete imported data — REQ-15 (**per-file delete** in Import History; pair upload still required — REQ-12).
 - [x] Calendar shows manual logs only (imports → analytics) — REQ-11.
 
 ## Change history
@@ -241,3 +242,5 @@ For the current America/New_York calendar day, show:
 | 2026-08-14 | Chart 4 HRV Figma: range labels + “What your HRV shows” callout | Owner Figma 62957:4735 |
 | 2026-08-14 | Chart 5 walking HR: Last 7 / Last 30 only (no Today) | Owner Figma 62959:4803 |
 | 2026-08-15 | Electrolytes comparison UI: With/Without cards + Avg HR/Resting/Walking/BP | Owner Figma 62967:5991 |
+| 2026-08-15 | REQ-15 → per-file Import History cards + per-file delete (Figma 62946:4447); REQ-12 pair upload unchanged | Owner grill FEAT-009 |
+| 2026-08-15 | NFR-07 Turso durability + local file fallback for dev/Playwright | Owner grill FEAT-009 |

@@ -9,28 +9,28 @@ describe("FEAT-006 calendar", () => {
     const { listManualLogsForDate } = await import("../src/calendar/day-entries");
     const { resetManualLogs, createWaterLog, createBloodPressureLog } =
       await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
     const accountId = "acct-laura";
     const day = "2026-08-06";
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: `${day}T09:00:00`,
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 118,
       diastolic: 76,
       heartRate: 70,
       recordedAt: `${day}T10:00:00`,
     });
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 16,
       recordedAt: "2026-08-07T09:00:00",
     });
 
-    const entries = listManualLogsForDate(accountId, day);
+    const entries = await listManualLogsForDate(accountId, day);
     expect(entries).toHaveLength(2);
     expect(entries.every((e) => e.recordedAt.startsWith(day))).toBe(true);
     expect(entries.map((e) => e.type).sort()).toEqual([
@@ -43,25 +43,25 @@ describe("FEAT-006 calendar", () => {
     const { listManualLogsForDate } = await import("../src/calendar/day-entries");
     const { resetManualLogs, createWaterLog, createSymptomLog } =
       await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
     const accountId = "acct-laura";
     const dayA = "2026-08-06";
     const dayB = "2026-08-07";
 
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: `${dayA}T09:00:00`,
     });
-    createSymptomLog({
+    await createSymptomLog({
       accountId,
       symptomName: "Fatigue",
       severity: "usual",
       recordedAt: `${dayB}T11:00:00`,
     });
 
-    const listA = listManualLogsForDate(accountId, dayA);
-    const listB = listManualLogsForDate(accountId, dayB);
+    const listA = await listManualLogsForDate(accountId, dayA);
+    const listB = await listManualLogsForDate(accountId, dayB);
 
     expect(listA).toHaveLength(1);
     expect(listA[0].type).toBe("water");
@@ -74,21 +74,21 @@ describe("FEAT-006 calendar", () => {
   it("AC-3: empty selected day returns no entries / empty state data", async () => {
     const { listManualLogsForDate } = await import("../src/calendar/day-entries");
     const { resetManualLogs, createWaterLog } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
     const accountId = "acct-laura";
     const emptyDay = "2026-08-06";
     const otherDay = "2026-08-07";
 
-    expect(listManualLogsForDate(accountId, emptyDay)).toEqual([]);
+    expect(await listManualLogsForDate(accountId, emptyDay)).toEqual([]);
 
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: `${otherDay}T09:00:00`,
     });
 
-    expect(listManualLogsForDate(accountId, emptyDay)).toEqual([]);
-    expect(listManualLogsForDate(accountId, otherDay)).toHaveLength(1);
+    expect(await listManualLogsForDate(accountId, emptyDay)).toEqual([]);
+    expect(await listManualLogsForDate(accountId, otherDay)).toHaveLength(1);
   });
 
   it("AC-4: calendar listing uses manual-log store only (no imports)", async () => {
@@ -110,21 +110,21 @@ describe("FEAT-006 calendar", () => {
     expect(source).toMatch(/from ["']\.\.\/log\/store["']/);
     expect(source).not.toMatch(/health|import\/|ImportBatch|imported/i);
 
-    resetManualLogs();
+    await resetManualLogs();
     const accountId = "acct-laura";
     const day = "2026-08-06";
-    createWaterLog({
+    await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: `${day}T09:00:00`,
     });
-    createSymptomLog({
+    await createSymptomLog({
       accountId,
       symptomName: "Fatigue",
       severity: "usual",
       recordedAt: `${day}T10:00:00`,
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 118,
       diastolic: 76,
@@ -132,7 +132,7 @@ describe("FEAT-006 calendar", () => {
       recordedAt: `${day}T11:00:00`,
     });
 
-    const entries = listManualLogsForDate(accountId, day);
+    const entries = await listManualLogsForDate(accountId, day);
     const allowed = new Set(getManualLogTypes());
     expect(entries).toHaveLength(3);
     expect(entries.every((e) => allowed.has(e.type))).toBe(true);
@@ -142,25 +142,25 @@ describe("FEAT-006 calendar", () => {
     const { listManualLogsForDate } = await import("../src/calendar/day-entries");
     const { resetManualLogs, createWaterLog, createSymptomLog } =
       await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
     const laura = "acct-laura";
     const demo = "acct-demo";
     const day = "2026-08-06";
 
-    createWaterLog({
+    await createWaterLog({
       accountId: laura,
       amountOz: 8,
       recordedAt: `${day}T09:00:00`,
     });
-    createSymptomLog({
+    await createSymptomLog({
       accountId: laura,
       symptomName: "Fatigue",
       severity: "usual",
       recordedAt: `${day}T10:00:00`,
     });
 
-    expect(listManualLogsForDate(laura, day)).toHaveLength(2);
-    expect(listManualLogsForDate(demo, day)).toEqual([]);
+    expect(await listManualLogsForDate(laura, day)).toHaveLength(2);
+    expect(await listManualLogsForDate(demo, day)).toEqual([]);
   });
 
   it("AC-6: delete from selected day removes entry from that day list", async () => {
@@ -171,25 +171,25 @@ describe("FEAT-006 calendar", () => {
       createSymptomLog,
       deleteManualLog,
     } = await import("../src/log/store");
-    resetManualLogs();
+    await resetManualLogs();
     const accountId = "acct-laura";
     const day = "2026-08-06";
 
-    const water = createWaterLog({
+    const water = await createWaterLog({
       accountId,
       amountOz: 8,
       recordedAt: `${day}T09:00:00`,
     });
-    createSymptomLog({
+    await createSymptomLog({
       accountId,
       symptomName: "Fatigue",
       severity: "usual",
       recordedAt: `${day}T10:00:00`,
     });
 
-    expect(listManualLogsForDate(accountId, day)).toHaveLength(2);
-    expect(deleteManualLog(accountId, water.id)).toBe(true);
-    const remaining = listManualLogsForDate(accountId, day);
+    expect(await listManualLogsForDate(accountId, day)).toHaveLength(2);
+    expect(await deleteManualLog(accountId, water.id)).toBe(true);
+    const remaining = await listManualLogsForDate(accountId, day);
     expect(remaining).toHaveLength(1);
     expect(remaining[0].type).toBe("symptom");
     expect(remaining.some((e) => e.id === water.id)).toBe(false);

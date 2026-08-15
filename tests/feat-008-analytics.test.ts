@@ -60,15 +60,15 @@ describe("FEAT-008 analytics", () => {
     const { buildMedicationImpactSeries, MEDICATION_IMPACT_SLOT_KEYS } =
       await import("../src/analytics/medication-series");
 
-    resetManualLogs();
-    createMedicationLog({
+    await resetManualLogs();
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T10:00:00",
     });
 
-    const series = buildMedicationImpactSeries({
+    const series = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -110,15 +110,15 @@ describe("FEAT-008 analytics", () => {
       "../src/analytics/medication-series"
     );
 
-    resetManualLogs();
-    createMedicationLog({
+    await resetManualLogs();
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T10:00:00",
     });
     // -1h target 09:00 → within ±15m
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 118,
       diastolic: 70,
@@ -126,14 +126,14 @@ describe("FEAT-008 analytics", () => {
       recordedAt: "2026-08-01T09:05:00",
     });
     // Dose target 10:00 — two candidates; closest wins (no average)
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 120,
       diastolic: 80,
       heartRate: 95,
       recordedAt: "2026-08-01T10:03:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 125,
       diastolic: 85,
@@ -141,7 +141,7 @@ describe("FEAT-008 analytics", () => {
       recordedAt: "2026-08-01T10:10:00",
     });
     // +1h target 11:00 — 20 min away → blank (no interpolation)
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 130,
       diastolic: 90,
@@ -149,7 +149,7 @@ describe("FEAT-008 analytics", () => {
       recordedAt: "2026-08-01T11:20:00",
     });
 
-    const series = buildMedicationImpactSeries({
+    const series = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -179,17 +179,17 @@ describe("FEAT-008 analytics", () => {
       "../src/analytics/medication-series"
     );
 
-    resetManualLogs();
-    resetImports();
+    await resetManualLogs();
+    await resetImports();
 
-    createMedicationLog({
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T10:00:00",
     });
     // Near Dose: systolic 140 vs HR 200 — metric picks the right field
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 140,
       diastolic: 80,
@@ -207,7 +207,7 @@ describe("FEAT-008 analytics", () => {
       "2026-08-01,100,999",
     ].join("\n");
 
-    const imported = importHealthCsvPair({
+    const imported = await importHealthCsvPair({
       accountId: "acct-laura",
       summaryCsv,
       detailedCsv,
@@ -216,7 +216,7 @@ describe("FEAT-008 analytics", () => {
     });
     expect(imported.ok).toBe(true);
 
-    const bpSeries = buildMedicationImpactSeries({
+    const bpSeries = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -224,7 +224,7 @@ describe("FEAT-008 analytics", () => {
     });
     expect(bpSeries?.slots.find((s) => s.key === "Dose")?.value).toBe(140);
 
-    const hrSeries = buildMedicationImpactSeries({
+    const hrSeries = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -250,20 +250,20 @@ describe("FEAT-008 analytics", () => {
       "../src/analytics/medication-series"
     );
 
-    resetManualLogs();
-    createMedicationLog({
+    await resetManualLogs();
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T08:00:00",
     });
-    createMedicationLog({
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T14:30:00",
     });
-    createMedicationLog({
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Midodrine",
       dose: "2.5mg",
@@ -272,7 +272,7 @@ describe("FEAT-008 analytics", () => {
 
     expect(MEDICATION_UNAVAILABLE_COLOR).toBe("#8E8E93");
 
-    const options = getMedicationImpactMedOptions(
+    const options = await getMedicationImpactMedOptions(
       "acct-laura",
       "2026-08-01"
     );
@@ -291,7 +291,7 @@ describe("FEAT-008 analytics", () => {
       color: "#8E8E93",
     });
 
-    const series = buildMedicationImpactSeries({
+    const series = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -330,14 +330,14 @@ describe("FEAT-008 analytics", () => {
       })
     ).toBe("105 bpm · 8:07 AM");
 
-    resetManualLogs();
-    createMedicationLog({
+    await resetManualLogs();
+    await createMedicationLog({
       accountId: "acct-laura",
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T10:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: "acct-laura",
       systolic: 118,
       diastolic: 76,
@@ -345,7 +345,7 @@ describe("FEAT-008 analytics", () => {
       recordedAt: "2026-08-01T10:07:00",
     });
 
-    const bpSeries = buildMedicationImpactSeries({
+    const bpSeries = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -355,7 +355,7 @@ describe("FEAT-008 analytics", () => {
       "118/76 · 10:07 AM"
     );
 
-    const hrSeries = buildMedicationImpactSeries({
+    const hrSeries = await buildMedicationImpactSeries({
       accountId: "acct-laura",
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -381,19 +381,19 @@ describe("FEAT-008 analytics", () => {
       "../src/analytics/medication-series"
     );
 
-    resetManualLogs();
-    resetImports();
+    await resetManualLogs();
+    await resetImports();
 
     const laura = "acct-laura";
     const demo = "acct-demo";
 
-    createMedicationLog({
+    await createMedicationLog({
       accountId: laura,
       medicationName: "Propranolol",
       dose: "10mg",
       recordedAt: "2026-08-01T10:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId: laura,
       systolic: 140,
       diastolic: 90,
@@ -407,16 +407,16 @@ describe("FEAT-008 analytics", () => {
     ].join("\n");
     const summaryCsv = ["Date,Steps (sum)", "2026-08-01,100"].join("\n");
     expect(
-      importHealthCsvPair({
+      (await importHealthCsvPair({
         accountId: laura,
         summaryCsv,
         detailedCsv,
         summaryFilename: "summary.csv",
         detailedFilename: "detailed.csv",
-      }).ok
+      })).ok
     ).toBe(true);
 
-    const lauraSeries = buildMedicationImpactSeries({
+    const lauraSeries = await buildMedicationImpactSeries({
       accountId: laura,
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -424,7 +424,7 @@ describe("FEAT-008 analytics", () => {
     });
     expect(lauraSeries?.slots.find((s) => s.key === "Dose")?.value).toBe(140);
 
-    const lauraHr = buildMedicationImpactSeries({
+    const lauraHr = await buildMedicationImpactSeries({
       accountId: laura,
       calendarDate: "2026-08-01",
       medicationName: "Propranolol",
@@ -434,7 +434,7 @@ describe("FEAT-008 analytics", () => {
 
     // Demo: no take → no series; dropdown does not unlock Laura's meds
     expect(
-      buildMedicationImpactSeries({
+      await buildMedicationImpactSeries({
         accountId: demo,
         calendarDate: "2026-08-01",
         medicationName: "Propranolol",
@@ -443,7 +443,7 @@ describe("FEAT-008 analytics", () => {
     ).toBeNull();
 
     expect(
-      buildMedicationImpactSeries({
+      await buildMedicationImpactSeries({
         accountId: demo,
         calendarDate: "2026-08-01",
         medicationName: "Propranolol",
@@ -451,13 +451,13 @@ describe("FEAT-008 analytics", () => {
       })
     ).toBeNull();
 
-    const demoOptions = getMedicationImpactMedOptions(demo, "2026-08-01");
+    const demoOptions = await getMedicationImpactMedOptions(demo, "2026-08-01");
     expect(demoOptions.find((o) => o.name === "Propranolol")).toMatchObject({
       selectable: false,
       color: "#8E8E93",
     });
 
-    const lauraOptions = getMedicationImpactMedOptions(laura, "2026-08-01");
+    const lauraOptions = await getMedicationImpactMedOptions(laura, "2026-08-01");
     expect(lauraOptions.find((o) => o.name === "Propranolol")).toMatchObject({
       selectable: true,
       color: null,
@@ -506,19 +506,19 @@ describe("FEAT-008 analytics", () => {
       "at or above the 100 bpm threshold"
     );
 
-    resetManualLogs();
-    resetImports();
+    await resetManualLogs();
+    await resetImports();
     const accountId = "acct-laura";
     const today = "2026-08-01";
 
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 120,
       diastolic: 80,
       heartRate: 95,
       recordedAt: "2026-08-01T10:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 130,
       diastolic: 85,
@@ -526,7 +526,7 @@ describe("FEAT-008 analytics", () => {
       recordedAt: "2026-07-30T12:00:00",
     });
     // Outside last_7 window when today=2026-08-01 (before Jul 26)
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 150,
       diastolic: 90,
@@ -540,16 +540,16 @@ describe("FEAT-008 analytics", () => {
       "2026-08-01T11:30:00.000-04:00,2026-08-01,11:30:00,resting_heart_rate,70,bpm",
     ].join("\n");
     expect(
-      importHealthCsvPair({
+      (await importHealthCsvPair({
         accountId,
         summaryCsv: "Date,Steps (sum)\n2026-08-01,10",
         detailedCsv,
         summaryFilename: "s.csv",
         detailedFilename: "d.csv",
-      }).ok
+      })).ok
     ).toBe(true);
 
-    const overlay = buildBpHrOverlaySeries({
+    const overlay = await buildBpHrOverlaySeries({
       accountId,
       range: "last_7",
       today,
@@ -561,7 +561,7 @@ describe("FEAT-008 analytics", () => {
     // resting excluded; Jul 20 outside window
     expect(overlay.bp.every((p) => p.value !== 150)).toBe(true);
 
-    const todayOnly = buildBpHrOverlaySeries({
+    const todayOnly = await buildBpHrOverlaySeries({
       accountId,
       range: "today",
       today,
@@ -574,7 +574,7 @@ describe("FEAT-008 analytics", () => {
     // Chart 3: Aug 1 has HR 95 (manual), 112 (import) → 1/2 = 50%
     // Jul 30 has 105 → 1/1 = 100%
     // other days in window with no readings → null
-    const burden = buildTachycardiaBurdenSeries({ accountId, today });
+    const burden = await buildTachycardiaBurdenSeries({ accountId, today });
     expect(burden.days).toHaveLength(7);
     expect(burden.days[0]?.calendarDate).toBe("2026-07-26");
     expect(burden.days[6]?.calendarDate).toBe("2026-08-01");
@@ -613,7 +613,7 @@ describe("FEAT-008 analytics", () => {
     expect(walkCard.helper).toContain("Walks outside can be very challenging");
     expect(walkCard.ranges.map((r) => r.id)).toEqual(["last_7", "last_30"]);
 
-    resetImports();
+    await resetImports();
     const accountId = "acct-laura";
     const today = "2026-08-01";
     const detailedCsv = [
@@ -627,29 +627,29 @@ describe("FEAT-008 analytics", () => {
       "2026-08-01T12:00:00.000-04:00,2026-08-01,12:00:00,heart_rate,90,bpm",
     ].join("\n");
     expect(
-      importHealthCsvPair({
+      (await importHealthCsvPair({
         accountId,
         summaryCsv: "Date,Steps (sum)\n2026-08-01,10",
         detailedCsv,
         summaryFilename: "s.csv",
         detailedFilename: "d.csv",
-      }).ok
+      })).ok
     ).toBe(true);
 
-    const hrv = buildHrvSeries({ accountId, range: "last_7", today });
+    const hrv = await buildHrvSeries({ accountId, range: "last_7", today });
     expect(hrv.points.map((p) => p.value)).toEqual([38, 42.5]);
 
-    const hrvToday = buildHrvSeries({ accountId, range: "today", today });
+    const hrvToday = await buildHrvSeries({ accountId, range: "today", today });
     expect(hrvToday.points.map((p) => p.value)).toEqual([42.5]);
 
-    const walking = buildWalkingHrSeries({
+    const walking = await buildWalkingHrSeries({
       accountId,
       range: "last_7",
       today,
     });
     expect(walking.points.map((p) => p.value)).toEqual([120, 128]);
 
-    const walking30 = buildWalkingHrSeries({
+    const walking30 = await buildWalkingHrSeries({
       accountId,
       range: "last_30",
       today,
@@ -678,34 +678,34 @@ describe("FEAT-008 analytics", () => {
     expect(section.withTitle).toBe("With Electrolytes");
     expect(section.withoutTitle).toBe("Without Electrolytes");
 
-    resetManualLogs();
-    resetImports();
+    await resetManualLogs();
+    await resetImports();
     const accountId = "acct-laura";
     const asOf = "2026-08-05";
 
-    createElectrolyteLog({
+    await createElectrolyteLog({
       accountId,
       recordedAt: "2026-08-01T08:00:00",
     });
-    createElectrolyteLog({
+    await createElectrolyteLog({
       accountId,
       recordedAt: "2026-08-03T08:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 120,
       diastolic: 80,
       heartRate: 100,
       recordedAt: "2026-08-01T10:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 130,
       diastolic: 90,
       heartRate: 90,
       recordedAt: "2026-08-02T10:00:00",
     });
-    createBloodPressureLog({
+    await createBloodPressureLog({
       accountId,
       systolic: 110,
       diastolic: 70,
@@ -714,7 +714,7 @@ describe("FEAT-008 analytics", () => {
     });
 
     expect(
-      importHealthCsvPair({
+      (await importHealthCsvPair({
         accountId,
         summaryCsv: "Date,Steps (sum)\n2026-08-01,1",
         detailedCsv: [
@@ -725,10 +725,10 @@ describe("FEAT-008 analytics", () => {
         ].join("\n"),
         summaryFilename: "s.csv",
         detailedFilename: "d.csv",
-      }).ok
+      })).ok
     ).toBe(true);
 
-    const comparison = buildElectrolytesComparison({ accountId, asOf });
+    const comparison = await buildElectrolytesComparison({ accountId, asOf });
     expect(comparison).not.toBeNull();
     expect(comparison?.windowStart).toBe("2026-08-01");
     expect(comparison?.windowEnd).toBe("2026-08-05");
@@ -750,8 +750,8 @@ describe("FEAT-008 analytics", () => {
     expect(comparison?.withoutCard.avgBp).toBe("130/90");
 
     // No electrolytes → no comparison window
-    resetManualLogs();
-    expect(buildElectrolytesComparison({ accountId, asOf })).toBeNull();
+    await resetManualLogs();
+    expect(await buildElectrolytesComparison({ accountId, asOf })).toBeNull();
   });
   // AC-12: e2e/feat-008-analytics-journey.spec.ts
 });

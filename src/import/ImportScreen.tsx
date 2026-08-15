@@ -337,7 +337,7 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
                       data-testid="import-batch-filename"
                       sx={{ fontSize: 12 }}
                     >
-                      {batch.detailedFilename ?? "—"}
+                      {batch.originalFilename ?? "—"}
                     </Typography>
                     <Button
                       size="small"

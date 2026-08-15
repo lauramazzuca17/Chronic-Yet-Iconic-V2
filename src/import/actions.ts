@@ -27,7 +27,7 @@ export async function importCsvPairAction(
 
   const summaryCsv = await summaryFile.text();
   const detailedCsv = await detailedFile.text();
-  const result = importHealthCsvPair({
+  const result = await importHealthCsvPair({
     accountId: session.accountId,
     summaryCsv,
     detailedCsv,
@@ -52,7 +52,7 @@ export async function deleteImportBatchAction(
   batchId: string
 ): Promise<{ ok: boolean }> {
   const session = await requireSession();
-  const deleted = deleteImportBatch(session.accountId, batchId);
+  const deleted = await deleteImportBatch(session.accountId, batchId);
   if (deleted) revalidatePath("/import");
   return { ok: deleted };
 }

@@ -29,6 +29,15 @@ unless a contract doc carries its own binding log. -->
 | 2026-08-13 | Import summary ingest | Persist **all non-BP** summary columns (not chart-subset only) | Owner |
 | 2026-08-13 | Import Processing status | In-flight only during request; then Completed/Failed | Owner |
 | 2026-08-13 | Import history filename | Display **detailed** CSV filename on batch row | Owner |
+| 2026-08-14 | Analytics scope | FEAT-008 covers REQ-16+17+20 (all tabs); Medication Figma first | Owner |
+| 2026-08-14 | Analytics charts | **Recharts** | Owner |
+| 2026-08-14 | Analytics subtitle | Compare how different factors impact your health over time. (Figma) | Owner |
+| 2026-08-14 | Analytics tab labels | Medication / Cardiovascular / Recovery / Electrolytes (Figma) | Owner |
+| 2026-08-14 | Medication Chart 1 window | Single America/New_York day via date picker + prev/next (not 7/30 range) | Owner + Figma 62816:27152 |
+| 2026-08-14 | Medication multi-dose | Use **most recent** take that day as Dose t=0 (not empty/error) | Owner |
+| 2026-08-14 | Chart 2 range UI labels | Today / Last 7 Days / Last 30 Days (Figma) | Owner Figma 62953:4603 |
+| 2026-08-14 | Chart 3 Figma + disclaimer | Tachycardia Burden card + Data Disclaimer; threshold ≥ vs > open | Owner Figma 62953:4604 |
+| 2026-08-14 | Chart 3 threshold | **≥ 100** bpm (math + UI copy; Figma had `>`) | Owner |
 | 2026-08-14 | Summary metric keys | Store summary columns as `summary_*` keys (not detailed `heart_rate`) so charts stay detailed-only | FEAT-007 AC-3 |
 | 2026-08-10 | Active nav style | Icon pill #082E33@80% radius ~16px; label below pill | Design review |
 | 2026-08-10 | Home vs Dashboard | Nav label Home; page title Dashboard | Design review |

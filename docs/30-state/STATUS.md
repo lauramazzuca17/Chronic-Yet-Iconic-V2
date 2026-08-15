@@ -6,28 +6,30 @@ tier: full
 # Project Status — session handoff
 
 ## Current phase
-Build — **FEAT-007** `done`. Next feature not started (Analytics REQ-16+).
+PRD draft — **FEAT-008** Analytics; Medication + Cardiovascular locked (Chart 3 = **≥ 100**); Recovery/Electrolytes Figma still open.
 
 ## Active feature
-_(none)_ — last completed: FEAT-007 Import ([[FEAT-007-import]])
+FEAT-008 — Analytics (`draft`) — [[FEAT-008-analytics]]  
+Medication: `62816:27151` / `62816:27152` · Chart 2: `62953:4603` · Chart 3: `62953:4604` · Recharts
 
 ## Built and tested
-- **FEAT-001**–**FEAT-006** — as before.
-- **FEAT-007** — Import CSV pair + history UI + Playwright upload/delete journey.
+- **FEAT-001**–**FEAT-007** — auth through Import.
 
 ## Not yet built (and what blocks it)
-- REQ-16–17, REQ-20 — Analytics / Lifestyle via `/new-feature`.
-- Turso persistence (still in-memory stores; import store on `globalThis` like logs).
+- **FEAT-008** — blocked on PRD **approve** + Recovery / Electrolytes Figma (or approve scoped build order).
+- Turso persistence.
 
 ## Test suite
-FEAT-007 AC-1–8 green (unit + Playwright). Full unit suite green after AC-8.
+FEAT-007 green. FEAT-008 skeleton pending `/tdd-cycle` after approval.
 
 ## In flight / uncommitted
-- FEAT-007 Import implementation + docs (ready to commit when asked).
+- FEAT-008 Chart 3 threshold locked to ≥ 100 bpm.
 
 ## Blockers & open questions
-- none
+- Figma for Recovery + Electrolytes.
+- Optional empty-chart helper copy (dashed placeholder OK for v1).
 
 ## Next actions
-1. Commit FEAT-007 when ready (ask).
-2. `/new-feature` for Analytics (REQ-16+).
+1. Owner shares Recovery / Electrolytes Figma (or approves Medication+Cardio-first).
+2. Owner **approves** [[FEAT-008-analytics]].
+3. `/tdd-cycle` AC-1.

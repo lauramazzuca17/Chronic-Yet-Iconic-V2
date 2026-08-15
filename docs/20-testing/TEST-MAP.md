@@ -72,6 +72,18 @@ updated: 2026-08-13
 | FEAT-007 | AC-6 | tests/feat-007-import.test.ts | AC-6: batch-delete removes ImportBatch samples | ✅ passing |
 | FEAT-007 | AC-7 | tests/feat-007-import.test.ts | AC-7: /import shell + upload + batch list | ✅ passing |
 | FEAT-007 | AC-8 | e2e/feat-007-import-journey.spec.ts | AC-8: Playwright upload pair then batch-delete | ✅ passing |
+| FEAT-008 | AC-1 | tests/feat-008-analytics.test.ts | AC-1: /analytics shell + four tabs; default Medication | ⏭ todo (skeleton fails until tabs helper) |
+| FEAT-008 | AC-2 | tests/feat-008-analytics.test.ts | AC-2: Medication Impact card + date/Compare controls (Figma) | ⏭ todo |
+| FEAT-008 | AC-3 | tests/feat-008-analytics.test.ts | AC-3: Medication impact series slots -2h…+2h | ⏭ todo |
+| FEAT-008 | AC-4 | tests/feat-008-analytics.test.ts | AC-4: ±15 min closest; no interpolation | ⏭ todo |
+| FEAT-008 | AC-5 | tests/feat-008-analytics.test.ts | AC-5: BP manual; HR manual + detailed heart_rate | ⏭ todo |
+| FEAT-008 | AC-6 | tests/feat-008-analytics.test.ts | AC-6: untaken meds gray `#8E8E93` disabled; multi-dose → most recent | ⏭ todo |
+| FEAT-008 | AC-7 | tests/feat-008-analytics.test.ts | AC-7: tooltips BP / HR | ⏭ todo |
+| FEAT-008 | AC-8 | tests/feat-008-analytics.test.ts | AC-8: Demo cannot read Laura analytics | ⏭ todo |
+| FEAT-008 | AC-9 | tests/feat-008-analytics.test.ts | AC-9: Cardiovascular Chart 2 + Chart 3 | ⏭ todo |
+| FEAT-008 | AC-10 | tests/feat-008-analytics.test.ts | AC-10: Recovery Chart 4 + Chart 5 | ⏭ todo |
+| FEAT-008 | AC-11 | tests/feat-008-analytics.test.ts | AC-11: Electrolytes Lifestyle cards | ⏭ todo |
+| FEAT-008 | AC-12 | e2e (TBD) | AC-12: Playwright Analytics Medication journey | ⏭ todo |
 
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |

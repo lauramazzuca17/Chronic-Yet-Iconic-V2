@@ -79,12 +79,13 @@ For **Chart 1 (Medication impact)**, **Chart 2 (BP & HR over time)**, **Chart 3 
 Specific detailed `Metric` keys per view remain as listed in each chart/card section below.
 
 ### Analytics — information architecture (binding)
-Four tabs on the analytics page: **Medication** | **Heart Trends** | **Recovery** | **Lifestyle**. **Six views total:** five charts + one Lifestyle comparison section (not a chart).
+Four tabs on the analytics page (Figma chips): **Medication** | **Cardiovascular** | **Recovery** | **Electrolytes**. **Six views total:** five charts + one Electrolytes/Lifestyle comparison section (not a chart). Requirements sections below still use Heart Trends / Lifestyle as analytic names where noted.
 
 ### Analytics — Medication tab: Medication impact chart (binding)
 - **Only chart on this tab.**
-- **Controls:** date select (America/New_York day); medication name dropdown (catalog); metric dropdown: `heart rate` | `bp`.
-- **X-axis:** time relative to medication **take-time** that day: `-2h`, `-1h`, `Dose`, `+1h`, `+2h` (`Dose` = take-time t=0, not dosage amount). ≤1 take of that med that day; else empty/error as previously locked.
+- **Controls:** date select (America/New_York day) with previous/next day; medication name dropdown (catalog); metric dropdown: `heart rate` | `bp`.
+- **X-axis:** time relative to medication **take-time** that day: `-2h`, `-1h`, `Dose`, `+1h`, `+2h` (`Dose` = take-time t=0, not dosage amount). If multiple takes of that med that day, use the **most recent** take-time as t=0.
+- **Medication dropdown:** catalog names with **no log that day** appear in gray `#8E8E93` and are **not selectable**.
 - **Y-axis / data sources:**
   - Metric **BP:** **manual BP logs only** (systolic for Y; never Apple Health).
   - Metric **HR:** **manual BP-log heart rate** + imported detailed **`heart_rate`** only (not resting).
@@ -95,7 +96,7 @@ Four tabs on the analytics page: **Medication** | **Heart Trends** | **Recovery*
 
 ### Analytics — Heart Trends tab: Chart 2 — BP & HR over time (binding)
 - **Type:** two-line **overlay** on one chart (not side-by-side) to show interaction between BP and HR.
-- **Range control:** `Today` | `Past 7 days` | `Past 30 days` (America/New_York).
+- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62953:4603).
 - **X-axis:** time across the selected range.
 - **Y-axis:** shared numeric scale **50–190** (fixed). Plots **systolic** (manual BP) and **HR** (manual BP-log HR + detailed CSV **`heart_rate`**) as two lines — intentional shared axis so patterns (HR up when BP up/down) are visible together. POTS variability is the point: use point **`heart_rate`**, not resting.
 - **Style:** both lines **semi-faded** by default; on hover/focus of a line, that line goes to **full opacity** (other stays faded).
@@ -105,9 +106,10 @@ Four tabs on the analytics page: **Medication** | **Heart Trends** | **Recovery*
 - **Goal:** Show the clinician this is not occasional spikes — a substantial share of HR readings are ≥100 bpm. (Total time-in-tachycardia is out of scope.)
 - **Type:** bar chart (horizontal OK: days on one axis, % on the other).
 - **Day axis:** last **6 days + today** (7 bars), America/New_York, weekday labels ending with today.
-- **Value:** **percentage (0–100)** of that day’s HR readings that are **≥ 100** bpm.
+- **Value:** **percentage (0–100)** of that day’s HR readings that are **≥ 100** bpm (owner lock; overrides Figma `>` wording).
+- **UI (Figma 62953:4604):** title Tachycardia Burden; helper; bar chart for last 6 days + today; Data Disclaimer callout (copy deck — helper/disclaimer use ≥ / “at or above”).
 - **Data sources (Chart 3 only):** **manual BP-log HR** + imported detailed **`heart_rate`**. Not resting HR.
-- Denominator = all Chart-3-eligible HR readings that day; numerator = those ≥100. If denominator is 0, show empty/zero state for that day (no divide-by-zero).
+- Denominator = all Chart-3-eligible HR readings that day; numerator = those **≥ 100**. If denominator is 0, show empty/zero state for that day (no divide-by-zero).
 
 ### Analytics — Recovery tab (binding)
 Two charts on this tab.
@@ -187,7 +189,7 @@ For the current America/New_York calendar day, show:
 | REQ-11 | Calendar lets user pick a past day and see **manual logs only** for that day (not Apple Health / CSV / XML imports — imports feed analytics) | Selecting a date shows that day’s manual entries only; imported samples do not appear on calendar |
 | REQ-12 | User must import **both** third-party CSVs together (**detailed** + **summary**) in one import operation; map detailed `Metric` values to binding `metric_key`s; store summary day rows | Import succeeds only when both files present and parse; analytics can use imported data; missing either file → blunt error, no partial commit |
 | REQ-15 | User can **batch-delete** an import (one upload = one `ImportBatch`): deleting the batch removes all its imported rows | After batch delete, those samples no longer appear in analytics; no per-sample import delete required in v1 |
-| REQ-16 | Analytics four tabs; six views. **Medication** — Medication impact chart. Imported HR for Charts 1–3 and Lifestyle from **detailed CSV only** (never summary HR aggregates) | Per binding contracts |
+| REQ-16 | Analytics four tabs; six views. **Medication** — Medication impact chart (single-day date + prev/next; multi-dose → most recent take; untaken meds gray/disabled in dropdown). Imported HR for Charts 1–3 and Lifestyle from **detailed CSV only** (never summary HR aggregates) | Per binding contracts |
 | REQ-17 | **Heart Trends** charts 2–3; **Recovery** charts 4–5 (as previously specified) | Per binding contracts |
 | REQ-20 | **Lifestyle** tab (v1): With vs Without electrolytes cards from first electrolytes-yes day; Without = not explicitly yes; each card: avg HR (manual HR + detailed **`heart_rate`**), avg resting (detailed **`resting_heart_rate`**), avg BP as **avg sys / avg dia**, avg walking (detailed **`walking_heart_rate_average`**). Imported HR metrics from **detailed CSV only** | Cards match binding contract |
 | REQ-18 | Owner account is protected by password (authentication required to access their data) | Unauthenticated access cannot read owner health records; correct password grants access |
@@ -231,3 +233,5 @@ For the current America/New_York calendar day, show:
 | 2026-08-12 | Symptom severity UI label Usual → **Normal amount**; matches Log Figma | Owner Frame 2 |
 | 2026-08-13 | REQ-07: electrolytes create **yes only** (absence = no); blocked copy shortened to Figma string | Owner Log Figma |
 | 2026-08-11 | NFR-06 phone-first app shell chrome (design-brief fidelity) | FEAT-003 shell polish — **approved** with FEAT-003 |
+| 2026-08-14 | Analytics chips: Medication / Cardiovascular / Recovery / Electrolytes | Owner + Figma |
+| 2026-08-14 | Chart 2 UI range labels Today / Last 7 Days / Last 30 Days; Chart 3 Figma + disclaimer; threshold locked ≥ 100 | Owner Cardiovascular Figma |

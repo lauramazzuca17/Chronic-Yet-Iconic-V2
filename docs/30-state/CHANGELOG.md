@@ -6,6 +6,11 @@ type: changelog
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
 ## 2026-08-14
+- **FEAT-008 Chart 3 threshold** — locked **≥ 100** bpm (math + copy; Figma had `>`).
+- **FEAT-008 Cardiovascular Figma** — Chart 2 `62953:4603` (BP & HR + Today/Last 7/Last 30); Chart 3 `62953:4604` (Tachycardia Burden + Data Disclaimer); copy deck keys added.
+- **FEAT-008 Medication locks** — single-day date picker + prev/next (Figma `62816:27152`); multi-dose → most recent; untaken meds `#8E8E93` disabled; REQ-16 binding text updated.
+- **FEAT-008 updated** — all Analytics tabs in scope (REQ-16/17/20); Recharts; Medication Figma `62816:27151`; subtitle + chip labels locked; build Medication first.
+- **FEAT-008 draft** — Analytics shell + Medication impact (REQ-16); Heart Trends/Recovery/Lifestyle deferred unless owner expands; skeleton tests; awaiting PRD approval.
 - **FEAT-007 done** — Import (REQ-12/15): CSV pair ingest, history UI, Playwright upload + batch-delete (`e2e/feat-007-import-journey.spec.ts`); import store on `globalThis` for Next action/RSC sharing.
 - **FEAT-007 AC-7** — Import UI: Upload Files + Import History (Database Summary, batch cards); copy helpers; shell subtitle already locked.
 - **FEAT-007 AC-6** — owner `deleteImportBatch` removes batch and all its samples.

@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: copy-deck
 status: design-contract
-updated: 2026-08-12
+updated: 2026-08-14
 ---
 # Copy Deck — canonical user-facing strings
 
@@ -49,7 +49,16 @@ updated: 2026-08-12
 | calendar.empty_day | _(unused)_ | Empty = heading + `0 logged entries` only (Figma 62910-6163); no separate empty blurb |
 | calendar.day_heading | {weekday} · {Month} {D}, {YYYY} | Locked pattern e.g. Thursday · August 6, 2026 |
 | calendar.day_heading_today | Today | When selected day is today (Figma) |
-| shell.subtitle.analytics | See trends and relationships. | Draft — refine with owner |
+| shell.subtitle.analytics | Compare how different factors impact your health over time. | Locked from Analytics Figma 62816-27151 |
+| analytics.cardio.chart2.title | Blood Pressure and Heart Rate | Figma 62953-4603 |
+| analytics.cardio.chart2.helper | See how changes in one may relate to changes in the other. | Figma 62953-4603 |
+| analytics.range.today | Today | Chart range segmented control |
+| analytics.range.last_7 | Last 7 Days | Figma (not “Past 7 days”) |
+| analytics.range.last_30 | Last 30 Days | Figma |
+| analytics.cardio.chart3.title | Tachycardia Burden | Figma 62953-4604 |
+| analytics.cardio.chart3.helper | Percent of heart rate readings ≥ 100 bpm | Owner lock ≥100 (overrides Figma `>`) |
+| analytics.cardio.chart3.disclaimer_title | Data Disclaimer | Figma 62953-4604 |
+| analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the percentage of heart rate readings that were at or above the 100 bpm threshold. | ≥100 lock |
 | shell.subtitle.import | Upload Apple Health export files to populate your health database. | Locked from Import Figma 62939-4277 |
 | dashboard.empty | No stats for today yet. Add a log or import data. | Unused on Figma Home (zeros on cards); keep until confirmed drop |
 | dashboard.metric.bp_count | BP Readings | Home Figma |

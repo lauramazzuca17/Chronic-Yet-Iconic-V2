@@ -116,30 +116,33 @@ Two charts on this tab.
 
 #### Chart 4 — HRV over time
 - **Type:** line chart.
-- **Range control:** `Today` | `Past 7 days` | `Past 30 days` (America/New_York).
+- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62957:4735).
 - **X-axis:** time across the selected range.
 - **Y-axis:** Heart Rate Variability (ms).
 - **Data source:** imported **`heart_rate_variability`** (`hrv_sdnn` in detailed CSV) only.
+- **UI (Figma 62957:4735):** title Heart Rate Variability; helper; range switch; dashed chart placeholder; “What your HRV shows” info callout (copy deck).
 
 #### Chart 5 — Average walking HR over time
 - **Type:** line chart.
-- **Range control:** `Today` | `Past 7 days` | `Past 30 days` (America/New_York).
+- **Range control (UI):** `Last 7 Days` | `Last 30 Days` only — **no Today** (Figma 62959:4803; overrides earlier three-option range).
 - **X-axis:** time across the selected range.
 - **Y-axis:** Walking Heart Rate Average (count/min).
 - **Data source:** imported **`walking_heart_rate_average`** (`walking_heart_rate_avg` in detailed CSV) only.
+- **UI (Figma 62959:4803):** title Average Walking Heart Rate; helper; two-option range switch; dashed chart placeholder.
 
 ### Analytics — Lifestyle tab: Electrolytes comparison cards (binding)
-v1 has **one section**, not a chart: **two comparison cards**.
+v1 has **one section**, not a chart: **two comparison cards** (Figma `62967:5991`).
+- **Section title / helper:** Electrolytes / “See how days with electrolytes compare to days without.”
 - **Window:** from the **first calendar day with electrolytes = yes** through the latest data (America/New_York). No comparison averages before that first “with” day.
 - **With cohort:** days in that window with electrolytes **yes**.
 - **Without cohort:** days in that window **not** explicitly logged as electrolytes yes (explicit `no` or no electrolyte log).
 
 #### Card 1 — With Electrolytes / Card 2 — Without Electrolytes
-Each card shows:
-- **avg HR** — mean of manual BP-log HR + imported **`heart_rate`** on cohort days
-- **avg resting HR** — mean of imported **`resting_heart_rate`**
-- **avg BP** — **mean systolic over mean diastolic** (display like `118/76`), both from manual BP logs only
-- **avg walking HR** — mean of imported **`walking_heart_rate_average`**
+Each card (2×2 metric grid per Figma):
+- **Avg HR** — mean of manual BP-log HR + imported **`heart_rate`** on cohort days
+- **Avg Resting** — mean of imported **`resting_heart_rate`**
+- **Avg Walking** — mean of imported **`walking_heart_rate_average`**
+- **Avg BP** — **mean systolic over mean diastolic** (display like `100/60`), both from manual BP logs only
 
 If a cohort has no samples for a metric, show an empty/not-enough-data state for that metric (not zero pretending to be real).
 
@@ -235,3 +238,6 @@ For the current America/New_York calendar day, show:
 | 2026-08-11 | NFR-06 phone-first app shell chrome (design-brief fidelity) | FEAT-003 shell polish — **approved** with FEAT-003 |
 | 2026-08-14 | Analytics chips: Medication / Cardiovascular / Recovery / Electrolytes | Owner + Figma |
 | 2026-08-14 | Chart 2 UI range labels Today / Last 7 Days / Last 30 Days; Chart 3 Figma + disclaimer; threshold locked ≥ 100 | Owner Cardiovascular Figma |
+| 2026-08-14 | Chart 4 HRV Figma: range labels + “What your HRV shows” callout | Owner Figma 62957:4735 |
+| 2026-08-14 | Chart 5 walking HR: Last 7 / Last 30 only (no Today) | Owner Figma 62959:4803 |
+| 2026-08-15 | Electrolytes comparison UI: With/Without cards + Avg HR/Resting/Walking/BP | Owner Figma 62967:5991 |

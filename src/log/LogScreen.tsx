@@ -176,7 +176,7 @@ export function LogScreen({
       value={recordedAt}
       onChange={(e) => setRecordedAt(e.target.value)}
       required
-      InputLabelProps={{ shrink: true }}
+      slotProps={{ inputLabel: { shrink: true } }}
       disabled={selectedType === "electrolyte" && electrolyteBlocked}
     />
   );
@@ -418,7 +418,7 @@ export function LogScreen({
               value={amountOz}
               onChange={(e) => setAmountOz(e.target.value)}
               type="number"
-              inputProps={{ min: 1, step: "any" }}
+              slotProps={{ htmlInput: { min: 1, step: "any" } }}
               required
               sx={{ flex: 1 }}
             />

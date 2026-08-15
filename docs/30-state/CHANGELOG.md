@@ -5,7 +5,24 @@ type: changelog
 
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
+## 2026-08-15
+- **FEAT-008 done** — AC-12 Playwright Medication journey; `AnalyticsScreen` + `/analytics` UI (tabs + Medication Impact card); domain AC-1–11 remain green. Cardiovascular/Recovery/Electrolytes UI tabs still deferred to a later iterate.
+- **FEAT-008 AC-11** — `src/analytics/electrolytes`: With/Without cohort averages (HR/resting/walking/BP); window from first electrolytes yes.
+- **FEAT-008 AC-10** — `src/analytics/recovery`: Chart 4 HRV (Today/7/30) + Chart 5 walking HR (7/30 only).
+- **FEAT-008 AC-9** — `src/analytics/cardiovascular`: Chart 2 BP/HR overlay (Today/7/30, Y 50–190); Chart 3 tachycardia ≥100 (7 bars).
+- **FEAT-008 AC-8** — Demo cannot read Laura analytics series/options (account scoping regression lock).
+- **FEAT-008 AC-7** — tooltips `120/80 · 8:07 AM` / `105 bpm · 8:07 AM`; slots carry `tooltip`.
+- **FEAT-008 AC-6** — `getMedicationImpactMedOptions`: catalog + `#8E8E93` disabled untaken; multi-dose uses most recent take-time.
+- **FEAT-008 AC-5** — BP = manual systolic only; HR = manual BP-log HR + detailed `heart_rate` (resting/summary excluded).
+- **FEAT-008 AC-4** — ±15 min closest slot fill (`pickClosestInWindow`); no interpolation; BP systolic candidates.
+- **FEAT-008 AC-3** — `buildMedicationImpactSeries`: slots `-2h | -1h | Dose | +1h | +2h` with absolute targets from take-time.
+- **FEAT-008 AC-2** — Medication Impact card contract (`src/analytics/medication-impact`): title/helper, Compare/with, Heart Rate|BP, date `MM/DD/YYYY` + prev/next, Recharts chart-area flag.
+- **FEAT-008 AC-1** — approved → in-progress; `src/analytics/tabs` (Medication default); shell Analytics subtitle locked; AC-1 green.
+- **FEAT-008 Electrolytes Figma** — full page `62967:5991` locked (With/Without cards; Avg HR / Resting / Walking / BP); all Analytics tab Figma now in hand; awaiting PRD approve.
+
 ## 2026-08-14
+- **FEAT-008 Chart 5 walking HR** — Figma `62959:4803` locked; range **Last 7 / Last 30 only** (no Today); copy deck keys added.
+- **FEAT-008 Chart 4 HRV** — Figma `62957:4735` locked (Today/Last 7/Last 30 + “What your HRV shows” callout); copy deck keys added.
 - **FEAT-008 Chart 3 threshold** — locked **≥ 100** bpm (math + copy; Figma had `>`).
 - **FEAT-008 Cardiovascular Figma** — Chart 2 `62953:4603` (BP & HR + Today/Last 7/Last 30); Chart 3 `62953:4604` (Tachycardia Burden + Data Disclaimer); copy deck keys added.
 - **FEAT-008 Medication locks** — single-day date picker + prev/next (Figma `62816:27152`); multi-dose → most recent; untaken meds `#8E8E93` disabled; REQ-16 binding text updated.

@@ -38,6 +38,9 @@ unless a contract doc carries its own binding log. -->
 | 2026-08-14 | Chart 2 range UI labels | Today / Last 7 Days / Last 30 Days (Figma) | Owner Figma 62953:4603 |
 | 2026-08-14 | Chart 3 Figma + disclaimer | Tachycardia Burden card + Data Disclaimer; threshold ≥ vs > open | Owner Figma 62953:4604 |
 | 2026-08-14 | Chart 3 threshold | **≥ 100** bpm (math + UI copy; Figma had `>`) | Owner |
+| 2026-08-14 | Chart 4 HRV Figma | Title/helper/range + “What your HRV shows” callout | Owner Figma 62957:4735 |
+| 2026-08-14 | Chart 5 walking HR range | **Last 7 Days \| Last 30 Days** only — no Today | Owner Figma 62959:4803 |
+| 2026-08-15 | Electrolytes Figma | Full page With/Without cards + metric labels | Owner Figma 62967:5991 |
 | 2026-08-14 | Summary metric keys | Store summary columns as `summary_*` keys (not detailed `heart_rate`) so charts stay detailed-only | FEAT-007 AC-3 |
 | 2026-08-10 | Active nav style | Icon pill #082E33@80% radius ~16px; label below pill | Design review |
 | 2026-08-10 | Home vs Dashboard | Nav label Home; page title Dashboard | Design review |

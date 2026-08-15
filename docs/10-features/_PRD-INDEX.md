@@ -1,6 +1,6 @@
 ---
 type: prd-index
-updated: 2026-08-13
+updated: 2026-08-15
 ---
 # Feature Index
 
@@ -15,7 +15,7 @@ updated: 2026-08-13
 | FEAT-005 | Home dashboard (today's summary) | REQ-01, NFR-01 | done | [[FEAT-005-home-dashboard]] | tests/feat-005-home-dashboard.test.ts; e2e/feat-005-home-journey.spec.ts |
 | FEAT-006 | Calendar (manual day detail) | REQ-11, NFR-01 | done | [[FEAT-006-calendar]] | tests/feat-006-calendar.test.ts · e2e/feat-006-calendar-journey.spec.ts |
 | FEAT-007 | Import (third-party CSV pair) | REQ-12, REQ-15, NFR-01, NFR-02, NFR-06 | done | [[FEAT-007-import]] | tests/feat-007-import.test.ts · e2e/feat-007-import-journey.spec.ts |
-| FEAT-008 | Analytics (all tabs) | REQ-16, REQ-17, REQ-20, NFR-01, NFR-06 | draft | [[FEAT-008-analytics]] | tests/feat-008-analytics.test.ts |
+| FEAT-008 | Analytics (all tabs) | REQ-16, REQ-17, REQ-20, NFR-01, NFR-06 | done | [[FEAT-008-analytics]] | tests/feat-008-analytics.test.ts; e2e/feat-008-analytics-journey.spec.ts |
 
 **Status values:** `draft` → `approved` → `in-progress` → `done` (or `deprecated`)
 
@@ -23,4 +23,4 @@ updated: 2026-08-13
 > Every REQ-ID in [[01-requirements]] must appear in some feature's
 > Implements column, or be listed here as explicitly deferred:
 >
-> **Deferred requirements:** _(none for Analytics — FEAT-008 covers REQ-16/17/20 once approved)._ **Done:** REQ-01–REQ-12, REQ-15 via FEAT-001–007. **Draft:** REQ-16, REQ-17, REQ-20 via FEAT-008.
+> **Deferred requirements:** _(none)._ **Done:** REQ-01–REQ-12, REQ-15–REQ-20 via FEAT-001–008.

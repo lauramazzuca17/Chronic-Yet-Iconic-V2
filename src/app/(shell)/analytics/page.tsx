@@ -1,7 +1,7 @@
-export default function AnalyticsPage() {
-  return (
-    <main style={{ padding: "0 16px 24px" }}>
-      <p>This section is next.</p>
-    </main>
-  );
+import { loadMedicationImpactView } from "@/analytics/actions";
+import { AnalyticsScreen } from "@/analytics/AnalyticsScreen";
+
+export default async function AnalyticsPage() {
+  const initial = await loadMedicationImpactView();
+  return <AnalyticsScreen initial={initial} />;
 }

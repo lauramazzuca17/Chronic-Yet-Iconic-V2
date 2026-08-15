@@ -28,6 +28,7 @@ describe("FEAT-007 import", () => {
     });
 
     expect(result.ok).toBe(false);
+    if (result.ok) return;
     expect(result.errorKey).toBe("import.error_missing_pair");
     expect(listImportedSamples(accountId)).toHaveLength(0);
   });

@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: copy-deck
 status: design-contract
-updated: 2026-08-14
+updated: 2026-08-15
 ---
 # Copy Deck — canonical user-facing strings
 
@@ -50,6 +50,19 @@ updated: 2026-08-14
 | calendar.day_heading | {weekday} · {Month} {D}, {YYYY} | Locked pattern e.g. Thursday · August 6, 2026 |
 | calendar.day_heading_today | Today | When selected day is today (Figma) |
 | shell.subtitle.analytics | Compare how different factors impact your health over time. | Locked from Analytics Figma 62816-27151 |
+| analytics.tab.medication | Medication | Analytics chip |
+| analytics.tab.cardiovascular | Cardiovascular | Analytics chip |
+| analytics.tab.recovery | Recovery | Analytics chip |
+| analytics.tab.electrolytes | Electrolytes | Analytics chip |
+| analytics.med.title | Medication Impact | Figma 62816-27152 |
+| analytics.med.helper | See how your vitals change before and after taking a medication. | Figma |
+| analytics.med.compare | Compare | Figma |
+| analytics.med.with | with | Figma |
+| analytics.med.metric.hr | Heart Rate | Metric dropdown |
+| analytics.med.metric.bp | BP | Metric dropdown |
+| analytics.med.prev_day | Previous day | a11y |
+| analytics.med.next_day | Next day | a11y |
+| analytics.med.date_format | MM/DD/YYYY | Display pattern |
 | analytics.cardio.chart2.title | Blood Pressure and Heart Rate | Figma 62953-4603 |
 | analytics.cardio.chart2.helper | See how changes in one may relate to changes in the other. | Figma 62953-4603 |
 | analytics.range.today | Today | Chart range segmented control |
@@ -59,6 +72,26 @@ updated: 2026-08-14
 | analytics.cardio.chart3.helper | Percent of heart rate readings ≥ 100 bpm | Owner lock ≥100 (overrides Figma `>`) |
 | analytics.cardio.chart3.disclaimer_title | Data Disclaimer | Figma 62953-4604 |
 | analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the percentage of heart rate readings that were at or above the 100 bpm threshold. | ≥100 lock |
+| analytics.recovery.hrv.title | Heart Rate Variability | Figma 62957-4735 |
+| analytics.recovery.hrv.helper | HRV measures the changes in time between your heartbeats. | Figma 62957-4735 |
+| analytics.recovery.hrv.info_title | What your HRV shows | Figma info callout |
+| analytics.recovery.hrv.info_intro | Your autonomic nervous system controls HRV through two competing parts: | Figma |
+| analytics.recovery.hrv.info_sympathetic | Sympathetic system: The "fight-or-flight" response that speeds up your heart during stress or action. | Bold label in UI |
+| analytics.recovery.hrv.info_parasympathetic | Parasympathetic system: The "rest-and-digest" response that slows down your heart and creates variation between beats. | Bold label in UI |
+| analytics.recovery.hrv.info_footer | What does this mean for someone with POTs? No clue. But when I figure it out I’ll have this chart to reference. | Figma spelling POTs |
+| analytics.recovery.walking.title | Average Walking Heart Rate | Figma 62959-4803 |
+| analytics.recovery.walking.helper | Walks outside can be very challenging. This chart will show what your average heart rate is during these walks. | Figma 62959-4803 |
+| analytics.electrolytes.title | Electrolytes | Figma 62967-5991 |
+| analytics.electrolytes.helper | See how days with electrolytes compare to days without. | Figma |
+| analytics.electrolytes.with_title | With Electrolytes | Figma card |
+| analytics.electrolytes.with_helper | Averages based on days you logged electrolytes | Figma |
+| analytics.electrolytes.without_title | Without Electrolytes | Figma card |
+| analytics.electrolytes.without_helper | Averages based on days you didn’t log electrolytes | Figma |
+| analytics.electrolytes.metric.avg_hr | Avg HR | Figma metric label |
+| analytics.electrolytes.metric.avg_resting | Avg Resting | Figma |
+| analytics.electrolytes.metric.avg_walking | Avg Walking | Figma |
+| analytics.electrolytes.metric.avg_bp | Avg BP | Figma |
+| analytics.electrolytes.unit.bpm | bpm | Unit suffix for HR metrics |
 | shell.subtitle.import | Upload Apple Health export files to populate your health database. | Locked from Import Figma 62939-4277 |
 | dashboard.empty | No stats for today yet. Add a log or import data. | Unused on Figma Home (zeros on cards); keep until confirmed drop |
 | dashboard.metric.bp_count | BP Readings | Home Figma |

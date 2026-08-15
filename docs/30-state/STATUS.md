@@ -1,35 +1,33 @@
 ---
 type: status
-updated: 2026-08-14
+updated: 2026-08-15
 tier: full
 ---
 # Project Status — session handoff
 
 ## Current phase
-PRD draft — **FEAT-008** Analytics; Medication + Cardiovascular locked (Chart 3 = **≥ 100**); Recovery/Electrolytes Figma still open.
+`/tdd-cycle` complete for FEAT-008. Ready for next FEAT or `/ship` when ready.
 
 ## Active feature
-FEAT-008 — Analytics (`draft`) — [[FEAT-008-analytics]]  
-Medication: `62816:27151` / `62816:27152` · Chart 2: `62953:4603` · Chart 3: `62953:4604` · Recharts
+_(none)_ — FEAT-008 Analytics is **done**.
 
 ## Built and tested
 - **FEAT-001**–**FEAT-007** — auth through Import.
+- **FEAT-008** — Analytics (domain AC-1–11 + Medication UI + AC-12 Playwright).
 
 ## Not yet built (and what blocks it)
-- **FEAT-008** — blocked on PRD **approve** + Recovery / Electrolytes Figma (or approve scoped build order).
+- Cardiovascular / Recovery / Electrolytes **UI tabs** (domain green; Medication tab is the only wired Analytics screen).
+- Recharts rendering (Medication chart area is a slot list for now).
 - Turso persistence.
 
 ## Test suite
-FEAT-007 green. FEAT-008 skeleton pending `/tdd-cycle` after approval.
+`npm test` — 68 passed | 1 todo.  
+AC-12 E2E: `e2e/feat-008-analytics-journey.spec.ts` — passing.
 
 ## In flight / uncommitted
-- FEAT-008 Chart 3 threshold locked to ≥ 100 bpm.
-
-## Blockers & open questions
-- Figma for Recovery + Electrolytes.
-- Optional empty-chart helper copy (dashed placeholder OK for v1).
+- FEAT-008 AC-12 completion + FEAT-008 done docs (uncommitted session work).
 
 ## Next actions
-1. Owner shares Recovery / Electrolytes Figma (or approves Medication+Cardio-first).
-2. Owner **approves** [[FEAT-008-analytics]].
-3. `/tdd-cycle` AC-1.
+1. Optional: wire Cardiovascular / Recovery / Electrolytes UI tabs + Recharts.
+2. Persist stores to Turso.
+3. `/ship` when ready for a release cut.

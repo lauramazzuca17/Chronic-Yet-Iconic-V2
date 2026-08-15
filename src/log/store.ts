@@ -351,3 +351,10 @@ export function listTodayEntries(
     )
     .map((e) => ({ ...e }));
 }
+
+/** All manual logs for an account (account-scoped). */
+export function listManualLogsForAccount(accountId: string): ManualLogEntry[] {
+  return getEntries()
+    .filter((e) => e.accountId === accountId)
+    .map((e) => ({ ...e }));
+}

@@ -5,6 +5,9 @@ type: changelog
 
 <!-- Newest first. Claude appends one entry per completed feature or notable change. -->
 
+## 2026-08-15 (login visual)
+- **Login visual fidelity** — Figma `62827:29846` + brief: lilypad pond image background, DM Sans ExtraLight wordmark + italic green Yet, fluid card (38px side margins), outlined fields, compact orange pill CTA, koi 177px under card; tokens in `src/styles/tokens.css`; tests in `tests/login-visual-fidelity.test.ts`.
+
 ## v0.1.1 — 2026-08-15
 - **Ship** — FEAT-001–009 MVP on Turso/libSQL persistence; full suite green; security-audit recorded (npm audit Next/postcss/sharp highs **accepted** for private NFR-05).
 - **Ship fixes** — Analytics client no longer value-imports `medication-impact`→`log/store` (`node:crypto` client break); login returns `{ok:true}` + `router.push`; FEAT-002 E2E warms DB before first login.

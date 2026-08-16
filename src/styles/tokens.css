@@ -1,0 +1,39 @@
+/**
+ * Design tokens — single source (docs/50-design/50-design-brief.md).
+ * Login visual fidelity values locked from Figma + login-page-brief.
+ */
+:root {
+  /* Brand */
+  --cyi-brand-orange: #f08429;
+  --cyi-yet-green: #367057;
+  --cyi-error: #d95c1c;
+  --cyi-on-surface: #1d1b20;
+  --cyi-field-border: #d1d1d6;
+  --cyi-field-label: #484649;
+  --cyi-field-input: #1c1b1f;
+  --cyi-surface: #ffffff;
+
+  /* Login layout */
+  --cyi-login-side-margin: 38px;
+  --cyi-login-card-radius: 22px;
+  --cyi-login-card-pad-top: 19px;
+  --cyi-login-card-pad-bottom: 23px;
+  --cyi-login-card-pad-x: 28px;
+  --cyi-login-stack-gap: 10px;
+  --cyi-login-field-gap: 16px;
+  --cyi-login-main-pad-top: 0px;
+  --cyi-login-koi-size: 177px;
+  --cyi-login-koi-gap: 10px;
+  --cyi-login-cta-pad-x: 16px;
+  --cyi-login-cta-pad-y: 4px;
+  --cyi-login-field-height: 56px;
+  --cyi-login-field-radius: 4px;
+  --cyi-login-wordmark-size: 28px;
+  --cyi-login-wordmark-line: 36px;
+  --cyi-login-error-size: 12px;
+  --cyi-login-pond-image: url("/images/login-pond.png");
+
+  /* Elevation (M3 light / Figma login card) */
+  --cyi-elevation-login-card:
+    0 4px 4px rgba(0, 0, 0, 0.15), 0 1px 1.5px rgba(0, 0, 0, 0.3);
+}

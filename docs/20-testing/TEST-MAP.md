@@ -1,6 +1,6 @@
 ---
 type: test-map
-updated: 2026-08-13
+updated: 2026-08-15
 ---
 # Test Map — acceptance criteria ↔ tests
 
@@ -8,6 +8,9 @@ updated: 2026-08-13
 
 | Feature | Criterion | Test file | Test name | Status |
 | --- | --- | --- | --- | --- |
+| Login visual | Layout tokens | tests/login-visual-fidelity.test.ts | layout: fluid card uses 38px side margins (not fixed 314px width) | ✅ passing |
+| Login visual | Pond asset | tests/login-visual-fidelity.test.ts | layout: pond background asset path exists under public/ | ✅ passing |
+| Login visual | Card/CTA/wordmark | tests/login-visual-fidelity.test.ts | layout: card radius, padding, stack, koi, and CTA match brief | ✅ passing |
 | FEAT-001 | AC-1 | tests/feat-001-auth-shell.test.ts | AC-1: unauthenticated access to protected routes is blocked | ✅ passing |
 | FEAT-001 | AC-2 | tests/feat-001-auth-shell.test.ts | AC-2: Laura can sign in with valid credentials | ✅ passing |
 | FEAT-001 | AC-3 | tests/feat-001-auth-shell.test.ts | AC-3: Demo can sign in with valid credentials | ✅ passing |
@@ -99,4 +102,5 @@ updated: 2026-08-13
 ## Exemptions (targeted-coverage rule 8)
 | Area | Why exempt | Approved by |
 | --- | --- | --- |
+| Login pixel match vs Figma | Side-by-side visual check (pond crop, font raster, shadow); layout tokens covered by unit tests | Owner — visual pass after login rebuild |
 | _(none)_ | FEAT-001 login/shell E2E exemption cleared by FEAT-002 AC-8 | — |

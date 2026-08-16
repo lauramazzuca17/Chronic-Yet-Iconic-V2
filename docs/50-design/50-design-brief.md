@@ -17,15 +17,15 @@ updated: 2026-08-10
 Personal health tool: **calm, grounded, direct**. Material Design 3 language via **MUI** with an MD3-oriented theme. Prefer clear hierarchy and readable data density for logs/calendar/charts over decorative marketing layouts. Avoid playful illustration-led chrome, social-feed patterns, and “medical AI” visual tropes. A later design file (MD3 components) is the visual reference to reconcile into tokens + MUI.
 
 ## Design tokens — single source of truth
-- **Tokens live in:** `src/styles/tokens.css` (create at scaffold) — code and any Claude Design round-trip derive from this file; never hardcode raw values elsewhere in components when a token exists.
-- Color roles, type scale, spacing, radii, motion: align to **MD3** roles (primary, surface, error, etc.) mapped through MUI theme; exact palette from the forthcoming design handoff when imported.
+- **Tokens live in:** `src/styles/tokens.css` — code derives from this file; never hardcode raw values elsewhere in components when a token exists. Login layout helpers in `src/auth/login-page.ts` (`getLoginPageLayout`) mirror the same values for tests.
+- Color roles, type scale, spacing, radii, motion: align to **MD3** roles (primary, surface, error, etc.) mapped through MUI theme; login palette locked from Figma `62827:29846` (2026-08-15).
 - Motion: subtle; respect `prefers-reduced-motion`.
 
 ## Component inventory
 | Component | Purpose | States to support |
 | --- | --- | --- |
 | App shell + nav | Dashboard / Log / Calendar / Analytics / Import | active, focus |
-| Sign-in form | Username + password | default, error, submitting |
+| Sign-in form | Username + password over pond + koi; fluid card 38px side margins | default, error, submitting (65% opacity disabled) |
 | Dashboard summary | Today’s stats (BP row, meds, water+Taken badge, symptoms) | empty zeros, populated, electrolytes taken vs not |
 | Log screen | All manual create types | validation error, success, electrolytes blocked |
 | Calendar + day detail | Pick day; list entries; delete | empty day (`0 logged entries`), populated, today heading, Confirm Delete |
@@ -48,6 +48,7 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 ## Handoff log
 | Date | Feature | Bundle path | Notes |
 | --- | --- | --- | --- |
+| 2026-08-15 | Login visual fidelity | briefs/login-page-brief.md | Figma `62827:29846` + error `62829:31133`; koi OK, rest diverges; card fluid width (38px side margins, not fixed 314px) |
 | 2026-08-13 | FEAT-006 | briefs/FEAT-006-brief.md | Calendar states: past day list, today, empty, scroll header |
 | 2026-08-13 | FEAT-005 | briefs/FEAT-005-brief.md | Home dashboard brief — paste to Claude Design |
 | 2026-08-12 | FEAT-004 | briefs/FEAT-004-brief.md | Log UI brief — paste to Claude Design |

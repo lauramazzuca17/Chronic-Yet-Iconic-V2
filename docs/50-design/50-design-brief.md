@@ -29,7 +29,7 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 | Dashboard summary | Today’s stats (BP row, meds, water+Taken badge, symptoms) | empty zeros, populated, electrolytes taken vs not |
 | Log screen | All manual create types | validation error, success, electrolytes blocked |
 | Calendar + day detail | Pick day; list entries; delete | empty day (`0 logged entries`), populated, today heading, Confirm Delete |
-| Analytics controls + chart | BP vs medication / HR trends | empty data, loading, populated |
+| Analytics controls + chart | BP vs medication / HR trends | empty data (no med / no vitals in window), loading, populated, date picker |
 | Import uploader | CSV pair (summary + detailed) | idle, error under Start import, success |
 | Import history | Database summary + batch list | Completed / Processing / Failed; Delete → Delete this import? |
 | Confirm dialog | Delete manual or imported data | open, confirming (Import uses inline confirm link) |

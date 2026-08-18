@@ -61,6 +61,10 @@ updated: 2026-08-18
 | analytics.med.select_empty | Medication | Compare dropdown when no med logged that day |
 | analytics.med.metric.hr | Heart Rate | Metric dropdown |
 | analytics.med.metric.bp | BP | Metric dropdown |
+| analytics.med.empty_window | No {stat} logged during this timeframe | Medication Impact when a med was taken but no vitals in −2h…+2h |
+| analytics.med.empty_window.hr | HR | `{stat}` when Heart Rate is selected |
+| analytics.med.empty_window.bp | BP | `{stat}` when BP is selected |
+| analytics.med.pick_date | Choose date | a11y label for the date-field calendar |
 | analytics.med.prev_day | Previous day | a11y |
 | analytics.med.next_day | Next day | a11y |
 | analytics.med.date_format | MM/DD/YYYY | Display pattern |

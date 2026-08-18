@@ -14,8 +14,13 @@ import {
   Cell,
 } from "recharts";
 import { Box, Typography } from "@mui/material";
-import { ANALYTICS_CHART_FRAME } from "@/analytics/layout";
-import type { MedicationImpactSeries } from "@/analytics/medication-series";
+import { ANALYTICS_CARD, ANALYTICS_CHART_FRAME } from "@/analytics/layout";
+import { formatMedicationImpactEmptyWindow } from "@/analytics/medication-impact";
+import {
+  medicationImpactPlottedValues,
+  medicationImpactYDomain,
+  type MedicationImpactSeries,
+} from "@/analytics/medication-series";
 import type { BpHrOverlaySeries, TachycardiaBurdenSeries } from "@/analytics/cardiovascular";
 import type { RecoverySeries } from "@/analytics/recovery";
 
@@ -58,6 +63,61 @@ function EmptyChartNote({ text }: { text: string }) {
   );
 }
 
+function MedicationImpactEmptyNote({ text }: { text: string }) {
+  return (
+    <Box
+      sx={{
+        minHeight: ANALYTICS_CHART_FRAME.heightPx,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxSizing: "border-box",
+        px: `${ANALYTICS_CARD.padPx}px`,
+      }}
+    >
+      <Typography
+        sx={{
+          m: 0,
+          fontSize: ANALYTICS_CARD.helperSizePx,
+          lineHeight: `${ANALYTICS_CARD.helperLineHeightPx}px`,
+          color: ANALYTICS_CARD.helperColor,
+          textAlign: "center",
+        }}
+      >
+        {text}
+      </Typography>
+    </Box>
+  );
+}
+
+function MedicationImpactTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload?: { tooltip?: string | null } }>;
+}) {
+  if (!active || !payload?.length) return null;
+  const tip = payload[0]?.payload?.tooltip;
+  if (!tip) return null;
+  return (
+    <Box
+      sx={{
+        bgcolor: "#ffffff",
+        border: `1px solid ${ANALYTICS_CHART_FRAME.border}`,
+        borderRadius: `${ANALYTICS_CHART_FRAME.radiusPx}px`,
+        px: `${ANALYTICS_CARD.helperGapPx}px`,
+        py: `${ANALYTICS_CARD.helperGapPx}px`,
+        fontSize: ANALYTICS_CARD.helperSizePx,
+        lineHeight: `${ANALYTICS_CARD.helperLineHeightPx}px`,
+        color: ANALYTICS_CARD.titleColor,
+      }}
+    >
+      {tip}
+    </Box>
+  );
+}
+
 export function MedicationImpactChart({
   series,
 }: {
@@ -66,11 +126,22 @@ export function MedicationImpactChart({
   if (!series) {
     return (
       <ChartFrame testId="analytics-med-chart" label="Medication impact chart">
-        <EmptyChartNote text="No medication logged for this day." />
+        <MedicationImpactEmptyNote text="No medication logged for this day." />
       </ChartFrame>
     );
   }
 
+  const plotted = medicationImpactPlottedValues(series);
+  if (plotted.length === 0) {
+    return (
+      <ChartFrame testId="analytics-med-chart" label="Medication impact chart">
+        <MedicationImpactEmptyNote text={formatMedicationImpactEmptyWindow(series.metric)} />
+        <MedicationImpactSlotFallback series={series} />
+      </ChartFrame>
+    );
+  }
+
+  const [yMin, yMax] = medicationImpactYDomain(plotted);
   const data = series.slots.map((s) => ({
     key: s.key,
     value: s.value,
@@ -84,14 +155,13 @@ export function MedicationImpactChart({
           <LineChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
             <XAxis dataKey="key" tick={{ fontSize: 11, fill: MUTED }} />
-            <YAxis tick={{ fontSize: 11, fill: MUTED }} width={36} />
-            <Tooltip
-              formatter={(_value, _name, item) => {
-                const tip = (item?.payload as { tooltip?: string | null })?.tooltip;
-                return [tip ?? "—", ""];
-              }}
-              labelFormatter={() => ""}
+            <YAxis
+              domain={[yMin, yMax]}
+              allowDecimals={false}
+              tick={{ fontSize: 11, fill: MUTED }}
+              width={40}
             />
+            <Tooltip content={<MedicationImpactTooltip />} />
             <Line
               type="monotone"
               dataKey="value"
@@ -103,29 +173,38 @@ export function MedicationImpactChart({
           </LineChart>
         </ResponsiveContainer>
       </Box>
-      {/* Text fallback for a11y / E2E; clipped so the Figma chart frame stays clean. */}
-      <Box
-        component="ul"
-        sx={{
-          position: "absolute",
-          width: 1,
-          height: 1,
-          m: -1,
-          p: 0,
-          overflow: "hidden",
-          clip: "rect(0 0 0 0)",
-          whiteSpace: "nowrap",
-          border: 0,
-        }}
-      >
-        {series.slots.map((s) => (
-          <li key={s.key} data-testid={`analytics-med-slot-${s.key}`}>
-            {s.key}: {s.value == null ? "—" : s.value}
-            {s.tooltip ? ` · ${s.tooltip}` : ""}
-          </li>
-        ))}
-      </Box>
+      <MedicationImpactSlotFallback series={series} />
     </ChartFrame>
+  );
+}
+
+function MedicationImpactSlotFallback({
+  series,
+}: {
+  series: MedicationImpactSeries;
+}) {
+  return (
+    <Box
+      component="ul"
+      sx={{
+        position: "absolute",
+        width: 1,
+        height: 1,
+        m: -1,
+        p: 0,
+        overflow: "hidden",
+        clip: "rect(0 0 0 0)",
+        whiteSpace: "nowrap",
+        border: 0,
+      }}
+    >
+      {series.slots.map((s) => (
+        <li key={s.key} data-testid={`analytics-med-slot-${s.key}`}>
+          {s.key}: {s.value == null ? "—" : s.value}
+          {s.tooltip ? ` · ${s.tooltip}` : ""}
+        </li>
+      ))}
+    </Box>
   );
 }
 

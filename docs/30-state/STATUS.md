@@ -12,7 +12,33 @@ Visual fidelity: **v1 owner-approved** for Home, Log, Import, and Analytics (all
 None.
 
 ## In flight / uncommitted
-- Import hang fix (local, not on Vercel yet): chunked Turso inserts (100/row), `import.failed` if the request dies, server-action body 4mb.
+- Medication Impact iterate + new favicon (local): empty-window copy, native date picker, tooltip colon fix, y-axis min−30/max+30.
+
+## Built and tested
+- **FEAT-001**–**FEAT-009**.
+- Visual fidelity (Home, Log, Import, Analytics) + Next.js 16.3.1 — on `main` (`ef9a060`), deployed.
+- **Import hang fix** — on `main` (`dc71dd7`).
+- **Medication Impact iterate (local)** — empty window copy; date field calendar; tooltip without leading colon; y-axis plotted min−30 / max+30. New owner koi favicon PNG.
+
+## Not yet built
+- Health records Home card (deferred).
+
+## Session notes / uncommitted
+- Favicon replaced with owner’s orange koi (teal outline, black ground).
+- Medication Impact y-axis uses **plotted** values (BP = systolic). Diastolic is tooltip-only, so 97/69 and 107/77 → 67–137.
+
+## Known local hazards
+- No ESLint CLI yet. `next lint` was removed in Next 16; `npm run lint` currently runs `tsc --noEmit`.
+- Playwright's dev server shares `.next` with `npm run dev`; running E2E or `next build` while dev is up can 500 the running server. Stop dev first (or give E2E its own `distDir`).
+- Remaining `npm audit` findings are **dev-only** (drizzle-kit / vite → esbuild). Do not `audit fix --force` (it wants to *downgrade* drizzle-kit).
+
+## Next actions
+1. Commit + push Medication Impact iterate + favicon when ready.
+
+## Test status (2026-08-18)
+- Unit: **130 passed** (1 todo).
+- Production `npm audit --omit=dev`: **0**.
+- E2E / full `next build` not re-run this pass (`.next` collision with `npm run dev`).
 
 ## Built and tested
 - **FEAT-001**–**FEAT-009**.
@@ -41,7 +67,8 @@ None.
 - E2E / full `next build` not re-run this pass (`.next` collision with `npm run dev`).
 
 ## Resolved 2026-08-18
-- Production Import hung on Start import “Processing” — chunked inserts + error copy (local; not deployed yet).
+- Medication Impact: empty window copy; date-field calendar; tooltip colon; y-axis min−30/max+30. New koi favicon.
+- Production Import hung on Start import “Processing” — chunked inserts + error copy (deployed `dc71dd7`).
 - Import picker filenames overflowing between Summary/Detailed columns — ellipsis-truncate; owner approved the Import page look.
 - Next.js 15 postcss/sharp npm audit highs — upgraded to Next 16.3.1; production audit clean.
 - Shared `TakenBadge` — Home and Log electrolytes no longer duplicate the `#efefef` 65px pill.

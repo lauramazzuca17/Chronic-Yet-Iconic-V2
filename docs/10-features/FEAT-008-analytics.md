@@ -6,7 +6,7 @@ implements: [REQ-16, REQ-17, REQ-20, NFR-01, NFR-06]
 depends_on: [FEAT-001, FEAT-002, FEAT-003, FEAT-004, FEAT-007]
 tests: [tests/feat-008-analytics.test.ts, e2e/feat-008-analytics-journey.spec.ts]
 created: 2026-08-14
-updated: 2026-08-15
+updated: 2026-08-18
 ---
 # FEAT-008 — Analytics (all tabs)
 
@@ -31,7 +31,7 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 - [x] AC-1: `/analytics` shell title **Analytics** + locked subtitle; four chips **Medication | Cardiovascular | Recovery | Electrolytes**; default **Medication** (REQ-16 / NFR-06 / Figma).
 
 ### Medication (Chart 1) — build first
-- [x] AC-2: Medication Impact card: title + helper; **date control** (prev day / date field `MM/DD/YYYY` / next day); **Compare** [med] **with** [metric]; Recharts chart area (REQ-16 / Figma `62816:27152`).
+- [x] AC-2: Medication Impact card: title + helper; **date control** (prev day / date field `MM/DD/YYYY` that opens a native calendar / next day); **Compare** [med] **with** [metric]; Recharts chart area (REQ-16 / Figma `62816:27152`).
 - [x] AC-3: Domain series for selected America/New_York **calendar day** + medication + metric (`Heart Rate` | BP) with X slots `-2h | -1h | Dose | +1h | +2h` relative to take-time (REQ-16).
 - [x] AC-4: Slot rule ±15 min closest; no interpolation (REQ-16).
 - [x] AC-5: BP = manual systolic only; HR = manual BP-log HR + detailed `heart_rate` only (REQ-16).
@@ -92,6 +92,10 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | analytics.med.date_format | MM/DD/YYYY | locked display pattern (e.g. 08/01/2026) |
 | analytics.med.prev_day / next_day | Previous day / Next day | a11y labels |
 | analytics.med.unavailable | _(visual)_ | gray `#8E8E93`, not selectable — no separate string required |
+| analytics.med.empty_window | No {stat} logged during this timeframe | `{stat}` = HR or BP |
+| analytics.med.empty_window.hr | HR | |
+| analytics.med.empty_window.bp | BP | |
+| analytics.med.pick_date | Choose date | a11y for date-field calendar |
 | analytics.cardio.chart2.title | Blood Pressure and Heart Rate | locked Figma 62953:4603 |
 | analytics.cardio.chart2.helper | See how changes in one may relate to changes in the other. | locked |
 | analytics.range.today | Today | locked |
@@ -130,8 +134,7 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 - Domain pure functions; UI thin.
 
 ## Open questions
-1. Optional: empty-chart / empty-metric helper text when series or cohort has no samples (dashed placeholder / non-zero empty OK for v1).
-2. Owner **approve** on [[FEAT-008-analytics]] to open `/tdd-cycle`.
+- none
 
 ## Change history
 | Date | Change | Why |
@@ -157,3 +160,4 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | 2026-08-15 | AC-10 green — HRV + walking HR series (Chart 4–5) | /tdd-cycle |
 | 2026-08-15 | AC-11 green — Electrolytes With/Without comparison cards | /tdd-cycle |
 | 2026-08-17 | Compare select stays enabled with “Medication” empty label; date caps white per owner screenshot; pills clamp at 122px | Owner visual pass |
+| 2026-08-18 | Empty window copy (`No HR/BP logged during this timeframe`); native date picker on the date field; tooltip without leading colon; y-axis plotted min−30 / max+30 | Owner |

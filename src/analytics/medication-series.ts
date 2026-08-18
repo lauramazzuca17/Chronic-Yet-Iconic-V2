@@ -129,6 +129,23 @@ export function formatMedicationImpactTooltip(
   return `${input.value} bpm · ${time}`;
 }
 
+export function medicationImpactPlottedValues(
+  series: MedicationImpactSeries
+): number[] {
+  return series.slots
+    .map((s) => s.value)
+    .filter((v): v is number => v != null);
+}
+
+/** Pad the y-axis 30 below the lowest plotted point and 30 above the highest. */
+export const MEDICATION_IMPACT_Y_PAD = 30;
+
+export function medicationImpactYDomain(values: number[]): [number, number] {
+  const lo = Math.min(...values);
+  const hi = Math.max(...values);
+  return [lo - MEDICATION_IMPACT_Y_PAD, hi + MEDICATION_IMPACT_Y_PAD];
+}
+
 async function mostRecentTake(
   accountId: string,
   calendarDate: string,

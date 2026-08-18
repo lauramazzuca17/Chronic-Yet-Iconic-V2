@@ -42,6 +42,7 @@ describe("FEAT-008 analytics", () => {
     expect(card.selectEmptyLabel).toBe("Medication");
     expect(card.prevDayLabel).toBe("Previous day");
     expect(card.nextDayLabel).toBe("Next day");
+    expect(card.pickDateLabel).toBe("Choose date");
     expect(card.metrics.map((m) => m.id)).toEqual(["heart_rate", "bp"]);
     expect(card.metrics.find((m) => m.id === "heart_rate")?.label).toBe(
       "Heart Rate"
@@ -365,6 +366,59 @@ describe("FEAT-008 analytics", () => {
     expect(hrSeries?.slots.find((s) => s.key === "Dose")?.tooltip).toBe(
       "92 bpm · 10:07 AM"
     );
+  });
+
+  it("empty window copy uses HR or BP; no chart when med taken but no vitals in ±2h", async () => {
+    const { formatMedicationImpactEmptyWindow } = await import(
+      "../src/analytics/medication-impact"
+    );
+    expect(formatMedicationImpactEmptyWindow("heart_rate")).toBe(
+      "No HR logged during this timeframe"
+    );
+    expect(formatMedicationImpactEmptyWindow("bp")).toBe(
+      "No BP logged during this timeframe"
+    );
+
+    const { resetManualLogs, createMedicationLog } = await import(
+      "../src/log/store"
+    );
+    const {
+      buildMedicationImpactSeries,
+      medicationImpactPlottedValues,
+    } = await import("../src/analytics/medication-series");
+    await resetManualLogs();
+    await createMedicationLog({
+      accountId: "acct-laura",
+      medicationName: "Propranolol",
+      dose: "10mg",
+      recordedAt: "2026-08-01T10:00:00",
+    });
+    const series = await buildMedicationImpactSeries({
+      accountId: "acct-laura",
+      calendarDate: "2026-08-01",
+      medicationName: "Propranolol",
+      metric: "bp",
+    });
+    expect(series).not.toBeNull();
+    expect(medicationImpactPlottedValues(series!)).toEqual([]);
+  });
+
+  it("y-axis domain is 30 below the lowest plotted point and 30 above the highest", async () => {
+    const { medicationImpactYDomain } = await import(
+      "../src/analytics/medication-series"
+    );
+    expect(medicationImpactYDomain([97, 107])).toEqual([67, 137]);
+    expect(medicationImpactYDomain([97, 69, 107, 77])).toEqual([39, 137]);
+  });
+
+  it("Medication Impact tooltip content is the slot string with no name colon", async () => {
+    const source = await import("node:fs/promises").then((fs) =>
+      fs.readFile(new URL("../src/analytics/charts.tsx", import.meta.url), "utf8")
+    );
+    expect(source).not.toContain('return [tip ?? "—", ""]');
+    expect(source).toContain("MedicationImpactTooltip");
+    expect(source).toContain("medicationImpactYDomain");
+    expect(source).toContain("formatMedicationImpactEmptyWindow");
   });
   it("AC-8: Demo cannot read Laura analytics", async () => {
     const {

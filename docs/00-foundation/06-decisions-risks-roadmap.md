@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-18 | Medication Impact y-axis | Plotted min−30 / max+30 (BP uses systolic as the plotted value; diastolic is tooltip-only) | Owner: 97/69 and 107/77 → 67–137 |
 | 2026-08-18 | Import payload + ingest | Server-action body **4mb**; sample rows insert in **chunks of 100** with `ON CONFLICT DO NOTHING`; UI shows `import.failed` instead of hanging on Processing | Owner hit a 4+ min hang on Vercel: one Turso round-trip per sample + no try/finally. Vercel request bodies cap ~4.5mb. |
 | 2026-08-18 | Next.js 16 upgrade | **16.3.1** + React 19.2.8; `src/middleware.ts` → `src/proxy.ts`; `next lint` removed (lint aliases typecheck) | Owner asked; clears Next→postcss/sharp highs; `npm audit --omit=dev` is 0 |
 | 2026-08-15 | `/ship` npm audit highs (Next→postcss/sharp) | **Accepted** for private v0.1.1 (NFR-05); revisit on Next 16 upgrade | Owner |

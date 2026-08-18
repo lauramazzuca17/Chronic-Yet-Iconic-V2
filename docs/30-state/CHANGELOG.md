@@ -3,6 +3,10 @@ type: changelog
 ---
 # Changelog
 
+## 2026-08-18 (medication impact + favicon)
+- **Favicon** — owner koi PNG (orange fish, teal outline, black ground) at `public/favicon.png`.
+- **Medication Impact** — empty window copy when a med was taken but no HR/BP in −2h…+2h; date field opens a native calendar; tooltip is `97/69 · 8:46 AM` with no leading colon; y-axis is plotted min−30 / max+30.
+
 ## 2026-08-18 (import hang)
 - **Import on Vercel hung on “Processing”** — samples were inserted one Turso round-trip at a time, and a dead request never cleared the button. Ingest now chunks 100 rows; the button recovers with `import.failed`; server-action body limit is 4mb.
 

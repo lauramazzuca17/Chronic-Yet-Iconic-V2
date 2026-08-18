@@ -73,4 +73,4 @@ Slot list (`analytics-med-slot-*`) is visually clipped (a11y/E2E fallback). E2E 
 
 ## Favicon
 
-Owner PNG (koi yin-yang on black) at `public/favicon.png`. Metadata + `/favicon.ico` rewrite point at the PNG.
+Owner PNG (orange koi, teal outline, black ground) at `public/favicon.png`. Metadata + `/favicon.ico` rewrite point at the PNG.

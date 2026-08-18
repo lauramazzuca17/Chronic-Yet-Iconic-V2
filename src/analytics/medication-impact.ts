@@ -29,6 +29,8 @@ export type MedicationImpactCard = {
   prevDayKey: "analytics.med.prev_day";
   nextDayLabel: string;
   nextDayKey: "analytics.med.next_day";
+  pickDateLabel: string;
+  pickDateKey: "analytics.med.pick_date";
   dateFormat: "MM/DD/YYYY";
   metrics: MedicationImpactMetric[];
   chartLibrary: "recharts";
@@ -46,6 +48,10 @@ const COPY = {
   "analytics.med.next_day": "Next day",
   "analytics.med.metric.hr": "Heart Rate",
   "analytics.med.metric.bp": "BP",
+  "analytics.med.empty_window": "No {stat} logged during this timeframe",
+  "analytics.med.empty_window.hr": "HR",
+  "analytics.med.empty_window.bp": "BP",
+  "analytics.med.pick_date": "Choose date",
 } as const;
 
 const METRICS: readonly MedicationImpactMetric[] = [
@@ -77,6 +83,8 @@ export function getMedicationImpactCard(): MedicationImpactCard {
     prevDayKey: "analytics.med.prev_day",
     nextDayLabel: COPY["analytics.med.next_day"],
     nextDayKey: "analytics.med.next_day",
+    pickDateLabel: COPY["analytics.med.pick_date"],
+    pickDateKey: "analytics.med.pick_date",
     dateFormat: "MM/DD/YYYY",
     metrics: [...METRICS],
     chartLibrary: "recharts",
@@ -91,6 +99,17 @@ export function formatMedicationImpactDate(calendarDate: string): string {
     throw new Error(`Invalid calendar date: ${calendarDate}`);
   }
   return `${m}/${d}/${y}`;
+}
+
+/** Empty chart when a med was taken but no HR/BP landed in the −2h…+2h slots. */
+export function formatMedicationImpactEmptyWindow(
+  metric: MedicationImpactMetricId
+): string {
+  const stat =
+    metric === "bp"
+      ? COPY["analytics.med.empty_window.bp"]
+      : COPY["analytics.med.empty_window.hr"];
+  return COPY["analytics.med.empty_window"].replace("{stat}", stat);
 }
 
 function parseCalendarDate(calendarDate: string): {

@@ -43,7 +43,7 @@ updated: 2026-08-18
 | Import visual | Cards + summary | tests/import-visual-layout.test.ts | Upload radius 8 / History radius 12; sage Database Summary + 18×24 file-waveform (`62946:4425`) | ✅ passing |
 | Import visual | Screen wiring | tests/import-visual-layout.test.ts | ImportScreen uses IMPORT tokens; compact Choose File / Start import (not 44px visual) | ✅ passing |
 | Import visual | Filename overflow | tests/import-visual-layout.test.ts | Chosen Summary/Detailed names ellipsis-truncate (`IMPORT.filename`); full name on `title` | ✅ passing |
-| Shell visual | Favicon | tests/log-visual-layout.test.ts | `public/favicon.png` (owner koi yin-yang) exists | ✅ passing |
+| Shell visual | Favicon | tests/log-visual-layout.test.ts | `public/favicon.png` (owner koi, black background) exists | ✅ passing |
 | FEAT-003 | Header layout | tests/feat-003-shell-polish.test.ts | header layout: Figma type sizes, 16px gutter, logout icon asset | ✅ passing |
 | FEAT-003 | Nav layout | tests/feat-003-shell-polish.test.ts | nav layout: 64px bar and label medium tokens | ✅ passing |
 | FEAT-003 | Nav fixed | tests/feat-003-shell-polish.test.ts | nav layout: fixed bar so Log (and siblings) stay tappable | ✅ passing |
@@ -115,6 +115,8 @@ updated: 2026-08-18
 | FEAT-007 | AC-8 | e2e/feat-007-import-journey.spec.ts | AC-8: Playwright upload pair then per-file delete (2 cards) | ✅ passing |
 | FEAT-008 | AC-1 | tests/feat-008-analytics.test.ts | AC-1: /analytics shell + four tabs; default Medication | ✅ passing |
 | FEAT-008 | AC-2 | tests/feat-008-analytics.test.ts | AC-2: Medication Impact card + date/Compare controls (Figma) | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Empty window copy HR/BP; y-axis min−30/max+30; tooltip without name colon | ✅ passing |
+| FEAT-008 | iterate | tests/analytics-visual-layout.test.ts | Date field overlays native `type="date"` picker (`analytics-med-date-picker`) | ✅ passing |
 | FEAT-008 | AC-3 | tests/feat-008-analytics.test.ts | AC-3: Medication impact series slots -2h…+2h | ✅ passing |
 | FEAT-008 | AC-4 | tests/feat-008-analytics.test.ts | AC-4: ±15 min closest; no interpolation | ✅ passing |
 | FEAT-008 | AC-5 | tests/feat-008-analytics.test.ts | AC-5: BP manual; HR manual + detailed heart_rate | ✅ passing |

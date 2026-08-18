@@ -416,6 +416,19 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
     });
   }
 
+  function onPickDate(calendarDate: string) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(calendarDate)) return;
+    startTransition(async () => {
+      setMed(
+        await loadMedicationImpactView({
+          calendarDate,
+          medicationName: med.selectedMed,
+          metric: med.metric,
+        })
+      );
+    });
+  }
+
   function onMedChange(name: string) {
     startTransition(async () => {
       setMed(
@@ -627,6 +640,7 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
                 </Box>
                 <Box
                   sx={{
+                    position: "relative",
                     flex: 1,
                     minWidth: 0,
                     display: "flex",
@@ -660,6 +674,36 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
                   >
                     {med.dateDisplay}
                   </Typography>
+                  <Box
+                    component="input"
+                    type="date"
+                    value={med.calendarDate}
+                    onChange={(e) => onPickDate(e.target.value)}
+                    disabled={pending}
+                    aria-label={med.card.pickDateLabel}
+                    data-testid="analytics-med-date-picker"
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                      opacity: 0,
+                      width: "100%",
+                      height: "100%",
+                      m: 0,
+                      p: 0,
+                      border: "none",
+                      cursor: pending ? "default" : "pointer",
+                      "&::-webkit-calendar-picker-indicator": {
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        margin: 0,
+                        padding: 0,
+                        cursor: pending ? "default" : "pointer",
+                        opacity: 0,
+                      },
+                    }}
+                  />
                 </Box>
                 <Box
                   component="button"

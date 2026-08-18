@@ -6,7 +6,7 @@ implements: [REQ-12, REQ-15, NFR-01, NFR-02, NFR-06]
 depends_on: [FEAT-001, FEAT-002, FEAT-003]
 tests: [tests/feat-007-import.test.ts, e2e/feat-007-import-journey.spec.ts]
 created: 2026-08-13
-updated: 2026-08-14
+updated: 2026-08-18
 ---
 # FEAT-007 — Import (third-party CSV pair)
 
@@ -103,3 +103,4 @@ Composition (owner):
 | 2026-08-14 | AC-7 green — Import UI Upload Files + History (Figma 62939-4277) | /tdd-cycle |
 | 2026-08-14 | AC-8 green — Playwright upload + batch-delete; feature **done** | /tdd-cycle |
 | 2026-08-15 | REQ-15 semantics superseded by [[FEAT-009-turso-persistence]] (per-file history/delete); pair upload REQ-12 unchanged | Owner grill |
+| 2026-08-18 | Production ingest hung on Start import “Processing”: samples now insert in chunks of 100; action/UI report `import.failed` instead of spinning; server-action body limit 4mb | Owner report |

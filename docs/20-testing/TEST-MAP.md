@@ -108,6 +108,7 @@ updated: 2026-08-18
 | FEAT-007 | AC-2 | tests/feat-007-import.test.ts | AC-2: detailed Metric → metric_key + NY recorded_at | ✅ passing |
 | FEAT-007 | AC-3 | tests/feat-007-import.test.ts | AC-3: summary rows stored; BP never imported | ✅ passing |
 | FEAT-007 | AC-4 | tests/feat-007-import.test.ts | AC-4: skip duplicates; new + skipped counts | ✅ passing |
+| FEAT-007 | bug | tests/feat-007-import.test.ts | Production hang: chunked sample inserts (≤100/row) + import.failed if the request dies; server action body 4mb | ✅ passing |
 | FEAT-007 | AC-5 | tests/feat-007-import.test.ts | AC-5: Demo cannot access Laura imports | ✅ passing |
 | FEAT-007 | AC-6 | tests/feat-007-import.test.ts | AC-6: batch-delete removes ImportBatch samples | ✅ passing |
 | FEAT-007 | AC-7 | tests/feat-007-import.test.ts | AC-7: /import shell + upload + batch list | ✅ passing |

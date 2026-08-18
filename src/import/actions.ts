@@ -14,38 +14,42 @@ export type ImportActionResult =
 export async function importCsvPairAction(
   formData: FormData
 ): Promise<ImportActionResult> {
-  const session = await requireSession();
-  const summaryFile = formData.get("summaryCsv");
-  const detailedFile = formData.get("detailedCsv");
+  try {
+    const session = await requireSession();
+    const summaryFile = formData.get("summaryCsv");
+    const detailedFile = formData.get("detailedCsv");
 
-  const summaryOk = summaryFile instanceof File && summaryFile.size > 0;
-  const detailedOk = detailedFile instanceof File && detailedFile.size > 0;
+    const summaryOk = summaryFile instanceof File && summaryFile.size > 0;
+    const detailedOk = detailedFile instanceof File && detailedFile.size > 0;
 
-  if (!summaryOk || !detailedOk) {
-    return { ok: false, errorKey: "import.error_missing_pair" };
+    if (!summaryOk || !detailedOk) {
+      return { ok: false, errorKey: "import.error_missing_pair" };
+    }
+
+    const summaryCsv = await summaryFile.text();
+    const detailedCsv = await detailedFile.text();
+    const result = await importHealthCsvPair({
+      accountId: session.accountId,
+      summaryCsv,
+      detailedCsv,
+      summaryFilename: summaryFile.name,
+      detailedFilename: detailedFile.name,
+    });
+
+    if (!result.ok) {
+      return { ok: false, errorKey: result.errorKey };
+    }
+
+    revalidatePath("/import");
+    return {
+      ok: true,
+      inserted: result.inserted,
+      skipped: result.skipped,
+      batchId: result.batchId,
+    };
+  } catch {
+    return { ok: false, errorKey: "import.failed" };
   }
-
-  const summaryCsv = await summaryFile.text();
-  const detailedCsv = await detailedFile.text();
-  const result = await importHealthCsvPair({
-    accountId: session.accountId,
-    summaryCsv,
-    detailedCsv,
-    summaryFilename: summaryFile.name,
-    detailedFilename: detailedFile.name,
-  });
-
-  if (!result.ok) {
-    return { ok: false, errorKey: result.errorKey };
-  }
-
-  revalidatePath("/import");
-  return {
-    ok: true,
-    inserted: result.inserted,
-    skipped: result.skipped,
-    batchId: result.batchId,
-  };
 }
 
 export async function deleteImportBatchAction(

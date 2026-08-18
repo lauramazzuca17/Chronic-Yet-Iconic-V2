@@ -332,4 +332,70 @@ describe("FEAT-007 import", () => {
     ]);
   });
 
+  it(
+    "chunks sample inserts under the SQLite variable limit",
+    async () => {
+    const { IMPORT_SAMPLE_INSERT_CHUNK_SIZE, chunkItems } = await import(
+      "../src/import/store"
+    );
+    expect(IMPORT_SAMPLE_INSERT_CHUNK_SIZE).toBeLessThanOrEqual(100);
+    expect(IMPORT_SAMPLE_INSERT_CHUNK_SIZE).toBeGreaterThan(0);
+    expect(chunkItems([1, 2, 3, 4, 5], 2)).toEqual([[1, 2], [3, 4], [5]]);
+  },
+    15_000
+  );
+
+  it("ingests many detailed samples across insert chunks without dropping rows", async () => {
+    const {
+      importHealthCsvPair,
+      listImportedSamples,
+      resetImports,
+      IMPORT_SAMPLE_INSERT_CHUNK_SIZE,
+    } = await import("../src/import/store");
+    await resetImports();
+    const count = IMPORT_SAMPLE_INSERT_CHUNK_SIZE * 2 + 15;
+    const header =
+      "Timestamp,Date,Time,Metric,Value,Unit";
+    const rows = Array.from({ length: count }, (_, i) => {
+      const hour = String(12 + Math.floor(i / 3600)).padStart(2, "0");
+      const min = String(Math.floor(i / 60) % 60).padStart(2, "0");
+      const sec = String(i % 60).padStart(2, "0");
+      return `2026-07-15T${hour}:${min}:${sec}-04:00,2026-07-15,${hour}:${min}:${sec},heart_rate,${70 + (i % 30)},bpm`;
+    });
+    const detailed = [header, ...rows].join("\n");
+    const summary =
+      "Date,Steps (sum)\n2026-07-15,10\n";
+
+    const result = await importHealthCsvPair({
+      accountId: "acct-laura",
+      summaryCsv: summary,
+      detailedCsv: detailed,
+      summaryFilename: "summary.csv",
+      detailedFilename: "detailed.csv",
+    });
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const samples = await listImportedSamples("acct-laura");
+    const hr = samples.filter((s) => s.metricKey === "heart_rate");
+    expect(hr).toHaveLength(count);
+    expect(result.inserted).toBe(count + 1); // + summary_steps
+  });
+
+  it("exposes import.failed copy and clears Processing if the action errors", async () => {
+    const { IMPORT_COPY } = await import("../src/import/copy");
+    expect(IMPORT_COPY["import.failed"]).toBe(
+      "Import did not finish. Try a shorter date range, then try again."
+    );
+    const source = await import("node:fs/promises").then((fs) =>
+      fs.readFile(new URL("../src/import/ImportScreen.tsx", import.meta.url), "utf8")
+    );
+    expect(source).toContain("finally");
+    expect(source).toContain('IMPORT_COPY["import.failed"]');
+  });
+
+  it("raises the server-action body limit so real CSV pairs are not capped at 1MB", async () => {
+    const { default: nextConfig } = await import("../next.config");
+    expect(nextConfig.experimental?.serverActions?.bodySizeLimit).toBe("4mb");
+  });
+
 });

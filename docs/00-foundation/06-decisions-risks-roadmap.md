@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-18 | Import payload + ingest | Server-action body **4mb**; sample rows insert in **chunks of 100** with `ON CONFLICT DO NOTHING`; UI shows `import.failed` instead of hanging on Processing | Owner hit a 4+ min hang on Vercel: one Turso round-trip per sample + no try/finally. Vercel request bodies cap ~4.5mb. |
 | 2026-08-18 | Next.js 16 upgrade | **16.3.1** + React 19.2.8; `src/middleware.ts` → `src/proxy.ts`; `next lint` removed (lint aliases typecheck) | Owner asked; clears Next→postcss/sharp highs; `npm audit --omit=dev` is 0 |
 | 2026-08-15 | `/ship` npm audit highs (Next→postcss/sharp) | **Accepted** for private v0.1.1 (NFR-05); revisit on Next 16 upgrade | Owner |
 | 2026-08-13 | Design tooling | **No Claude Design** — Figma + `/design-brief` + `/tdd-cycle` | Owner |
@@ -129,6 +130,6 @@ unless a contract doc carries its own binding log. -->
 | Risk | Control |
 | --- | --- |
 | Cross-account data leak | Account-scoped queries; tests for REQ-19 / NFR-01 |
-| Large Apple Health zip imports | CSV/XML alternate path (NFR-02); size limits decided at import FEAT |
+| Large Apple Health zip imports | CSV/XML alternate path (NFR-02); v1 accepts CSV pair only. Server-action body **4mb** (Vercel ~4.5mb cap). Samples insert in chunks of 100 (Turso round-trips). Longer date ranges may still need a shorter export. |
 | Public Vercel URL + password-only auth | Strong unique passwords; don’t broadly publish URL; consider Vercel Deployment Protection later if needed |
 | Next.js transitive postcss/sharp **high** CVEs (`npm audit`) | **Mitigated** 2026-08-18 via Next 16.3.1 (postcss 8.5.23); production `npm audit --omit=dev` is 0 |

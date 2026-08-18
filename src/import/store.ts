@@ -366,13 +366,18 @@ function parseSummarySamples(
   return out;
 }
 
-function dedupeKey(
-  accountId: string,
-  metricKey: string,
-  recordedAt: string,
-  value: number
-): string {
-  return `${accountId}|${metricKey}|${recordedAt}|${value}`;
+/** SQLite caps bound variables (~999). Each sample row uses 8 columns. */
+export const IMPORT_SAMPLE_INSERT_CHUNK_SIZE = 100;
+
+export function chunkItems<T>(items: readonly T[], size: number): T[][] {
+  if (size <= 0) {
+    throw new Error("chunk size must be positive");
+  }
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    out.push(items.slice(i, i + size));
+  }
+  return out;
 }
 
 /**
@@ -428,48 +433,29 @@ export async function importHealthCsvPair(
     ...parseSummarySamples(input.summaryCsv as string, input.accountId, now),
   ];
 
-  const existing = await db
-    .select()
-    .from(importedSamples)
-    .where(eq(importedSamples.accountId, input.accountId));
-  const seen = new Set(
-    existing.map((s) =>
-      dedupeKey(s.accountId, s.metricKey, s.recordedAt, s.value)
-    )
-  );
+  const rows = candidates.map((sample) => ({
+    id: randomUUID(),
+    accountId: sample.accountId,
+    importBatchId:
+      sample.sourceFormat === "detailed_csv" ? detailedBatchId : summaryBatchId,
+    metricKey: sample.metricKey,
+    value: sample.value,
+    unit: sample.unit,
+    recordedAt: sample.recordedAt,
+    createdAt: sample.createdAt,
+  }));
 
   let inserted = 0;
-  let skipped = 0;
-  for (const sample of candidates) {
-    const key = dedupeKey(
-      sample.accountId,
-      sample.metricKey,
-      sample.recordedAt,
-      sample.value
-    );
-    if (seen.has(key)) {
-      skipped += 1;
-      continue;
-    }
-    seen.add(key);
-    const batchId =
-      sample.sourceFormat === "detailed_csv" ? detailedBatchId : summaryBatchId;
-    try {
-      await db.insert(importedSamples).values({
-        id: randomUUID(),
-        accountId: sample.accountId,
-        importBatchId: batchId,
-        metricKey: sample.metricKey,
-        value: sample.value,
-        unit: sample.unit,
-        recordedAt: sample.recordedAt,
-        createdAt: sample.createdAt,
-      });
-      inserted += 1;
-    } catch {
-      skipped += 1;
-    }
+  for (const chunk of chunkItems(rows, IMPORT_SAMPLE_INSERT_CHUNK_SIZE)) {
+    if (chunk.length === 0) continue;
+    const written = await db
+      .insert(importedSamples)
+      .values(chunk)
+      .onConflictDoNothing()
+      .returning({ id: importedSamples.id });
+    inserted += written.length;
   }
+  const skipped = candidates.length - inserted;
 
   return {
     ok: true,

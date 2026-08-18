@@ -189,23 +189,31 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
 
     setProcessing(true);
     setPairError(false);
-    const result = await importCsvPairAction(data);
-    setProcessing(false);
+    try {
+      const result = await importCsvPairAction(data);
+      if (!result.ok) {
+        if (result.errorKey === "import.error_missing_pair") {
+          setPairError(true);
+        } else {
+          setFeedback(IMPORT_COPY["import.failed"]);
+        }
+        return;
+      }
 
-    if (!result.ok) {
-      setPairError(result.errorKey === "import.error_missing_pair");
-      return;
+      let message = formatImportSuccess(result.inserted);
+      if (result.skipped > 0) {
+        message = `${message} ${formatDuplicateSkipped(result.skipped)}`;
+      }
+      setFeedback(message);
+      setSummaryName(null);
+      setDetailedName(null);
+      form.reset();
+      router.refresh();
+    } catch {
+      setFeedback(IMPORT_COPY["import.failed"]);
+    } finally {
+      setProcessing(false);
     }
-
-    let message = formatImportSuccess(result.inserted);
-    if (result.skipped > 0) {
-      message = `${message} ${formatDuplicateSkipped(result.skipped)}`;
-    }
-    setFeedback(message);
-    setSummaryName(null);
-    setDetailedName(null);
-    form.reset();
-    router.refresh();
   }
 
   async function onDelete(batchId: string) {

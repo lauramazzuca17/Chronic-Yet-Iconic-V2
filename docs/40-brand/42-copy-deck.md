@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: copy-deck
 status: design-contract
-updated: 2026-08-15
+updated: 2026-08-18
 ---
 # Copy Deck — canonical user-facing strings
 
@@ -167,6 +167,7 @@ updated: 2026-08-15
 | log.electrolyte.no | No | Implied by **no row** for that day — not a create option in v1 |
 | import.success | Import finished — {count} new samples. | `{count}` = integer |
 | import.duplicate_skipped | Skipped {count} duplicates. | |
+| import.failed | Import did not finish. Try a shorter date range, then try again. | Shown under Start import when ingest throws or the request dies |
 | import.pair_required | Upload both the summary and detailed CSV files. | Guidance (upload card uses Figma instructions) |
 | import.error_missing_pair | Need both summary and detailed CSV files. | Locked under Start import (Figma) |
 | import.delete_confirm | _(superseded)_ | Use `import.entry.confirm_delete` |

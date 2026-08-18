@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      // Default is 1MB; real Health Export CSV pairs exceed that. Vercel
+      // serverless request bodies cap around 4.5MB — stay under that.
+      bodySizeLimit: "4mb",
+    },
+  },
   outputFileTracingRoot: path.join(__dirname),
   // Drizzle migrator reads drizzle/meta/_journal.json at runtime (getDb on login).
   outputFileTracingIncludes: {

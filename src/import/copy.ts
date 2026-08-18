@@ -21,6 +21,8 @@ export const IMPORT_COPY = {
   "import.entry.confirm_delete": "Delete this import?",
   "import.success": "Import finished — {count} new samples.",
   "import.duplicate_skipped": "Skipped {count} duplicates.",
+  "import.failed":
+    "Import did not finish. Try a shorter date range, then try again.",
 } as const;
 
 export function formatDatabaseSummaryCount(count: number): string {

@@ -3,6 +3,9 @@ type: changelog
 ---
 # Changelog
 
+## 2026-08-18 (import hang)
+- **Import on Vercel hung on “Processing”** — samples were inserted one Turso round-trip at a time, and a dead request never cleared the button. Ingest now chunks 100 rows; the button recovers with `import.failed`; server-action body limit is 4mb.
+
 ## 2026-08-18 (owner look)
 - **Log** — owner approved all form types (including BP, Medication, Mood, Event).
 - **Analytics** — owner approved all four tabs for v1 (Medication, Cardiovascular, Recovery, Electrolytes `62967:5994`).

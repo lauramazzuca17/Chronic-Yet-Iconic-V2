@@ -15,12 +15,12 @@ import {
 } from "recharts";
 import { Box, Typography } from "@mui/material";
 import { ANALYTICS_CARD, ANALYTICS_CHART_FRAME } from "@/analytics/layout";
-import { formatMedicationImpactEmptyWindow } from "@/analytics/medication-impact";
 import {
+  formatMedicationImpactEmptyWindow,
   medicationImpactPlottedValues,
   medicationImpactYDomain,
-  type MedicationImpactSeries,
-} from "@/analytics/medication-series";
+} from "@/analytics/medication-chart";
+import type { MedicationImpactSeries } from "@/analytics/medication-series";
 import type { BpHrOverlaySeries, TachycardiaBurdenSeries } from "@/analytics/cardiovascular";
 import type { RecoverySeries } from "@/analytics/recovery";
 

@@ -12,20 +12,19 @@ Visual fidelity: **v1 owner-approved** for Home, Log, Import, and Analytics (all
 None.
 
 ## In flight / uncommitted
-- Medication Impact iterate + new favicon (local): empty-window copy, native date picker, tooltip colon fix, y-axis min−30/max+30.
+- Vercel `2b13c28` build fix: client chart helpers in `src/analytics/medication-chart.ts` so Analytics does not bundle `node:fs`. Needs commit/push.
 
 ## Built and tested
 - **FEAT-001**–**FEAT-009**.
-- Visual fidelity (Home, Log, Import, Analytics) + Next.js 16.3.1 — on `main` (`ef9a060`), deployed.
-- **Import hang fix** — on `main` (`dc71dd7`).
-- **Medication Impact iterate (local)** — empty window copy; date field calendar; tooltip without leading colon; y-axis plotted min−30 / max+30. New owner koi favicon PNG.
+- Visual fidelity + Next.js 16.3.1 + Import hang fix — on `main`.
+- **Medication Impact iterate** — on `main` (`2b13c28`); Vercel build failed until this client-chunk fix.
+- **Analytics client-safe helpers (local)** — `medication-chart.ts`; unit 131 passed.
 
 ## Not yet built
 - Health records Home card (deferred).
 
 ## Session notes / uncommitted
-- Favicon replaced with owner’s orange koi (teal outline, black ground).
-- Medication Impact y-axis uses **plotted** values (BP = systolic). Diastolic is tooltip-only, so 97/69 and 107/77 → 67–137.
+- Client `charts.tsx` must not value-import `medication-series` / `medication-impact` (those pull Turso stores → Node builtins). Same class of bug as the earlier `node:crypto` client break.
 
 ## Known local hazards
 - No ESLint CLI yet. `next lint` was removed in Next 16; `npm run lint` currently runs `tsc --noEmit`.
@@ -33,40 +32,15 @@ None.
 - Remaining `npm audit` findings are **dev-only** (drizzle-kit / vite → esbuild). Do not `audit fix --force` (it wants to *downgrade* drizzle-kit).
 
 ## Next actions
-1. Commit + push Medication Impact iterate + favicon when ready.
+1. Commit + push the Analytics `node:fs` client-chunk fix so Vercel can deploy `2b13c28`’s Medication Impact work.
 
 ## Test status (2026-08-18)
-- Unit: **130 passed** (1 todo).
+- Unit: **131 passed** (1 todo).
 - Production `npm audit --omit=dev`: **0**.
-- E2E / full `next build` not re-run this pass (`.next` collision with `npm run dev`).
-
-## Built and tested
-- **FEAT-001**–**FEAT-009**.
-- Visual fidelity (Home, Log, Import, Analytics) + Next.js 16.3.1 — on `main` (`ef9a060`), deployed.
-- **Import hang fix (local)** — samples insert in chunks of 100; Start import recovers with `import.failed` instead of spinning; body limit 4mb. Unit suite 127 passed.
-
-## Not yet built
-- Health records Home card (deferred).
-
-## Session notes / uncommitted
-- Production Import hung on “Processing” (~4 min): one Turso round-trip per sample + no try/finally on the client action. Fix is local; needs commit/push to reach Vercel.
-- Vercel request bodies cap ~4.5mb. Exports larger than **4mb** (typical long-range detailed CSVs) still will not ingest — use a shorter date range in My Health Export.
-
-## Known local hazards
-- No ESLint CLI yet. `next lint` was removed in Next 16; `npm run lint` currently runs `tsc --noEmit`.
-- Playwright's dev server shares `.next` with `npm run dev`; running E2E or `next build` while dev is up can 500 the running server. Stop dev first (or give E2E its own `distDir`).
-- Remaining `npm audit` findings are **dev-only** (drizzle-kit / vite → esbuild). Do not `audit fix --force` (it wants to *downgrade* drizzle-kit).
-
-## Next actions
-1. Commit + push the Import hang fix so production picks it up.
-2. Retry Import with a shorter date range if the pair is larger than ~4mb.
-
-## Test status (2026-08-18)
-- Unit: **127 passed** (1 todo) on Next 16.3.1.
-- Production `npm audit --omit=dev`: **0**.
-- E2E / full `next build` not re-run this pass (`.next` collision with `npm run dev`).
+- E2E / full `next build` not re-run locally this pass (`.next` collision with `npm run dev`).
 
 ## Resolved 2026-08-18
+- Vercel deploy of Medication Impact iterate failed: Analytics client bundled `node:fs`. Helpers extracted to `medication-chart.ts` (local, not pushed).
 - Medication Impact: empty window copy; date-field calendar; tooltip colon; y-axis min−30/max+30. New koi favicon.
 - Production Import hung on Start import “Processing” — chunked inserts + error copy (deployed `dc71dd7`).
 - Import picker filenames overflowing between Summary/Detailed columns — ellipsis-truncate; owner approved the Import page look.

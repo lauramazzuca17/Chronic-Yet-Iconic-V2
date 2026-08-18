@@ -370,7 +370,7 @@ describe("FEAT-008 analytics", () => {
 
   it("empty window copy uses HR or BP; no chart when med taken but no vitals in ±2h", async () => {
     const { formatMedicationImpactEmptyWindow } = await import(
-      "../src/analytics/medication-impact"
+      "../src/analytics/medication-chart"
     );
     expect(formatMedicationImpactEmptyWindow("heart_rate")).toBe(
       "No HR logged during this timeframe"
@@ -382,10 +382,12 @@ describe("FEAT-008 analytics", () => {
     const { resetManualLogs, createMedicationLog } = await import(
       "../src/log/store"
     );
-    const {
-      buildMedicationImpactSeries,
-      medicationImpactPlottedValues,
-    } = await import("../src/analytics/medication-series");
+    const { buildMedicationImpactSeries } = await import(
+      "../src/analytics/medication-series"
+    );
+    const { medicationImpactPlottedValues } = await import(
+      "../src/analytics/medication-chart"
+    );
     await resetManualLogs();
     await createMedicationLog({
       accountId: "acct-laura",
@@ -405,7 +407,7 @@ describe("FEAT-008 analytics", () => {
 
   it("y-axis domain is 30 below the lowest plotted point and 30 above the highest", async () => {
     const { medicationImpactYDomain } = await import(
-      "../src/analytics/medication-series"
+      "../src/analytics/medication-chart"
     );
     expect(medicationImpactYDomain([97, 107])).toEqual([67, 137]);
     expect(medicationImpactYDomain([97, 69, 107, 77])).toEqual([39, 137]);
@@ -419,6 +421,32 @@ describe("FEAT-008 analytics", () => {
     expect(source).toContain("MedicationImpactTooltip");
     expect(source).toContain("medicationImpactYDomain");
     expect(source).toContain("formatMedicationImpactEmptyWindow");
+  });
+
+  it("Medication Impact chart helpers stay off server stores (no node:fs in the client chunk)", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const charts = await readFile(
+      new URL("../src/analytics/charts.tsx", import.meta.url),
+      "utf8"
+    );
+    expect(charts).toContain('from "@/analytics/medication-chart"');
+    expect(charts).not.toMatch(
+      /from ["']@\/analytics\/medication-impact["']/
+    );
+    expect(charts).not.toMatch(
+      /import \{[^}]*\} from ["']@\/analytics\/medication-series["']/
+    );
+    expect(charts).toContain(
+      'import type { MedicationImpactSeries } from "@/analytics/medication-series"'
+    );
+
+    const helpers = await readFile(
+      new URL("../src/analytics/medication-chart.ts", import.meta.url),
+      "utf8"
+    );
+    expect(helpers).not.toContain("log/store");
+    expect(helpers).not.toContain("import/store");
+    expect(helpers).not.toMatch(/from ["']node:(fs|crypto)["']/);
   });
   it("AC-8: Demo cannot read Laura analytics", async () => {
     const {

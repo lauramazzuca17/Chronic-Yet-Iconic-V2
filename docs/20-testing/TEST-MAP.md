@@ -116,6 +116,7 @@ updated: 2026-08-18
 | FEAT-008 | AC-1 | tests/feat-008-analytics.test.ts | AC-1: /analytics shell + four tabs; default Medication | ✅ passing |
 | FEAT-008 | AC-2 | tests/feat-008-analytics.test.ts | AC-2: Medication Impact card + date/Compare controls (Figma) | ✅ passing |
 | FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Empty window copy HR/BP; y-axis min−30/max+30; tooltip without name colon | ✅ passing |
+| FEAT-008 | bug | tests/feat-008-analytics.test.ts | Client chart helpers live in medication-chart.ts (no log/import stores / node:fs) | ✅ passing |
 | FEAT-008 | iterate | tests/analytics-visual-layout.test.ts | Date field overlays native `type="date"` picker (`analytics-med-date-picker`) | ✅ passing |
 | FEAT-008 | AC-3 | tests/feat-008-analytics.test.ts | AC-3: Medication impact series slots -2h…+2h | ✅ passing |
 | FEAT-008 | AC-4 | tests/feat-008-analytics.test.ts | AC-4: ±15 min closest; no interpolation | ✅ passing |

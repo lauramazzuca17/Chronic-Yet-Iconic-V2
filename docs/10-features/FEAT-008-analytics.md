@@ -161,3 +161,4 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | 2026-08-15 | AC-11 green — Electrolytes With/Without comparison cards | /tdd-cycle |
 | 2026-08-17 | Compare select stays enabled with “Medication” empty label; date caps white per owner screenshot; pills clamp at 122px | Owner visual pass |
 | 2026-08-18 | Empty window copy (`No HR/BP logged during this timeframe`); native date picker on the date field; tooltip without leading colon; y-axis plotted min−30 / max+30 | Owner |
+| 2026-08-18 | Client chart helpers moved to `medication-chart.ts` so Analytics does not bundle `node:fs` | Vercel `next build` |

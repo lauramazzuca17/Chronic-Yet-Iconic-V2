@@ -2,6 +2,15 @@
  * Design tokens — single source (docs/50-design/50-design-brief.md).
  * Login visual fidelity values locked from Figma + login-page-brief.
  */
+
+/* Padding is included in width/height so `width: 100%` cards cannot overflow
+   gutters. Screens may still set boxSizing in sx (Calendar overflow regression). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* Brand */
   --cyi-brand-orange: #f08429;
@@ -33,7 +42,20 @@
   --cyi-login-error-size: 12px;
   --cyi-login-pond-image: url("/images/login-pond.png");
 
-  /* Elevation (M3 light / Figma login card) */
-  --cyi-elevation-login-card:
-    0 4px 4px rgba(0, 0, 0, 0.15), 0 1px 1.5px rgba(0, 0, 0, 0.3);
+  /* Shell / Home (Figma 62795:75) */
+  --cyi-shell-gutter: 16px;
+  --cyi-shell-header-pad-top: 23px;
+  --cyi-shell-header-pad-bottom: 20px;
+  --cyi-shell-nav-height: 64px;
+  --cyi-card-title: #448774;
+  --cyi-card-value: #f08429;
+  --cyi-card-helper: #8e8e93;
+  --cyi-card-radius: 12px;
+
+  /* Log (Figma Main 62898:1748) */
+  --cyi-log-chip-selected: #f08429;
+  --cyi-log-chip-idle-text: #49454f;
+  --cyi-log-entry-border: #d1d5dc;
+  --cyi-log-zinc: #71717b;
+  --cyi-log-body-bg: #b7cc87;
 }

@@ -60,6 +60,7 @@ describe("FEAT-003 shell polish", () => {
     const scrolled = getScrolledHeaderChrome(true);
     expect(scrolled.sticky).toBe(true);
     expect(scrolled.background).toBe("rgba(11, 64, 65, 0.8)");
+    expect(scrolled.backgroundTransitionMs).toBe(300);
   });
 
   it("AC-5: nav hrefs map Home→/ title Dashboard and sibling routes", async () => {
@@ -81,5 +82,35 @@ describe("FEAT-003 shell polish", () => {
     expect(layout.hasWideShellLayout).toBe(false);
     expect(layout.desktopBreakpointLayouts).toEqual([]);
     expect(layout.maxContentWidthPx).toBe(430);
+  });
+
+  it("header layout: Figma type sizes, 16px gutter, logout icon asset", async () => {
+    const { getShellHeaderLayout } = await import("../src/shell/chrome");
+    const layout = getShellHeaderLayout();
+    expect(layout.gutterPx).toBe(16);
+    expect(layout.paddingTopPx).toBe(23);
+    expect(layout.paddingBottomPx).toBe(20);
+    expect(layout.eyebrowFontSizePx).toBe(16);
+    expect(layout.eyebrowFontWeight).toBe(300);
+    expect(layout.titleFontSizePx).toBe(32);
+    expect(layout.titleFontWeight).toBe(900);
+    expect(layout.subtitleFontSizePx).toBe(16);
+    expect(layout.subtitleFontWeight).toBe(500);
+    expect(layout.signOutIconSrc).toBe("/icons/sign-out.svg");
+  });
+
+  it("nav layout: 64px bar and label medium tokens", async () => {
+    const { getShellNavLayout } = await import("../src/shell/chrome");
+    const layout = getShellNavLayout();
+    expect(layout.barHeightPx).toBe(64);
+    expect(layout.labelFontSizePx).toBe(12);
+    expect(layout.iconStateWidthPx).toBe(46);
+  });
+
+  it("nav layout: fixed bar so Log (and siblings) stay tappable", async () => {
+    const { getShellNavLayout } = await import("../src/shell/chrome");
+    const layout = getShellNavLayout();
+    expect(layout.position).toBe("fixed");
+    expect(layout.zIndex).toBeGreaterThanOrEqual(50);
   });
 });

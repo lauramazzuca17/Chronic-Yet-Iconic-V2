@@ -23,6 +23,8 @@ export type MedicationImpactCard = {
   compareKey: "analytics.med.compare";
   withLabel: string;
   withKey: "analytics.med.with";
+  selectEmptyLabel: string;
+  selectEmptyKey: "analytics.med.select_empty";
   prevDayLabel: string;
   prevDayKey: "analytics.med.prev_day";
   nextDayLabel: string;
@@ -39,6 +41,7 @@ const COPY = {
     "See how your vitals change before and after taking a medication.",
   "analytics.med.compare": "Compare",
   "analytics.med.with": "with",
+  "analytics.med.select_empty": "Medication",
   "analytics.med.prev_day": "Previous day",
   "analytics.med.next_day": "Next day",
   "analytics.med.metric.hr": "Heart Rate",
@@ -68,6 +71,8 @@ export function getMedicationImpactCard(): MedicationImpactCard {
     compareKey: "analytics.med.compare",
     withLabel: COPY["analytics.med.with"],
     withKey: "analytics.med.with",
+    selectEmptyLabel: COPY["analytics.med.select_empty"],
+    selectEmptyKey: "analytics.med.select_empty",
     prevDayLabel: COPY["analytics.med.prev_day"],
     prevDayKey: "analytics.med.prev_day",
     nextDayLabel: COPY["analytics.med.next_day"],

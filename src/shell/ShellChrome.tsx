@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { SignOutButton } from "@/components/SignOutButton";
 import {
   getActiveNavItemChrome,
@@ -10,48 +10,84 @@ import {
   getPhoneFirstShellLayout,
   getScrolledHeaderChrome,
   getShellHeaderChrome,
+  getShellHeaderLayout,
+  getShellNavLayout,
 } from "@/shell/chrome";
+import { ANALYTICS_BODY_BG } from "@/analytics/layout";
+import { LOG_BODY_BG } from "@/log/layout";
+
+const NAV_ICONS: Record<string, string> = {
+  home: "/icons/nav-home.svg",
+  log: "/icons/nav-log.svg",
+  calendar: "/icons/nav-calendar.svg",
+  analytics: "/icons/nav-analytics.svg",
+  import: "/icons/nav-import.svg",
+};
+
+const TEXT_SHADOW = "0px 1px 3px rgba(0,0,0,0.3), 0px 4px 8px rgba(0,0,0,0.15)";
 
 export function ShellChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const phone = getPhoneFirstShellLayout();
   const nav = getBottomNavChrome();
   const header = getShellHeaderChrome(pathname);
   const scrolled = getScrolledHeaderChrome(isScrolled);
+  const headerLayout = getShellHeaderLayout();
+  const navLayout = getShellNavLayout();
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 0);
+    const scrollEl = contentRef.current;
+    if (!scrollEl) return;
+
+    const onScroll = () => setIsScrolled(scrollEl.scrollTop > 0);
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    scrollEl.addEventListener("scroll", onScroll, { passive: true });
+    return () => scrollEl.removeEventListener("scroll", onScroll);
+  }, [pathname]);
 
   return (
     <div
       style={{
-        minHeight: "100dvh",
-        background:
-          "radial-gradient(ellipse at 30% 20%, #4a8f7a 0%, transparent 50%), linear-gradient(160deg, #1a4a42 0%, #0b4041 50%, #163a36 100%)",
-        color: "#f5f7f6",
+        height: "100dvh",
+        overflow: "hidden",
+        backgroundColor: "#0b4041",
+        backgroundImage: 'url("/images/login-pond.png")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        color: "#ffffff",
+        fontFamily: 'var(--font-geist-sans), "Geist", system-ui, sans-serif',
       }}
     >
       <div
         style={{
           maxWidth: phone.maxContentWidthPx,
           marginInline: "auto",
-          minHeight: "100dvh",
+          height: "100dvh",
           display: "flex",
           flexDirection: "column",
+          width: "100%",
+          boxSizing: "border-box",
+          overflow: "hidden",
         }}
       >
         <header
           style={{
-            position: scrolled.sticky ? "sticky" : "relative",
-            top: 0,
+            position: "relative",
+            flexShrink: 0,
             zIndex: 10,
             background: scrolled.background,
-            padding: "12px 16px 8px",
+            transition: `background ${scrolled.backgroundTransitionMs}ms ease`,
+            boxSizing: "border-box",
+            paddingTop: headerLayout.paddingTopPx,
+            paddingBottom: headerLayout.paddingBottomPx,
+            paddingLeft: headerLayout.gutterPx,
+            paddingRight: headerLayout.gutterPx,
+            display: "flex",
+            flexDirection: "column",
+            gap: headerLayout.stackGapPx,
           }}
         >
           <div
@@ -59,63 +95,118 @@ export function ShellChrome({ children }: { children: ReactNode }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: 8,
+              gap: 8,
+              width: "100%",
+              // Match Figma eyebrow row height — don't let controls inflate gap to title.
+              minHeight: headerLayout.eyebrowLineHeightPx,
             }}
           >
             <p
               style={{
                 margin: 0,
-                fontSize: "0.7rem",
-                letterSpacing: "0.12em",
+                flex: 1,
+                minWidth: 0,
+                fontSize: headerLayout.eyebrowFontSizePx,
+                fontWeight: headerLayout.eyebrowFontWeight,
+                lineHeight: `${headerLayout.eyebrowLineHeightPx}px`,
+                letterSpacing: 0,
                 textTransform: header.eyebrowUppercase ? "uppercase" : "none",
+                color: "#ffffff",
+                textShadow: TEXT_SHADOW,
               }}
             >
               {header.eyebrow}
             </p>
             <SignOutButton />
           </div>
-          <h1 style={{ margin: "0 0 4px", fontSize: "1.75rem", fontWeight: 600 }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: headerLayout.titleFontSizePx,
+              fontWeight: headerLayout.titleFontWeight,
+              lineHeight: `${headerLayout.titleLineHeightPx}px`,
+              color: "#ffffff",
+              textShadow: TEXT_SHADOW,
+            }}
+          >
             {header.title}
           </h1>
-          <p style={{ margin: 0, opacity: 0.85, fontSize: "0.95rem" }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: headerLayout.subtitleFontSizePx,
+              fontWeight: headerLayout.subtitleFontWeight,
+              lineHeight: `${headerLayout.subtitleLineHeightPx}px`,
+              color: "#ffffff",
+              textShadow: TEXT_SHADOW,
+              maxWidth: 300,
+            }}
+          >
             {header.subtitle}
           </p>
         </header>
 
-        <div style={{ flex: 1, paddingBottom: 88 }}>{children}</div>
+        <div
+          ref={contentRef}
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            paddingBottom: navLayout.barHeightPx,
+            // Log Main is brand3; Analytics Main is brand5 (pond stays in header).
+            backgroundColor:
+              pathname === "/log"
+                ? LOG_BODY_BG
+                : pathname === "/analytics"
+                  ? ANALYTICS_BODY_BG
+                  : undefined,
+          }}
+        >
+          {children}
+        </div>
 
         <nav
           aria-label="Primary"
           style={{
-            position: "sticky",
+            position: navLayout.position,
+            left: 0,
+            right: 0,
             bottom: 0,
-            zIndex: 10,
+            zIndex: navLayout.zIndex,
+            boxSizing: "border-box",
             display: "flex",
-            justifyContent: "space-around",
-            alignItems: "flex-end",
-            gap: 4,
-            padding: "8px 8px calc(8px + env(safe-area-inset-bottom))",
+            alignItems: "stretch",
+            justifyContent: "center",
+            height: navLayout.barHeightPx,
+            paddingBottom: "env(safe-area-inset-bottom)",
             background: nav.barBackground,
+            width: "100%",
+            maxWidth: phone.maxContentWidthPx,
+            marginInline: "auto",
           }}
         >
           {nav.items.map((item) => {
             const active = pathname === item.href;
             const chrome = getActiveNavItemChrome(active);
+            const iconSrc = NAV_ICONS[item.id] ?? NAV_ICONS.home;
             return (
               <Link
                 key={item.id}
                 href={item.href}
                 style={{
+                  flex: 1,
+                  minWidth: 0,
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  gap: 4,
+                  justifyContent: "center",
+                  gap: navLayout.itemGapPx,
                   textDecoration: "none",
-                  color: "#f5f7f6",
-                  fontSize: "0.7rem",
-                  minWidth: 44,
-                  minHeight: 44,
-                  padding: "4px 6px",
+                  color: "#ffffff",
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                  boxSizing: "border-box",
                 }}
               >
                 <span
@@ -124,20 +215,44 @@ export function ShellChrome({ children }: { children: ReactNode }) {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 36,
-                    height: 36,
+                    width: navLayout.iconStateWidthPx,
+                    height: navLayout.iconStateHeightPx,
                     borderRadius: chrome.showPill
                       ? chrome.pillBorderRadiusPx
-                      : 0,
+                      : 16,
                     background: chrome.showPill
-                      ? chrome.pillBackground ?? undefined
+                      ? (chrome.pillBackground ?? undefined)
                       : "transparent",
-                    fontSize: "1.1rem",
                   }}
                 >
-                  {navIcon(item.id)}
+                  <img
+                    src={iconSrc}
+                    alt=""
+                    width={20}
+                    height={16}
+                    style={{
+                      width: 20,
+                      height: "auto",
+                      maxHeight: 16,
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
                 </span>
-                {chrome.labelBelowPill ? <span>{item.label}</span> : null}
+                {chrome.labelBelowPill ? (
+                  <span
+                    style={{
+                      fontSize: navLayout.labelFontSizePx,
+                      fontWeight: 500,
+                      lineHeight: `${navLayout.labelLineHeightPx}px`,
+                      letterSpacing: navLayout.labelTrackingPx,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                ) : null}
               </Link>
             );
           })}
@@ -145,21 +260,4 @@ export function ShellChrome({ children }: { children: ReactNode }) {
       </div>
     </div>
   );
-}
-
-function navIcon(id: string): string {
-  switch (id) {
-    case "home":
-      return "⌂";
-    case "log":
-      return "✎";
-    case "calendar":
-      return "▦";
-    case "analytics":
-      return "◔";
-    case "import":
-      return "⇩";
-    default:
-      return "•";
-  }
 }

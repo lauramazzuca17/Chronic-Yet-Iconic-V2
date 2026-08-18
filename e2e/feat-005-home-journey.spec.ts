@@ -34,7 +34,7 @@ test.describe("FEAT-005 AC-9 Home summary journey", () => {
     await expect(page).toHaveURL("/log");
 
     await page
-      .getByRole("button", { name: "Blood pressure", exact: true })
+      .getByRole("button", { name: "Blood Pressure", exact: true })
       .click();
     await page.getByLabel("Systolic").fill("118");
     await page.getByLabel("Diastolic").fill("76");

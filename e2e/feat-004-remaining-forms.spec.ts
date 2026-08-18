@@ -45,7 +45,7 @@ test.describe("FEAT-004 remaining Log create forms", () => {
 
     // Blood pressure
     await page
-      .getByRole("button", { name: "Blood pressure", exact: true })
+      .getByRole("button", { name: "Blood Pressure", exact: true })
       .click();
     await page.getByLabel("Systolic").fill("120");
     await page.getByLabel("Diastolic").fill("80");

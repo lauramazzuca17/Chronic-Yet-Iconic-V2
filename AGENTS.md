@@ -57,7 +57,7 @@ Only then act. Or the user can just run `/resume`.
 5. **Import = both third-party CSVs** (summary + detailed) every time; **no** native Apple zip/XML in v1; skip duplicates on ingest. ([[01-requirements]], [[03-data-model]])
 6. **Calendar shows manual logs only**; imports feed analytics. Charts 1–3 and Lifestyle imported HR come from **detailed** `heart_rate` (or named keys), never summary aggregates. ([[01-requirements]])
 7. **No clinician portal, social, or AI diagnosis** — ever for this product scope. ([[01-requirements]])
-8. **Stack:** Next.js (App Router) + React + TS + MUI (MD3-oriented) + Turso + Vercel/GitHub; username/password sessions. ([[02-platform]])
+8. **Stack:** Next.js 16 (App Router) + React + TS + MUI (MD3-oriented) + Turso + Vercel/GitHub; username/password sessions. ([[02-platform]])
 9. **Contract docs bind:** data model, copy deck, design brief — change doc first, then code. ([[03-data-model]], [[42-copy-deck]], [[50-design-brief]])
 
 ## Commands & environment
@@ -65,7 +65,7 @@ Only then act. Or the user can just run `/resume`.
 - Run dev: `npm run dev`
 - Test suite: `npm test` ← /tdd-cycle and /resume must run
 - E2E (Playwright): `npm run test:e2e`
-- Lint / typecheck: `npm run lint` / `npm run typecheck`
+- Lint / typecheck: `npm run lint` / `npm run typecheck` (`next lint` was removed in Next 16; `lint` currently aliases `tsc --noEmit`)
 - Build: `npm run build`
 - Env: never commit `.env`; Turso URL/token + session secret in Vercel/local only ([[07-credentials]]); see `.env.example`
   - Local/E2E need `SESSION_SECRET` (≥32 chars) and `SEED_PASSWORD_LAURA` / `SEED_PASSWORD_DEMO`
@@ -111,3 +111,14 @@ Only then act. Or the user can just run `/resume`.
 
 Idea capture: append one-liners to docs/10-features/_BACKLOG.md anytime;
 triage happens in /define or /new-feature.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+

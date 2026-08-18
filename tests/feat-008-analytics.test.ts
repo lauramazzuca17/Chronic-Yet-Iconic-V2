@@ -39,6 +39,7 @@ describe("FEAT-008 analytics", () => {
     );
     expect(card.compareLabel).toBe("Compare");
     expect(card.withLabel).toBe("with");
+    expect(card.selectEmptyLabel).toBe("Medication");
     expect(card.prevDayLabel).toBe("Previous day");
     expect(card.nextDayLabel).toBe("Next day");
     expect(card.metrics.map((m) => m.id)).toEqual(["heart_rate", "bp"]);

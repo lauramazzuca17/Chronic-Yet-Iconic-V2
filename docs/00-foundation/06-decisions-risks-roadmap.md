@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: planning
 status: living-document
-updated: 2026-08-15
+updated: 2026-08-18
 ---
 
 # Decisions, Risks, and Roadmap
@@ -10,7 +10,7 @@ updated: 2026-08-15
 [[00-overview|← Overview]]
 
 ## Recommended next move
-Deploy v0.1.1 to Vercel with Turso (`TURSO_*` + seed passwords); backlog Next 16 when ready to clear npm audit highs.
+Deploy v0.1.1 to Vercel with Turso (`TURSO_*` + seed passwords). Next.js 16.3.1 is in; production `npm audit --omit=dev` is clean.
 
 ## Decisions needing an owner
 | Decision | Why it matters | Proposed owner | Status |
@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-18 | Next.js 16 upgrade | **16.3.1** + React 19.2.8; `src/middleware.ts` → `src/proxy.ts`; `next lint` removed (lint aliases typecheck) | Owner asked; clears Next→postcss/sharp highs; `npm audit --omit=dev` is 0 |
 | 2026-08-15 | `/ship` npm audit highs (Next→postcss/sharp) | **Accepted** for private v0.1.1 (NFR-05); revisit on Next 16 upgrade | Owner |
 | 2026-08-13 | Design tooling | **No Claude Design** — Figma + `/design-brief` + `/tdd-cycle` | Owner |
 | 2026-08-13 | Import UI | Figma `62939:4277`: Upload Files + Import History (Database Summary + Completed/Processing/Failed); Delete → Delete this import?; scroll-behind header like Calendar | Owner |
@@ -37,6 +38,13 @@ unless a contract doc carries its own binding log. -->
 | 2026-08-15 | Import delete UX | REQ-15 per-file history cards + delete; pair upload still atomic (REQ-12); ImportBatch per file + `pair_id` | Owner + Figma 62946:4447 |
 | 2026-08-15 | FEAT-009 scope | Turso/Drizzle full schema + Import History per-file UI (Figma 62946:4447) in same FEAT | Owner |
 | 2026-08-15 | Local DB | `next dev` / Playwright: local file libSQL if TURSO_* unset; unit tests in-process; Vercel/prod require Turso | Owner |
+| 2026-08-17 | E2E DB isolation | `playwright.config.ts` **explicitly blanks** `TURSO_*` and sets `CYI_LOCAL_DB_PATH=.data/e2e.db` | Once `.env.local` held real Turso creds, Next loaded them into the Playwright web server, so `reset-manual-logs` deleted live logs and boot re-seeded Laura/Demo password hashes to the test values. Blanking restores the 2026-08-15 intent (`@next/env` leaves already-set vars alone). |
+| 2026-08-17 | Calendar day font | Day numbers render the project font (Geist) at Figma's 16px, not the Inter the Figma node specifies | The calendar frame is an instance of the third-party "Simple Design System" library, so `--sds-typography-body-font-family: Inter` is that library's default rather than a CYI choice. Honouring it would put a second typeface on one screen. |
+| 2026-08-17 | Calendar day grid width | Fluid 7-column grid capped at Figma's 286px and centered, rather than a fixed 286px | A fixed width overflows the card interior at a 320px viewport (256px available). Capping keeps the 390px reference pixel-exact and shrinks cells to ~36px on narrow phones. |
+| 2026-08-18 | Calendar Month/Year at 320px | Side-by-side: 24px chevrons (44px hit) + Year min 92px; Month flexes | Equal fullWidth selects + 44px visual chevrons left ~72px each; Year became `2…`. Stacking would break the Figma row. |
+| 2026-08-17 | Calendar out-of-month cells | Leading **and** trailing neighbour-month days both render greyed `#b3b3b3` day numbers (no blank cells) | Owner confirmed. Figma's reference month (Sep 2025) leaves its one leading cell empty while greying trailing days; treated as a quirk of that frame rather than intent. Pinned by `tests/calendar-visual-layout.test.ts`. |
+| 2026-08-17 | Calendar month card top pad | Month card `pt` 24px vs 16px sides/bottom | Owner asked for more padding above the calendar. Figma's 16px assumes unlabeled selects; our MUI Month/Year labels overhang their boxes and sat 9px off the card edge. |
+| 2026-08-17 | Calendar entry cards | Calendar day list reuses Log's `LogEntryCard` (`62811:25282`) rather than a second markup | Owner asked the two Today lists to match. Shared component + `MANUAL_TYPE_LABEL` so they cannot drift. |
 
 
 
@@ -123,4 +131,4 @@ unless a contract doc carries its own binding log. -->
 | Cross-account data leak | Account-scoped queries; tests for REQ-19 / NFR-01 |
 | Large Apple Health zip imports | CSV/XML alternate path (NFR-02); size limits decided at import FEAT |
 | Public Vercel URL + password-only auth | Strong unique passwords; don’t broadly publish URL; consider Vercel Deployment Protection later if needed |
-| Next.js transitive postcss/sharp **high** CVEs (`npm audit`) | **Accepted** for private v0.1.1 (NFR-05); no public signup; upgrade Next 16 when ready |
+| Next.js transitive postcss/sharp **high** CVEs (`npm audit`) | **Mitigated** 2026-08-18 via Next 16.3.1 (postcss 8.5.23); production `npm audit --omit=dev` is 0 |

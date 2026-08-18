@@ -1,7 +1,7 @@
 ---
 type: backlog
 status: living-document
-updated: 2026-08-10
+updated: 2026-08-18
 ---
 # Backlog — idea inbox
 
@@ -15,7 +15,10 @@ updated: 2026-08-10
 > whenever you ask.
 
 ## Ideas
-- [ ] Upgrade Next.js to clear npm audit postcss/sharp highs (accepted for v0.1.1)
+- [x] Upgrade Next.js to clear npm audit postcss/sharp highs — Next 16.3.1 (2026-08-18); production `npm audit --omit=dev` is 0
+- [x] Extract one shared `TakenBadge` — Home + Log electrolytes (`src/components/TakenBadge.tsx`, 2026-08-18)
+- [x] Set a global `box-sizing: border-box` — `tokens.css` (`*`, `*::before`, `*::after`), 2026-08-18
+- [x] Calendar Month/Year selects crowd at 320px — compact chevrons + Year min 92px (2026-08-18)
 - [ ] _(add more anytime)_
 
 ## Deferred (decided, not now)

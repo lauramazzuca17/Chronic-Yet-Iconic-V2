@@ -3,7 +3,56 @@ type: changelog
 ---
 # Changelog
 
-<!-- Newest first. Claude appends one entry per completed feature or notable change. -->
+## 2026-08-18 (owner look)
+- **Log** — owner approved all form types (including BP, Medication, Mood, Event).
+- **Analytics** — owner approved all four tabs for v1 (Medication, Cardiovascular, Recovery, Electrolytes `62967:5994`).
+
+## 2026-08-18 (calendar picker 320px)
+- **Calendar Month/Year at 320px** — compact 24px chevrons (44px hit) and a 92px Year field so `2026` no longer ellipsizes to `2…`. Side-by-side, not stacked.
+
+## 2026-08-18 (global border-box)
+- **Global `box-sizing: border-box`** in `tokens.css` so a missing per-component `boxSizing` cannot overflow gutters again (Calendar). Existing sx declarations left in place.
+
+## 2026-08-18 (TakenBadge)
+- **TakenBadge** — Home water card and Log electrolytes share one `#efefef` 65px Taken + X/check pill (`src/components/TakenBadge.tsx`). Water “Today's Total” stays Log-only.
+
+## 2026-08-18 (Next.js 16)
+- **Next.js 16.3.1** (+ React 19.2.8) — clears production npm audit highs (postcss/sharp). Auth gate file is `src/proxy.ts` (Next 16 rename from middleware). `next lint` is gone; `npm run lint` aliases typecheck until ESLint is added. Restart `npm run dev` to pick this up.
+
+## 2026-08-18 (import filenames)
+- **Import picker filenames** — long Summary/Detailed names ellipsis-truncate inside their columns instead of overlapping; hover `title` still has the full name. Owner approved the Import page look.
+
+## 2026-08-17 (import visual)
+- **Import `62939:4277` / Main `62946:4425`** — Upload Files radius 8 + compact Choose File / Start import; History radius 12; sage Database Summary with file-waveform; overlapping Completed / Processing / Failed badges. Copy and CSV-pair locks unchanged.
+
+## 2026-08-17 (electrolytes visual)
+- **Electrolytes `62967:5994`** — 28/36 black title + drink hero; With/Without cards as a 2×2 metric grid with Figma pastel icon tiles (HR/Resting/Walking/BP). Copy and ≥100 locks unchanged.
+
+## 2026-08-17 (recovery visual)
+- **Recovery `62957:4735` / `62959:4803`** — 16px intro/chart gaps like Cardiovascular; “What your HRV shows” uses the sage disclaimer callout (icon + brand4 title).
+
+
+- **Cardiovascular `62953:4603` / `62953:4604`** — Today/Last 7/Last 30 is one bordered switch group; Chart 2 intro→switch 16px and switch→chart 16px; Tachycardia helper→chart 16px; sage disclaimer with circle-exclamation and brand4 title. ≥100 copy unchanged.
+
+
+- **Medication Impact controls** — white prev/next caps; Compare select opens with “Medication” when none logged that day (was disabled/blank); Heart Rate / Medication pills clamp at 122px so they stay inside the card.
+
+
+
+## 2026-08-17 (log fields/CTA)
+- **Log fields** — shared `LogOutlinedField` (`variant="outlined"`, always-shrunk filled state, Figma 12/18 + 16/24 type); compact Log Symptom CTA (px10/py4); Today card py 18 (less top pad than form field offset).
+
+## 2026-08-16 (log annotate)
+- **Log annotate** — brand3 body `#b7cc87` under header; chips match Figma height + idle shadow; form padTop 26; floating outlined labels (no asterisks); Notes label restored.
+
+## 2026-08-16 (log visual — chips/form/today)
+- **Log Main `62898:1748`** — horizontal chip strip (orange selected / white idle); white symptom form card + outlined fields; Today list card with bordered entry rows; favicon.svg (+ `/favicon.ico` rewrite); chip copy `Blood Pressure`.
+
+## 2026-08-16 (log nav fix)
+- **Log footer nav** — Next.js “1 Issue” badge sat on Home/Log and stole taps; Log datetime was client-initialized (hydration). Fix: server `initialRecordedAt`, fixed bottom nav, `devIndicators.position: top-right`.
+
+## 2026-08-16 (home visual)
+- **Home / shell visual** — Figma `62795:75`: 16px gutters; fluid 50/50 + full-width cards (border-box, no overlap); Geist header type/padding; Figma logout + bottom-nav icons; pond shell background; Health records still hidden.
 
 ## 2026-08-15 (login visual)
 - **Login visual fidelity** — Figma `62827:29846` + brief: lilypad pond image background, DM Sans ExtraLight wordmark + italic green Yet, fluid card (38px side margins), outlined fields, compact orange pill CTA, koi 177px under card; tokens in `src/styles/tokens.css`; tests in `tests/login-visual-fidelity.test.ts`.

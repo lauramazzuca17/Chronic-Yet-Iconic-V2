@@ -100,7 +100,7 @@ No modal for v1. Entry card: tap **Delete** → label becomes **Confirm Delete**
 | log.water_total_value | {oz} oz |
 | log.water_reset | Reset total |
 | log.type.symptom | Symptom |
-| log.type.blood_pressure | Blood pressure |
+| log.type.blood_pressure | Blood Pressure |
 | log.type.medication | Medication |
 | log.type.water | Water |
 | log.type.electrolyte | Electrolytes |

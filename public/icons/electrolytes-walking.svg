@@ -1,0 +1,15 @@
+<svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="electrolytes-walk-mask" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="29" height="29">
+<path d="M0 0H29V29H0V0Z" fill="white"/>
+</mask>
+<g mask="url(#electrolytes-walk-mask)">
+<path d="M28.1504 19.5977H15.6618L1.92715 11.668L1.07754 13.1395C0.608327 13.9523 0.886773 14.9915 1.69951 15.4607L13.9625 22.5408C14.4791 22.8391 15.0652 22.9961 15.6617 22.9961H26.4512C27.3896 22.9961 28.1504 22.2354 28.1504 21.2969V19.5977Z" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.82 9.85991L13.34 11.5999" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.98 12.76L15.08 14.5" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19.9186 13.9336C19.004 13.9336 18.1791 13.3837 17.8273 12.5394L15.5762 7.13672C12.7608 7.44954 10.2249 5.42085 9.91209 2.60547L5.65606 6.08768C5.02055 6.60764 4.48445 7.2385 4.07386 7.94974L1.92712 11.668L15.6617 19.5977H28.1504C28.1504 16.4695 25.6145 13.9336 22.4863 13.9336H19.9186Z" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M0.849854 26.3945H4.8147" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.3457 26.3945H22.4863" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M0.849609 22.9961H7.08008" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.8848 26.3945H28.1504" stroke="black" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

@@ -14,6 +14,7 @@ import {
   Cell,
 } from "recharts";
 import { Box, Typography } from "@mui/material";
+import { ANALYTICS_CHART_FRAME } from "@/analytics/layout";
 import type { MedicationImpactSeries } from "@/analytics/medication-series";
 import type { BpHrOverlaySeries, TachycardiaBurdenSeries } from "@/analytics/cardiovascular";
 import type { RecoverySeries } from "@/analytics/recovery";
@@ -37,12 +38,13 @@ function ChartFrame({
       aria-label={label}
       sx={{
         position: "relative",
-        bgcolor: "#f2f2f7",
-        borderRadius: "10px",
-        minHeight: 200,
+        boxSizing: "border-box",
+        bgcolor: ANALYTICS_CHART_FRAME.bg,
+        border: `1px ${ANALYTICS_CHART_FRAME.borderStyle} ${ANALYTICS_CHART_FRAME.border}`,
+        borderRadius: `${ANALYTICS_CHART_FRAME.radiusPx}px`,
+        minHeight: ANALYTICS_CHART_FRAME.heightPx,
         width: "100%",
-        pt: "8px",
-        pr: "8px",
+        overflow: "hidden",
       }}
     >
       {children}
@@ -77,9 +79,9 @@ export function MedicationImpactChart({
 
   return (
     <ChartFrame testId="analytics-med-chart" label="Medication impact chart">
-      <Box sx={{ width: "100%", height: 200 }}>
+      <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <LineChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
             <XAxis dataKey="key" tick={{ fontSize: 11, fill: MUTED }} />
             <YAxis tick={{ fontSize: 11, fill: MUTED }} width={36} />
@@ -101,17 +103,19 @@ export function MedicationImpactChart({
           </LineChart>
         </ResponsiveContainer>
       </Box>
-      {/* Text / table fallback (a11y + empty-slot clarity) */}
+      {/* Text fallback for a11y / E2E; clipped so the Figma chart frame stays clean. */}
       <Box
         component="ul"
         sx={{
-          m: 0,
-          mt: "4px",
-          px: "12px",
-          pb: "8px",
-          pl: "28px",
-          fontSize: 11,
-          color: MUTED,
+          position: "absolute",
+          width: 1,
+          height: 1,
+          m: -1,
+          p: 0,
+          overflow: "hidden",
+          clip: "rect(0 0 0 0)",
+          whiteSpace: "nowrap",
+          border: 0,
         }}
       >
         {series.slots.map((s) => (
@@ -151,7 +155,7 @@ export function BpHrOverlayChart({ series }: { series: BpHrOverlaySeries }) {
 
   return (
     <ChartFrame testId="analytics-cardio-chart2" label="Blood pressure and heart rate chart">
-      <Box sx={{ width: "100%", height: 220 }}>
+      <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
@@ -195,9 +199,9 @@ export function TachycardiaBurdenChart({
 
   return (
     <ChartFrame testId="analytics-cardio-chart3" label="Tachycardia burden chart">
-      <Box sx={{ width: "100%", height: 200 }}>
+      <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <BarChart data={data} margin={{ top: 16, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
             <XAxis dataKey="weekday" tick={{ fontSize: 11, fill: MUTED }} />
             <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: MUTED }} width={36} unit="%" />
@@ -247,7 +251,7 @@ export function RecoveryLineChart({
 
   return (
     <ChartFrame testId={testId} label={label}>
-      <Box sx={{ width: "100%", height: 200 }}>
+      <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />

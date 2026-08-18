@@ -86,6 +86,7 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | analytics.med.helper | See how your vitals change before and after taking a medication. | locked |
 | analytics.med.compare | Compare | locked |
 | analytics.med.with | with | locked |
+| analytics.med.select_empty | Medication | locked — empty Compare select (Figma) |
 | analytics.med.metric.hr | Heart Rate | locked |
 | analytics.med.metric.bp | BP | locked |
 | analytics.med.date_format | MM/DD/YYYY | locked display pattern (e.g. 08/01/2026) |
@@ -155,4 +156,4 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | 2026-08-15 | AC-9 green — Chart 2 overlay + Chart 3 tachycardia ≥100 | /tdd-cycle |
 | 2026-08-15 | AC-10 green — HRV + walking HR series (Chart 4–5) | /tdd-cycle |
 | 2026-08-15 | AC-11 green — Electrolytes With/Without comparison cards | /tdd-cycle |
-| 2026-08-15 | AC-12 green — Analytics Medication UI + Playwright journey; FEAT-008 **done** | /tdd-cycle |
+| 2026-08-17 | Compare select stays enabled with “Medication” empty label; date caps white per owner screenshot; pills clamp at 122px | Owner visual pass |

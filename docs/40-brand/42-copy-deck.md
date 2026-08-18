@@ -58,6 +58,7 @@ updated: 2026-08-15
 | analytics.med.helper | See how your vitals change before and after taking a medication. | Figma |
 | analytics.med.compare | Compare | Figma |
 | analytics.med.with | with | Figma |
+| analytics.med.select_empty | Medication | Compare dropdown when no med logged that day |
 | analytics.med.metric.hr | Heart Rate | Metric dropdown |
 | analytics.med.metric.bp | BP | Metric dropdown |
 | analytics.med.prev_day | Previous day | a11y |
@@ -132,7 +133,7 @@ updated: 2026-08-15
 | log.water_total_value | {oz} oz | Water form day-sum value; `{oz}` = daily sum |
 | log.water_reset | Reset total | Figma-only; **hidden / out of scope for v1** |
 | log.type.symptom | Symptom | Type picker |
-| log.type.blood_pressure | Blood pressure | |
+| log.type.blood_pressure | Blood Pressure | Figma Log chips 62898:1748 |
 | log.type.medication | Medication | |
 | log.type.water | Water | |
 | log.type.electrolyte | Electrolytes | |

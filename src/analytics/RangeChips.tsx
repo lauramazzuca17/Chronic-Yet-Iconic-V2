@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import { ANALYTICS_RANGE_SWITCH } from "@/analytics/layout";
 
 type RangeOption = { id: string; label: string };
 
@@ -23,33 +24,60 @@ export function RangeChips({
     <Box
       role="group"
       aria-label="Date range"
-      sx={{ display: "flex", flexWrap: "wrap", gap: "8px" }}
+      sx={{
+        display: "flex",
+        alignItems: "stretch",
+        width: "100%",
+        boxSizing: "border-box",
+        p: `${ANALYTICS_RANGE_SWITCH.padPx}px`,
+        border: `1px solid ${ANALYTICS_RANGE_SWITCH.border}`,
+        borderRadius: `${ANALYTICS_RANGE_SWITCH.radiusPx}px`,
+        bgcolor: ANALYTICS_RANGE_SWITCH.idleBg,
+      }}
     >
       {options.map((o) => {
         const active = o.id === value;
         return (
-          <Button
+          <Box
             key={o.id}
+            component="button"
             type="button"
-            size="small"
             disabled={disabled}
             data-testid={`${testIdPrefix}-${o.id}`}
             aria-pressed={active}
             onClick={() => onChange(o.id)}
             sx={{
-              borderRadius: "100px",
-              textTransform: "none",
-              px: "12px",
-              minHeight: 36,
-              bgcolor: active ? "#8B7E66" : "rgba(11,64,65,0.12)",
-              color: active ? "#fff" : "#0B4041",
-              "&:hover": {
-                bgcolor: active ? "#7a6e59" : "rgba(11,64,65,0.2)",
+              position: "relative",
+              flex: "1 1 0",
+              minWidth: 0,
+              m: 0,
+              appearance: "none",
+              border: "none",
+              cursor: disabled ? "default" : "pointer",
+              px: `${ANALYTICS_RANGE_SWITCH.segmentPadXPx}px`,
+              py: `${ANALYTICS_RANGE_SWITCH.segmentPadYPx}px`,
+              borderRadius: `${ANALYTICS_RANGE_SWITCH.radiusPx}px`,
+              bgcolor: active
+                ? ANALYTICS_RANGE_SWITCH.selectedBg
+                : ANALYTICS_RANGE_SWITCH.idleBg,
+              color: active
+                ? ANALYTICS_RANGE_SWITCH.selectedColor
+                : ANALYTICS_RANGE_SWITCH.idleColor,
+              fontFamily: "inherit",
+              fontSize: ANALYTICS_RANGE_SWITCH.fontSizePx,
+              fontWeight: ANALYTICS_RANGE_SWITCH.fontWeight,
+              lineHeight: `${ANALYTICS_RANGE_SWITCH.lineHeightPx}px`,
+              textAlign: "center",
+              whiteSpace: "nowrap",
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                inset: "-6px 0",
               },
             }}
           >
             {o.label}
-          </Button>
+          </Box>
         );
       })}
     </Box>

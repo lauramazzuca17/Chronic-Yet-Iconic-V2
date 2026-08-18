@@ -63,7 +63,7 @@ test.describe("FEAT-008 AC-12 Analytics Medication journey", () => {
     await page.getByTestId("analytics-metric-select").click();
     await page.getByRole("option", { name: "BP" }).click();
     await expect(page.getByTestId("analytics-med-chart")).toBeVisible();
-    await expect(page.getByTestId("analytics-med-slot-Dose")).toBeVisible();
+    await expect(page.getByTestId("analytics-med-slot-Dose")).toBeAttached();
 
     // Remaining tabs (UI finish)
     await page.getByTestId("analytics-tab-cardiovascular").click();

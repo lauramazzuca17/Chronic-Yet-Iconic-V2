@@ -2,7 +2,7 @@
 
 Paste-ready for Claude Design (or any design tool). Standalone — no repo paths required.
 
-**Updated:** 2026-08-13
+**Updated:** 2026-08-18
 
 **Figma file:** CYI — V2 (`WkhupgI4GcrvhLPqJV4T7d`)
 
@@ -50,16 +50,16 @@ Composition (top → bottom):
 2. **Month card** (white, large radius): prev/next chevrons; **month** dropdown; **year** dropdown; weekday row Su–Sa; day grid.
    - **Selected day:** orange rounded-square fill (`#f08429` family), white day number.
    - **Today** (when not selected): dark underline under the day number.
-   - Out-of-month trailing days: muted/faded.
+   - Out-of-month days (**both** leading and trailing): muted/faded.
 3. **Entries card** (white, large radius): day heading + count, then stacked entry cards with **Delete**.
 
 Day heading when not today: **Thursday · August 6, 2026** (weekday · Month D, YYYY).  
 Count: **6 logged entries** (pattern `{count} logged entries`).
 
-Each entry card:
-- Type label uppercase + time (e.g. `SYMPTOM` · `8:12 AM`)
-- Summary line (e.g. `Fatigue - Normal amount`, `100/75 - 100 bpm`)
-- **Delete** text control (bottom-right / trailing) — zinc/gray; armed state **Confirm Delete** in brand7 `#d95c1c` (same as Log)
+Each entry card reuses the Log `LogEntryCard` (`62811:25282` / `62910:6297`):
+- Eyebrow `SYMPTOM  8:12 AM` (uppercase type + double space + time; 11px `#71717b`)
+- Summary line (e.g. `Fatigue - Normal amount`, `100/75 - 100 bpm`; 12px `#1d1b20`)
+- **Delete** text control on the value row (12px `#71717b`); armed **Confirm Delete** in brand7 `#d95c1c`
 
 ### B. Calendar — selected day is today
 Same overall layout as A. Calendar grid shows **today** selected (orange square). List heading uses **Today** instead of the long date string. Count still uses `{count} logged entries`.
@@ -157,3 +157,46 @@ Content (month card + entries) scrolls **under** the sticky header. On scroll:
 4. Optional: light motion notes for month change / day select (keep subtle).
 
 When designing in Claude Design / Figma, also point the tool at this product’s codebase and token source so colors/type match the real shell.
+
+---
+
+## As built — day cell (2026-08-17)
+
+Tokens live in `src/calendar/layout.ts` (`CALENDAR_DAY`), measured from Figma
+`62888:11530` (selected ≠ today) and `62888:11531` (selected = today).
+
+| Property | Value |
+| --- | --- |
+| Cell visual | 40×40, radius 8 (`--sds-size-radius-200`) |
+| Tap target | 44px tall, expanded invisibly around the 40px visual |
+| Grid | 7 × 40px + 6 × 1px gap = **286px**, centered in the card's 326px inner width |
+| Day number | 16px, weight 400 |
+| Selected | fill `#f08429` (Brand6), number `#f5f5f5` (`text-brand-on-brand`) |
+| In-month number | `#1e1e1e` (`text-default-default`) |
+| Out-of-month number | `#b3b3b3` (`text-disabled-default`) |
+| Weekday label | `#757575` (`text-default-secondary`), 12/20 |
+| Today | `text-decoration: underline` on the number, 3px offset — **not** a cell border |
+
+Notes:
+- Today and selected are independent: a day that is both shows an underlined
+  `#f5f5f5` number on the orange square. `aria-current="date"` marks today so
+  the indicator is not underline-only.
+- Figma's day numbers inherit **Inter 16** from the Simple Design System library
+  the calendar instance came from; we render the project font (Geist) at 16px
+  rather than introduce a second typeface. See decision log.
+- Figma's grid is 286px wide against a 326px card interior; we keep it fluid with
+  a 286px max-width so 320px phones shrink the cells (to ~36px) instead of
+  overflowing. Weekday labels share the day grid's track — in Figma the header
+  row spans the full 326px and is very slightly wider than the day columns.
+- **Out-of-month cells are greyed at both ends** (`#b3b3b3`) — owner-confirmed
+  2026-08-17. Figma's reference month (Sep 2025) happens to leave its single
+  **leading** cell empty while greying trailing days; that asymmetry is a
+  quirk of the reference frame, not the intent. Pinned by
+  `tests/calendar-visual-layout.test.ts`.
+- Month card padding is 16px on the sides/bottom (`cardPadPx`) but **24px on
+  top** (`monthCardPadTopPx`). Figma's 16px assumes selects with no floating
+  label; our MUI Month/Year labels overhang their boxes and sat only 9px off
+  the card edge. Owner asked for more padding above the calendar.
+- Month/Year stay **side-by-side** at 320px (not stacked). Chevrons are 24px
+  visual / 44px hit; Year is a fixed 92px so `2026` cannot ellipsize to `2…`;
+  Month flexes. Pinned by `tests/calendar-visual-layout.test.ts`.

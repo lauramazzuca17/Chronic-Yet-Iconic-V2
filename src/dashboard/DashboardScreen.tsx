@@ -6,21 +6,24 @@ import {
   formatLatestBp,
   formatWaterOz,
 } from "@/dashboard/copy";
+import { SHELL_CONTENT_GUTTER_PX } from "@/shell/chrome";
+import { TakenBadge } from "@/components/TakenBadge";
 
 const TITLE = "#448774";
 const VALUE = "#f08429";
 const HELPER = "#8e8e93";
-const BADGE_BG = "#efefef";
-const BADGE_TEXT = "#5c5c60";
 
+/** Fluid cards: never fixed artboard widths; border-box so padding stays inside. */
 const cardSx = {
+  boxSizing: "border-box" as const,
   bgcolor: "#FFFFFF",
   borderRadius: "12px",
   boxShadow:
     "0 4px 4px rgba(12,12,13,0.05), 0 4px 4px rgba(12,12,13,0.1)",
-  px: 2,
-  pt: 1,
+  px: "16px",
+  pt: "8px",
   pb: "10px",
+  minWidth: 0,
   width: "100%",
 };
 
@@ -82,98 +85,6 @@ function MetricHelper({ children }: { children: ReactNode }) {
   );
 }
 
-function TakenBadge({ taken }: { taken: boolean }) {
-  return (
-    <Box
-      data-testid="dashboard-electrolytes-badge"
-      data-taken={taken ? "true" : "false"}
-      aria-label={
-        taken
-          ? "Electrolytes taken"
-          : "Electrolytes not taken"
-      }
-      sx={{
-        bgcolor: BADGE_BG,
-        borderRadius: "4px",
-        px: "10px",
-        py: "6px",
-        width: 65,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "2px",
-        flexShrink: 0,
-      }}
-    >
-      <Typography
-        component="span"
-        sx={{
-          color: BADGE_TEXT,
-          fontSize: 14,
-          lineHeight: "18px",
-          textAlign: "center",
-        }}
-      >
-        {DASHBOARD_COPY["dashboard.metric.electrolytes_taken"]}
-      </Typography>
-      {taken ? (
-        <Box
-          component="svg"
-          width={16}
-          height={16}
-          viewBox="0 0 16 16"
-          aria-hidden
-        >
-          <rect
-            x="1.5"
-            y="1.5"
-            width="13"
-            height="13"
-            rx="1"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M4 8.2 L6.8 11 L12 5"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </Box>
-      ) : (
-        <Box
-          component="svg"
-          width={16}
-          height={16}
-          viewBox="0 0 16 16"
-          aria-hidden
-        >
-          <rect
-            x="1.5"
-            y="1.5"
-            width="13"
-            height="13"
-            rx="1"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M5 5 L11 11 M11 5 L5 11"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </Box>
-      )}
-    </Box>
-  );
-}
-
 export type DashboardScreenProps = {
   summary: TodayDashboardSummary;
 };
@@ -183,22 +94,31 @@ export function DashboardScreen({ summary }: DashboardScreenProps) {
   return (
     <Box
       component="main"
+      data-testid="dashboard-main"
       sx={{
-        px: 2,
+        boxSizing: "border-box",
+        width: "100%",
+        maxWidth: "100%",
+        px: `${SHELL_CONTENT_GUTTER_PX}px`,
         pb: 3,
         display: "flex",
         flexDirection: "column",
-        gap: 1,
+        gap: 0,
       }}
     >
+      {/* 50/50 row: equal flex children, gap 16 — never fixed 170px, never overlap */}
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 1,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "stretch",
+          gap: "16px",
+          py: "8px",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
-        <Box sx={cardSx}>
+        <Box sx={{ ...cardSx, flex: "1 1 0", width: "auto" }}>
           <MetricTitle>
             {DASHBOARD_COPY["dashboard.metric.bp_count"]}
           </MetricTitle>
@@ -209,7 +129,7 @@ export function DashboardScreen({ summary }: DashboardScreenProps) {
             {DASHBOARD_COPY["dashboard.metric.bp_count_helper"]}
           </MetricHelper>
         </Box>
-        <Box sx={cardSx}>
+        <Box sx={{ ...cardSx, flex: "1 1 0", width: "auto" }}>
           <MetricTitle>
             {DASHBOARD_COPY["dashboard.metric.bp_latest"]}
           </MetricTitle>
@@ -222,50 +142,65 @@ export function DashboardScreen({ summary }: DashboardScreenProps) {
         </Box>
       </Box>
 
-      <Box sx={cardSx}>
-        <MetricTitle>
-          {DASHBOARD_COPY["dashboard.metric.meds_count"]}
-        </MetricTitle>
-        <MetricValue testId="dashboard-meds-count">
-          {summary.medsCount}
-        </MetricValue>
-        <MetricHelper>
-          {DASHBOARD_COPY["dashboard.metric.meds_helper"]}
-        </MetricHelper>
-      </Box>
-
-      <Box
-        sx={{
-          ...cardSx,
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+      <Box sx={{ py: "8px", width: "100%", boxSizing: "border-box" }}>
+        <Box sx={cardSx}>
           <MetricTitle>
-            {DASHBOARD_COPY["dashboard.metric.water_total"]}
+            {DASHBOARD_COPY["dashboard.metric.meds_count"]}
           </MetricTitle>
-          <MetricValue testId="dashboard-water-total">
-            {formatWaterOz(summary.waterTotalOz)}
+          <MetricValue testId="dashboard-meds-count">
+            {summary.medsCount}
           </MetricValue>
           <MetricHelper>
-            {DASHBOARD_COPY["dashboard.metric.water_helper"]}
+            {DASHBOARD_COPY["dashboard.metric.meds_helper"]}
           </MetricHelper>
         </Box>
-        <TakenBadge taken={summary.electrolytesTaken} />
       </Box>
 
-      <Box sx={cardSx}>
-        <MetricTitle>
-          {DASHBOARD_COPY["dashboard.metric.symptoms_count"]}
-        </MetricTitle>
-        <MetricValue testId="dashboard-symptoms-count">
-          {summary.symptomsCount}
-        </MetricValue>
-        <MetricHelper>
-          {DASHBOARD_COPY["dashboard.metric.symptoms_helper"]}
-        </MetricHelper>
+      <Box sx={{ py: "8px", width: "100%", boxSizing: "border-box" }}>
+        <Box
+          sx={{
+            ...cardSx,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <MetricTitle>
+              {DASHBOARD_COPY["dashboard.metric.water_total"]}
+            </MetricTitle>
+            <MetricValue testId="dashboard-water-total">
+              {formatWaterOz(summary.waterTotalOz)}
+            </MetricValue>
+            <MetricHelper>
+              {DASHBOARD_COPY["dashboard.metric.water_helper"]}
+            </MetricHelper>
+          </Box>
+          <TakenBadge
+            taken={summary.electrolytesTaken}
+            label={DASHBOARD_COPY["dashboard.metric.electrolytes_taken"]}
+            testId="dashboard-electrolytes-badge"
+            ariaLabel={
+              summary.electrolytesTaken
+                ? "Electrolytes taken"
+                : "Electrolytes not taken"
+            }
+          />
+        </Box>
+      </Box>
+
+      <Box sx={{ py: "8px", width: "100%", boxSizing: "border-box" }}>
+        <Box sx={cardSx}>
+          <MetricTitle>
+            {DASHBOARD_COPY["dashboard.metric.symptoms_count"]}
+          </MetricTitle>
+          <MetricValue testId="dashboard-symptoms-count">
+            {summary.symptomsCount}
+          </MetricValue>
+          <MetricHelper>
+            {DASHBOARD_COPY["dashboard.metric.symptoms_helper"]}
+          </MetricHelper>
+        </Box>
       </Box>
     </Box>
   );

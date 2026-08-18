@@ -11,11 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import { deleteManualLogAction } from "@/log/actions";
+import { formatEntriesCount } from "@/log/copy";
 import {
-  formatEntriesCount,
-  LOG_COPY,
-} from "@/log/copy";
-import type { ManualLogEntry, MoodValue, SymptomSeverity } from "@/log/store";
+  formatEntryEyebrow,
+  formatEntrySummary,
+  MANUAL_TYPE_LABEL,
+} from "@/log/entry-display";
+import { LogEntryCard } from "@/log/LogEntryCard";
+import { LOG_CARD } from "@/log/layout";
+import type { ManualLogEntry } from "@/log/store";
 import {
   buildMonthGrid,
   formatCalendarDayHeading,
@@ -24,72 +28,46 @@ import {
   WEEKDAY_LABELS,
   yearMonthFromCalendarDate,
 } from "@/calendar/selection";
+import {
+  CALENDAR_CARD_SX,
+  CALENDAR_DAY,
+  CALENDAR_DAY_GRID_MAX_WIDTH_PX,
+  CALENDAR_LAYOUT,
+  CALENDAR_PICKER,
+} from "@/calendar/layout";
 
 const ACCENT = "#f08429";
-const TEAL = "#0B4041";
-const CONFIRM_DELETE_COLOR = "#d95c1c";
-const CARD_RADIUS = "20px";
 
-const TYPE_LABEL: Record<ManualLogEntry["type"], string> = {
-  symptom: LOG_COPY["log.type.symptom"],
-  blood_pressure: LOG_COPY["log.type.blood_pressure"],
-  medication: LOG_COPY["log.type.medication"],
-  water: LOG_COPY["log.type.water"],
-  electrolyte: LOG_COPY["log.type.electrolyte"],
-  mood: LOG_COPY["log.type.mood"],
-  event: LOG_COPY["log.type.event"],
-};
+const cardSx = CALENDAR_CARD_SX;
 
-const SEVERITY_LABEL: Record<SymptomSeverity, string> = {
-  usual: LOG_COPY["log.severity.usual"],
-  worse_than_usual: LOG_COPY["log.severity.worse_than_usual"],
-  better_than_usual: LOG_COPY["log.severity.better_than_usual"],
-};
-
-const MOOD_LABEL: Record<MoodValue, string> = {
-  awful: LOG_COPY["log.mood.awful"],
-  not_great: LOG_COPY["log.mood.not_great"],
-  okay: LOG_COPY["log.mood.okay"],
-  good: LOG_COPY["log.mood.good"],
-  great: LOG_COPY["log.mood.great"],
-};
-
-function entrySummary(entry: ManualLogEntry): string {
-  switch (entry.type) {
-    case "water":
-      return `${entry.amountOz} oz`;
-    case "blood_pressure":
-      return `${entry.systolic}/${entry.diastolic} - ${entry.heartRate} bpm`;
-    case "symptom":
-      return `${entry.symptomName} - ${SEVERITY_LABEL[entry.severity]}`;
-    case "medication":
-      return `${entry.medicationName} · ${entry.dose}`;
-    case "electrolyte":
-      return LOG_COPY["log.field.taken"];
-    case "mood":
-      return MOOD_LABEL[entry.mood];
-    case "event":
-      return entry.note;
-  }
+function pickerChevronSx() {
+  const visual = CALENDAR_PICKER.chevronVisualPx;
+  const hit = CALENDAR_PICKER.chevronHitPx;
+  return {
+    position: "relative" as const,
+    width: visual,
+    height: visual,
+    minWidth: visual,
+    p: 0,
+    flexShrink: 0,
+    fontSize: 20,
+    lineHeight: 1,
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      inset: `${(visual - hit) / 2}px`,
+    },
+  };
 }
 
-function entryTimeLabel(recordedAt: string): string {
-  const [y, m, d] = recordedAt.slice(0, 10).split("-").map(Number);
-  const [hh, mm] = recordedAt.slice(11, 16).split(":").map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d, hh, mm));
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-}
-
-const cardSx = {
-  bgcolor: "#FFFFFF",
-  borderRadius: CARD_RADIUS,
-  boxShadow:
-    "0 4px 4px rgba(12,12,13,0.05), 0 4px 4px rgba(12,12,13,0.1)",
+/** Figma weekday row and day grid share one 7-column track. */
+const dayGridSx = {
+  display: "grid",
+  gridTemplateColumns: "repeat(7, 1fr)",
+  gap: `${CALENDAR_DAY.gapPx}px`,
   width: "100%",
+  maxWidth: `${CALENDAR_DAY_GRID_MAX_WIDTH_PX}px`,
+  mx: "auto",
 };
 
 export type CalendarScreenProps = {
@@ -144,33 +122,57 @@ export function CalendarScreen({
   return (
     <Box
       component="main"
-      sx={{ px: 2, pb: 3, display: "flex", flexDirection: "column", gap: 1.5 }}
+      sx={{
+        px: `${CALENDAR_LAYOUT.gutterPx}px`,
+        pb: 3,
+        display: "flex",
+        flexDirection: "column",
+        gap: 1.5,
+        boxSizing: "border-box",
+      }}
     >
-      <Box sx={{ ...cardSx, p: 2 }} data-testid="calendar-month-card">
+      <Box
+        sx={{
+          ...cardSx,
+          p: `${CALENDAR_LAYOUT.cardPadPx}px`,
+          pt: `${CALENDAR_LAYOUT.monthCardPadTopPx}px`,
+        }}
+        data-testid="calendar-month-card"
+      >
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: 1,
+            gap: `${CALENDAR_PICKER.rowGapPx}px`,
             mb: 1.5,
+            minWidth: 0,
           }}
         >
           <IconButton
             aria-label="Previous month"
             onClick={() => onShift(-1)}
-            sx={{ minWidth: 44, minHeight: 44 }}
+            sx={pickerChevronSx()}
           >
             ‹
           </IconButton>
-          <Box sx={{ display: "flex", gap: 1, flex: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: `${CALENDAR_PICKER.fieldGapPx}px`,
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
             <TextField
               select
               size="small"
               label="Month"
               value={viewMonth}
               onChange={(e) => setViewMonth(Number(e.target.value))}
-              fullWidth
+              sx={{
+                flex: "1 1 0",
+                minWidth: CALENDAR_PICKER.monthMinWidthPx,
+              }}
             >
               {MONTH_SHORT_LABELS.map((label, i) => (
                 <MenuItem key={label} value={i + 1}>
@@ -184,7 +186,15 @@ export function CalendarScreen({
               label="Year"
               value={viewYear}
               onChange={(e) => setViewYear(Number(e.target.value))}
-              fullWidth
+              sx={{
+                flex: "0 0 auto",
+                width: CALENDAR_PICKER.yearMinWidthPx,
+                minWidth: CALENDAR_PICKER.yearMinWidthPx,
+                "& .MuiSelect-select": {
+                  overflow: "hidden",
+                  textOverflow: "clip",
+                },
+              }}
             >
               {years.map((y) => (
                 <MenuItem key={y} value={y}>
@@ -196,28 +206,22 @@ export function CalendarScreen({
           <IconButton
             aria-label="Next month"
             onClick={() => onShift(1)}
-            sx={{ minWidth: 44, minHeight: 44 }}
+            sx={pickerChevronSx()}
           >
             ›
           </IconButton>
         </Box>
 
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 0.5,
-            mb: 0.5,
-          }}
-        >
+        <Box sx={{ ...dayGridSx, mb: 0.5 }}>
           {WEEKDAY_LABELS.map((label) => (
             <Typography
               key={label}
               component="span"
               sx={{
                 textAlign: "center",
-                fontSize: 12,
-                color: "text.secondary",
+                fontSize: CALENDAR_DAY.weekdayFontSizePx,
+                lineHeight: `${CALENDAR_DAY.weekdayLineHeightPx}px`,
+                color: CALENDAR_DAY.weekdayColor,
               }}
             >
               {label}
@@ -225,15 +229,7 @@ export function CalendarScreen({
           ))}
         </Box>
 
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 0.5,
-          }}
-          role="grid"
-          aria-label="Calendar days"
-        >
+        <Box sx={dayGridSx} role="grid" aria-label="Calendar days">
           {grid.map((cell) => {
             const selected = cell.calendarDate === selectedDate;
             const isToday = cell.calendarDate === today;
@@ -244,28 +240,55 @@ export function CalendarScreen({
                 data-testid={`calendar-day-${cell.calendarDate}`}
                 data-selected={selected ? "true" : "false"}
                 data-today={isToday ? "true" : "false"}
+                aria-current={isToday ? "date" : undefined}
                 onClick={() => selectDate(cell.calendarDate)}
                 sx={{
                   minWidth: 0,
-                  minHeight: 44,
-                  borderRadius: "10px",
                   p: 0,
-                  color: selected
-                    ? "#fff"
-                    : cell.inMonth
-                      ? "text.primary"
-                      : "text.disabled",
-                  bgcolor: selected ? ACCENT : "transparent",
-                  borderBottom:
-                    isToday && !selected
-                      ? `2px solid ${TEAL}`
-                      : "2px solid transparent",
-                  "&:hover": {
-                    bgcolor: selected ? ACCENT : "rgba(240,132,41,0.12)",
+                  // Hit target holds the 44px floor; the Figma visual is 40px.
+                  minHeight: CALENDAR_DAY.hitTargetPx,
+                  borderRadius: `${CALENDAR_DAY.radiusPx}px`,
+                  "&:hover": { bgcolor: "transparent" },
+                  "&:hover > span": {
+                    bgcolor: selected
+                      ? CALENDAR_DAY.selectedBg
+                      : "rgba(240,132,41,0.12)",
+                  },
+                  "&.Mui-focusVisible > span": {
+                    outline: `2px solid ${ACCENT}`,
+                    outlineOffset: "2px",
                   },
                 }}
               >
-                {cell.dayOfMonth}
+                <Box
+                  component="span"
+                  sx={{
+                    width: "100%",
+                    maxWidth: CALENDAR_DAY.visualSizePx,
+                    height: CALENDAR_DAY.visualSizePx,
+                    boxSizing: "border-box",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: `${CALENDAR_DAY.radiusPx}px`,
+                    fontSize: CALENDAR_DAY.fontSizePx,
+                    fontWeight: 400,
+                    bgcolor: selected
+                      ? CALENDAR_DAY.selectedBg
+                      : "transparent",
+                    color: selected
+                      ? CALENDAR_DAY.selectedColor
+                      : cell.inMonth
+                        ? CALENDAR_DAY.inMonthColor
+                        : CALENDAR_DAY.outOfMonthColor,
+                    textDecoration: isToday
+                      ? CALENDAR_DAY.todayDecoration
+                      : "none",
+                    textUnderlineOffset: `${CALENDAR_DAY.todayUnderlineOffsetPx}px`,
+                  }}
+                >
+                  {cell.dayOfMonth}
+                </Box>
               </Button>
             );
           })}
@@ -292,53 +315,26 @@ export function CalendarScreen({
           {formatEntriesCount(entries.length)}
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          {entries.map((entry) => {
-            const armed = armedDeleteId === entry.id;
-            return (
-              <Box
-                key={entry.id}
-                data-testid="calendar-entry"
-                sx={{
-                  border: "1px solid rgba(142,142,147,0.45)",
-                  borderRadius: "12px",
-                  px: 1.5,
-                  py: 1.25,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 1,
-                  alignItems: "flex-start",
-                }}
-              >
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography
-                    variant="overline"
-                    sx={{ color: "text.secondary", letterSpacing: 0.6 }}
-                  >
-                    {TYPE_LABEL[entry.type].toUpperCase()} ·{" "}
-                    {entryTimeLabel(entry.recordedAt)}
-                  </Typography>
-                  <Typography sx={{ color: "text.primary" }}>
-                    {entrySummary(entry)}
-                  </Typography>
-                </Box>
-                <Button
-                  size="small"
-                  onClick={() => onDelete(entry.id)}
-                  sx={{
-                    minHeight: 44,
-                    color: armed ? CONFIRM_DELETE_COLOR : "text.secondary",
-                    fontWeight: armed ? 700 : 500,
-                    flexShrink: 0,
-                  }}
-                >
-                  {armed
-                    ? LOG_COPY["log.entry.confirm_delete"]
-                    : LOG_COPY["log.entry.delete"]}
-                </Button>
-              </Box>
-            );
-          })}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: `${LOG_CARD.listGapPx}px`,
+          }}
+        >
+          {entries.map((entry) => (
+            <LogEntryCard
+              key={entry.id}
+              testId="calendar-entry"
+              summary={formatEntrySummary(entry)}
+              eyebrow={formatEntryEyebrow(
+                MANUAL_TYPE_LABEL[entry.type],
+                entry.recordedAt
+              )}
+              armed={armedDeleteId === entry.id}
+              onDelete={() => onDelete(entry.id)}
+            />
+          ))}
         </Box>
       </Box>
     </Box>

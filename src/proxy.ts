@@ -3,7 +3,7 @@ import { getIronSession } from "iron-session";
 import { getIronSessionOptions, type IronSessionData } from "@/auth/iron";
 import { resolveShellAuthGate } from "@/auth/route-gate";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next();
   const session = await getIronSession<IronSessionData>(
     request,

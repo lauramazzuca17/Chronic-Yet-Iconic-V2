@@ -90,6 +90,8 @@ export function getShellHeaderChrome(pathname: string): ShellHeaderChrome {
 export type ScrolledHeaderChrome = {
   sticky: true;
   background: "transparent" | typeof SHELL_BAR_FILL;
+  /** Background fade when content scrolls under header (Figma). */
+  backgroundTransitionMs: 300;
 };
 
 /** Default transparent; when content scrolls under, `#0B4041` @ 80%. */
@@ -97,6 +99,7 @@ export function getScrolledHeaderChrome(isScrolled: boolean): ScrolledHeaderChro
   return {
     sticky: true,
     background: isScrolled ? SHELL_BAR_FILL : "transparent",
+    backgroundTransitionMs: 300,
   };
 }
 
@@ -117,6 +120,73 @@ export function getShellNavRoutes(): ShellNavRoute[] {
 
 /** Phone column width (brief: phone viewport only; no desktop shell). */
 export const SHELL_PHONE_MAX_CONTENT_WIDTH_PX = 430;
+
+/** Figma Home header block (`62801:3888`) — type + padding. */
+export const SHELL_CONTENT_GUTTER_PX = 16;
+
+export type ShellHeaderLayout = {
+  gutterPx: typeof SHELL_CONTENT_GUTTER_PX;
+  paddingTopPx: 23;
+  paddingBottomPx: 20;
+  stackGapPx: 6;
+  eyebrowFontSizePx: 16;
+  eyebrowFontWeight: 300;
+  eyebrowLineHeightPx: 20;
+  titleFontSizePx: 32;
+  titleFontWeight: 900;
+  titleLineHeightPx: 40;
+  subtitleFontSizePx: 16;
+  subtitleFontWeight: 500;
+  subtitleLineHeightPx: 20;
+  signOutIconSrc: "/icons/sign-out.svg";
+};
+
+export function getShellHeaderLayout(): ShellHeaderLayout {
+  return {
+    gutterPx: SHELL_CONTENT_GUTTER_PX,
+    paddingTopPx: 23,
+    paddingBottomPx: 20,
+    stackGapPx: 6,
+    eyebrowFontSizePx: 16,
+    eyebrowFontWeight: 300,
+    eyebrowLineHeightPx: 20,
+    titleFontSizePx: 32,
+    titleFontWeight: 900,
+    titleLineHeightPx: 40,
+    subtitleFontSizePx: 16,
+    subtitleFontWeight: 500,
+    subtitleLineHeightPx: 20,
+    signOutIconSrc: "/icons/sign-out.svg",
+  };
+}
+
+/** Figma bottom nav bar (~64px) + label medium. */
+export type ShellNavLayout = {
+  barHeightPx: 64;
+  itemGapPx: 2;
+  iconStateWidthPx: 46;
+  iconStateHeightPx: 24;
+  labelFontSizePx: 12;
+  labelLineHeightPx: 16;
+  labelTrackingPx: 0.5;
+  /** Fixed so taps aren’t stolen by overlays / overflowing content. */
+  position: "fixed";
+  zIndex: 50;
+};
+
+export function getShellNavLayout(): ShellNavLayout {
+  return {
+    barHeightPx: 64,
+    itemGapPx: 2,
+    iconStateWidthPx: 46,
+    iconStateHeightPx: 24,
+    labelFontSizePx: 12,
+    labelLineHeightPx: 16,
+    labelTrackingPx: 0.5,
+    position: "fixed",
+    zIndex: 50,
+  };
+}
 
 export type PhoneFirstShellLayout = {
   mode: "phone-first";

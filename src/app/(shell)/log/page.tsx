@@ -1,7 +1,10 @@
 import { requireSession } from "@/auth/current-session";
 import { LogScreen } from "@/log/LogScreen";
 import { listTodayEntries, waterTotalOzForDate } from "@/log/store";
-import { calendarDateInNewYork } from "@/log/timezone";
+import {
+  calendarDateInNewYork,
+  datetimeLocalNowInNewYork,
+} from "@/log/timezone";
 
 export default async function LogPage() {
   const session = await requireSession();
@@ -15,6 +18,7 @@ export default async function LogPage() {
       entries={entries}
       waterTotalOz={waterTotalOz}
       electrolyteBlocked={electrolyteBlocked}
+      initialRecordedAt={datetimeLocalNowInNewYork()}
     />
   );
 }

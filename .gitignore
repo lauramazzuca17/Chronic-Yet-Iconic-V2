@@ -1,5 +1,7 @@
 .data/
 .env
+.env.*
+!.env.example
 .obsidian/
 node_modules/
 .next/
@@ -10,3 +12,6 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+
+.vercel
+.env*

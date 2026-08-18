@@ -2,7 +2,7 @@
 
 Paste-ready for design review. Standalone — no repo paths required.
 
-**Updated:** 2026-08-13
+**Updated:** 2026-08-18
 
 **Figma file:** CYI — V2 (`WkhupgI4GcrvhLPqJV4T7d`)
 
@@ -52,6 +52,24 @@ Calm, grounded, curious, direct. Blunt errors. Destructive confirm is direct (�
    - Delete: default **Delete** (gray) → armed **Delete this import?** (brand7 `#d95c1c`)
 
 **Data locks:** store all non-BP summary columns; Processing is not a durable queue state.
+
+## As built — visual (`62946:4425`, 2026-08-17)
+
+Tokens live in `src/import/layout.ts`.
+
+| Property | Value |
+| --- | --- |
+| Main | px 16 / pb 16 / gap 10 |
+| Upload card | white, radius **8**, pad 18/16, inner gap 16 |
+| Titles | 20/28 semibold `#1d1b20` |
+| Instructions / idle filename | 12/18 `#71717b` |
+| File pickers | two columns, gap **28**; Choose File 28px visual (4px pad), `#d1d1d6` stroke, 44px tap via `::after`; chosen filenames ellipsis-truncate in-column (`title` = full name) |
+| Start import | brand6 `#f08429`, 34px visual, 14/18 semibold white, 44px tap |
+| History card | white, radius **12**, pt 10 / px 16 / pb 18, gap 8 |
+| Database Summary | sage `#f2f5ed`, radius 8, pad 18/16; file-waveform **18×24** in 22×30; title 18/22 medium brand4; count 14/18 with **bold** number |
+| Batch row | 68px; badge overlaps top-right; card offset 10px; border `#d1d5dc`; Delete gray → armed brand7 |
+
+## Copy keys (locked)
 
 ---
 

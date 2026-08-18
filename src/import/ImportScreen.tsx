@@ -1,37 +1,20 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent, type RefObject } from "react";
 import { useRouter } from "next/navigation";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import {
   deleteImportBatchAction,
   importCsvPairAction,
 } from "@/import/actions";
 import {
   formatBatchMeta,
-  formatDatabaseSummaryCount,
+  IMPORT_COPY,
   formatDuplicateSkipped,
   formatImportSuccess,
-  IMPORT_COPY,
 } from "@/import/copy";
+import { IMPORT } from "@/import/layout";
 import type { ImportBatch, ImportBatchStatus } from "@/import/store";
-
-const ACCENT = "#f08429";
-const CONFIRM_DELETE = "#d95c1c";
-const SUMMARY_BG = "#f2f5ed";
-const SUMMARY_TITLE = "#367057";
-const COMPLETED_BADGE = "#b7cc87";
-const PROCESSING_BADGE = "#ffdb9c";
-const FAILED_BADGE = "#ff8c5a";
-const CARD_RADIUS = "12px";
-
-const cardSx = {
-  bgcolor: "#FFFFFF",
-  borderRadius: CARD_RADIUS,
-  boxShadow:
-    "0 4px 4px rgba(12,12,13,0.05), 0 4px 4px rgba(12,12,13,0.1)",
-  width: "100%",
-};
 
 const STATUS_LABEL: Record<ImportBatchStatus, string> = {
   completed: IMPORT_COPY["import.status.completed"],
@@ -40,9 +23,9 @@ const STATUS_LABEL: Record<ImportBatchStatus, string> = {
 };
 
 const STATUS_BG: Record<ImportBatchStatus, string> = {
-  completed: COMPLETED_BADGE,
-  processing: PROCESSING_BADGE,
-  failed: FAILED_BADGE,
+  completed: IMPORT.batch.badgeCompleted,
+  processing: IMPORT.batch.badgeProcessing,
+  failed: IMPORT.batch.badgeFailed,
 };
 
 export type ImportHistoryRow = ImportBatch & { sampleCount: number };
@@ -51,6 +34,119 @@ export type ImportScreenProps = {
   recordCount: number;
   batches: ImportHistoryRow[];
 };
+
+const titleSx = {
+  m: 0,
+  fontWeight: IMPORT.titleWeight,
+  fontSize: IMPORT.titleSizePx,
+  lineHeight: `${IMPORT.titleLineHeightPx}px`,
+  color: IMPORT.titleColor,
+} as const;
+
+function hitExpand(visualPx: number, hitPx: number) {
+  return `${(visualPx - hitPx) / 2}px 0`;
+}
+
+function FilePicker({
+  label,
+  inputRef,
+  name,
+  testId,
+  filenameTestId,
+  filename,
+  onChange,
+}: {
+  label: string;
+  inputRef: RefObject<HTMLInputElement | null>;
+  name: string;
+  testId: string;
+  filenameTestId: string;
+  filename: string | null;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flex: "1 1 0",
+        flexDirection: "column",
+        gap: `${IMPORT.fieldGapPx}px`,
+        minWidth: 0,
+      }}
+    >
+      <Typography
+        sx={{
+          m: 0,
+          fontWeight: 500,
+          fontSize: IMPORT.helperSizePx,
+          lineHeight: `${IMPORT.helperLineHeightPx}px`,
+          color: IMPORT.textColor,
+        }}
+      >
+        {label}
+      </Typography>
+      <input
+        ref={inputRef}
+        type="file"
+        name={name}
+        accept=".csv,text/csv"
+        hidden
+        data-testid={testId}
+        onChange={onChange}
+      />
+      <Box
+        component="button"
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        sx={{
+          position: "relative",
+          width: "100%",
+          boxSizing: "border-box",
+          m: 0,
+          p: `${IMPORT.choose.padPx}px`,
+          minHeight: IMPORT.choose.visualHeightPx,
+          bgcolor: "#ffffff",
+          border: `1px solid ${IMPORT.choose.border}`,
+          borderRadius: `${IMPORT.choose.radiusPx}px`,
+          fontFamily: "inherit",
+          fontSize: IMPORT.choose.fontSizePx,
+          lineHeight: `${IMPORT.choose.lineHeightPx}px`,
+          color: IMPORT.textColor,
+          textAlign: "center",
+          cursor: "pointer",
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            inset: hitExpand(
+              IMPORT.choose.visualHeightPx,
+              IMPORT.choose.hitHeightPx
+            ),
+          },
+        }}
+      >
+        {IMPORT_COPY["import.choose_file"]}
+      </Box>
+      <Typography
+        data-testid={filenameTestId}
+        title={filename ?? undefined}
+        sx={{
+          m: 0,
+          display: "block",
+          width: "100%",
+          minWidth: 0,
+          color: IMPORT.helperColor,
+          fontSize: IMPORT.helperSizePx,
+          lineHeight: `${IMPORT.helperLineHeightPx}px`,
+          overflow: IMPORT.filename.overflow,
+          textOverflow: IMPORT.filename.textOverflow,
+          whiteSpace: IMPORT.filename.whiteSpace,
+        }}
+      >
+        {filename ?? IMPORT_COPY["import.no_file_selected"]}
+      </Typography>
+    </Box>
+  );
+}
 
 /** Import upload + history — Figma FEAT-007 `62939:4277`. */
 export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
@@ -122,169 +218,272 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
     router.refresh();
   }
 
+  const countSuffix =
+    IMPORT_COPY["import.database_summary.count"].split("{count}")[1] ?? "";
+
   return (
     <Box
       component="main"
-      sx={{ px: 2, pb: 3, display: "flex", flexDirection: "column", gap: 1.5 }}
+      sx={{
+        px: `${IMPORT.padXPx}px`,
+        pb: `${IMPORT.padBottomPx}px`,
+        display: "flex",
+        flexDirection: "column",
+        gap: `${IMPORT.panelGapPx}px`,
+        width: "100%",
+        boxSizing: "border-box",
+      }}
     >
       <Box
         component="form"
         onSubmit={onSubmit}
-        sx={{ ...cardSx, p: 2 }}
         data-testid="import-upload-card"
+        sx={{
+          bgcolor: "#ffffff",
+          borderRadius: `${IMPORT.upload.radiusPx}px`,
+          px: `${IMPORT.upload.padXPx}px`,
+          py: `${IMPORT.upload.padYPx}px`,
+          display: "flex",
+          flexDirection: "column",
+          gap: `${IMPORT.upload.gapPx}px`,
+          width: "100%",
+          boxSizing: "border-box",
+        }}
       >
-        <Typography
-          component="h2"
-          sx={{ fontWeight: 700, fontSize: 20, m: 0 }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: `${IMPORT.introGapPx}px`,
+            width: "100%",
+          }}
         >
-          {IMPORT_COPY["import.upload.title"]}
-        </Typography>
-        <Typography
-          sx={{ color: "text.secondary", fontSize: 12, mt: 0.5, mb: 2 }}
-        >
-          {IMPORT_COPY["import.upload.instructions"]}
-        </Typography>
+          <Typography component="h2" sx={titleSx}>
+            {IMPORT_COPY["import.upload.title"]}
+          </Typography>
+          <Typography
+            sx={{
+              m: 0,
+              fontSize: IMPORT.helperSizePx,
+              lineHeight: `${IMPORT.helperLineHeightPx}px`,
+              color: IMPORT.helperColor,
+            }}
+          >
+            {IMPORT_COPY["import.upload.instructions"]}
+          </Typography>
+        </Box>
 
         <Box
           sx={{
             display: "flex",
-            gap: 2,
-            mb: 2,
-            flexWrap: "wrap",
+            gap: `${IMPORT.pickerGapPx}px`,
+            alignItems: "flex-start",
+            width: "100%",
+            minWidth: 0,
           }}
         >
-          <Box sx={{ flex: 1, minWidth: 140 }}>
-            <Typography sx={{ fontWeight: 500, fontSize: 12, mb: 1 }}>
-              {IMPORT_COPY["import.field.summary"]}
-            </Typography>
-            <input
-              ref={summaryInputRef}
-              type="file"
-              name="summaryCsv"
-              accept=".csv,text/csv"
-              hidden
-              data-testid="import-summary-input"
-              onChange={onSummaryChange}
-            />
-            <Button
-              type="button"
-              fullWidth
-              variant="outlined"
-              onClick={() => summaryInputRef.current?.click()}
-              sx={{ minHeight: 44, borderRadius: "8px", textTransform: "none" }}
-            >
-              {IMPORT_COPY["import.choose_file"]}
-            </Button>
-            <Typography
-              data-testid="import-summary-filename"
-              sx={{ color: "text.secondary", fontSize: 12, mt: 1 }}
-            >
-              {summaryName ?? IMPORT_COPY["import.no_file_selected"]}
-            </Typography>
-          </Box>
-          <Box sx={{ flex: 1, minWidth: 140 }}>
-            <Typography sx={{ fontWeight: 500, fontSize: 12, mb: 1 }}>
-              {IMPORT_COPY["import.field.detailed"]}
-            </Typography>
-            <input
-              ref={detailedInputRef}
-              type="file"
-              name="detailedCsv"
-              accept=".csv,text/csv"
-              hidden
-              data-testid="import-detailed-input"
-              onChange={onDetailedChange}
-            />
-            <Button
-              type="button"
-              fullWidth
-              variant="outlined"
-              onClick={() => detailedInputRef.current?.click()}
-              sx={{ minHeight: 44, borderRadius: "8px", textTransform: "none" }}
-            >
-              {IMPORT_COPY["import.choose_file"]}
-            </Button>
-            <Typography
-              data-testid="import-detailed-filename"
-              sx={{ color: "text.secondary", fontSize: 12, mt: 1 }}
-            >
-              {detailedName ?? IMPORT_COPY["import.no_file_selected"]}
-            </Typography>
-          </Box>
+          <FilePicker
+            label={IMPORT_COPY["import.field.summary"]}
+            inputRef={summaryInputRef}
+            name="summaryCsv"
+            testId="import-summary-input"
+            filenameTestId="import-summary-filename"
+            filename={summaryName}
+            onChange={onSummaryChange}
+          />
+          <FilePicker
+            label={IMPORT_COPY["import.field.detailed"]}
+            inputRef={detailedInputRef}
+            name="detailedCsv"
+            testId="import-detailed-input"
+            filenameTestId="import-detailed-filename"
+            filename={detailedName}
+            onChange={onDetailedChange}
+          />
         </Box>
 
-        <Button
-          type="submit"
-          fullWidth
-          disabled={processing}
-          data-testid="import-start"
+        <Box
           sx={{
-            bgcolor: ACCENT,
-            color: "#fff",
-            minHeight: 44,
-            borderRadius: "8px",
-            fontWeight: 700,
-            textTransform: "none",
-            "&:hover": { bgcolor: ACCENT },
+            display: "flex",
+            flexDirection: "column",
+            gap: `${IMPORT.fieldGapPx}px`,
+            width: "100%",
           }}
         >
-          {processing
-            ? IMPORT_COPY["import.status.processing"]
-            : IMPORT_COPY["import.start"]}
-        </Button>
-        {pairError ? (
-          <Typography
-            data-testid="import-pair-error"
+          <Box
+            component="button"
+            type="submit"
+            disabled={processing}
+            data-testid="import-start"
             sx={{
-              color: CONFIRM_DELETE,
-              fontSize: 12,
-              fontWeight: 500,
+              position: "relative",
+              width: "100%",
+              boxSizing: "border-box",
+              m: 0,
+              px: `${IMPORT.start.padXPx}px`,
+              py: `${IMPORT.start.padYPx}px`,
+              minHeight: IMPORT.start.visualHeightPx,
+              bgcolor: IMPORT.start.bg,
+              color: IMPORT.start.color,
+              border: "none",
+              borderRadius: `${IMPORT.start.radiusPx}px`,
+              fontFamily: "inherit",
+              fontWeight: IMPORT.start.fontWeight,
+              fontSize: IMPORT.start.fontSizePx,
+              lineHeight: `${IMPORT.start.lineHeightPx}px`,
               textAlign: "center",
-              mt: 1,
+              cursor: processing ? "default" : "pointer",
+              opacity: processing ? 0.7 : 1,
+              "&::after": {
+                content: '""',
+                position: "absolute",
+                inset: hitExpand(
+                  IMPORT.start.visualHeightPx,
+                  IMPORT.start.hitHeightPx
+                ),
+              },
             }}
           >
-            {IMPORT_COPY["import.error_missing_pair"]}
-          </Typography>
-        ) : null}
-        {feedback ? (
-          <Typography
-            data-testid="import-feedback"
-            sx={{ color: "text.secondary", fontSize: 12, mt: 1 }}
-          >
-            {feedback}
-          </Typography>
-        ) : null}
+            {processing
+              ? IMPORT_COPY["import.status.processing"]
+              : IMPORT_COPY["import.start"]}
+          </Box>
+          {pairError ? (
+            <Typography
+              data-testid="import-pair-error"
+              sx={{
+                m: 0,
+                color: IMPORT.batch.confirmDeleteColor,
+                fontSize: IMPORT.helperSizePx,
+                lineHeight: `${IMPORT.helperLineHeightPx}px`,
+                fontWeight: 500,
+                textAlign: "center",
+              }}
+            >
+              {IMPORT_COPY["import.error_missing_pair"]}
+            </Typography>
+          ) : null}
+          {feedback ? (
+            <Typography
+              data-testid="import-feedback"
+              sx={{
+                m: 0,
+                color: IMPORT.helperColor,
+                fontSize: IMPORT.helperSizePx,
+                lineHeight: `${IMPORT.helperLineHeightPx}px`,
+              }}
+            >
+              {feedback}
+            </Typography>
+          ) : null}
+        </Box>
       </Box>
 
-      <Box sx={{ ...cardSx, px: 2, pt: 1.5, pb: 2 }} data-testid="import-history-card">
-        <Typography
-          component="h2"
-          sx={{ fontWeight: 700, fontSize: 20, m: 0, mb: 1 }}
-        >
+      <Box
+        data-testid="import-history-card"
+        sx={{
+          bgcolor: "#ffffff",
+          borderRadius: `${IMPORT.history.radiusPx}px`,
+          pt: `${IMPORT.history.padTopPx}px`,
+          px: `${IMPORT.history.padXPx}px`,
+          pb: `${IMPORT.history.padBottomPx}px`,
+          display: "flex",
+          flexDirection: "column",
+          gap: `${IMPORT.history.gapPx}px`,
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        <Typography component="h2" sx={titleSx}>
           {IMPORT_COPY["import.history.title"]}
         </Typography>
 
         <Box
           data-testid="import-database-summary"
           sx={{
-            bgcolor: SUMMARY_BG,
-            borderRadius: "8px",
-            px: 2,
-            py: 1.5,
-            mb: 1.5,
+            bgcolor: IMPORT.summary.bg,
+            borderRadius: `${IMPORT.summary.radiusPx}px`,
+            px: `${IMPORT.summary.padXPx}px`,
+            py: `${IMPORT.summary.padYPx}px`,
+            display: "flex",
+            gap: `${IMPORT.summary.gapPx}px`,
+            alignItems: "flex-start",
+            width: "100%",
+            boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
-          <Typography
-            sx={{ color: SUMMARY_TITLE, fontWeight: 500, fontSize: 18 }}
+          <Box
+            sx={{
+              width: IMPORT.summary.iconOuterWidthPx,
+              height: IMPORT.summary.iconOuterHeightPx,
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            {IMPORT_COPY["import.database_summary.title"]}
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} data-testid="import-record-count">
-            {formatDatabaseSummaryCount(recordCount)}
-          </Typography>
+            <Box
+              component="img"
+              src={IMPORT.summary.iconSrc}
+              alt=""
+              aria-hidden
+              sx={{
+                display: "block",
+                width: IMPORT.summary.iconDrawWidthPx,
+                height: IMPORT.summary.iconDrawHeightPx,
+              }}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: `${IMPORT.introGapPx}px`,
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
+            <Typography
+              sx={{
+                m: 0,
+                fontWeight: IMPORT.summary.titleWeight,
+                fontSize: IMPORT.summary.titleSizePx,
+                lineHeight: `${IMPORT.summary.titleLineHeightPx}px`,
+                color: IMPORT.summary.titleColor,
+              }}
+            >
+              {IMPORT_COPY["import.database_summary.title"]}
+            </Typography>
+            <Typography
+              data-testid="import-record-count"
+              sx={{
+                m: 0,
+                fontSize: IMPORT.summary.countSizePx,
+                lineHeight: `${IMPORT.summary.countLineHeightPx}px`,
+                color: IMPORT.textColor,
+              }}
+            >
+              <Box
+                component="span"
+                sx={{ fontWeight: IMPORT.summary.countWeight }}
+              >
+                {recordCount}
+              </Box>
+              {countSuffix}
+            </Typography>
+          </Box>
         </Box>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: `${IMPORT.batchList.gapPx}px`,
+            pt: `${IMPORT.batchList.padTopPx}px`,
+            width: "100%",
+          }}
+        >
           {batches.map((batch) => {
             const armed = armedDeleteId === batch.id;
             const status = batch.status;
@@ -293,7 +492,11 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
                 key={batch.id}
                 data-testid="import-batch"
                 data-status={status}
-                sx={{ position: "relative", pt: 1.25 }}
+                sx={{
+                  position: "relative",
+                  height: IMPORT.batch.heightPx,
+                  width: "100%",
+                }}
               >
                 <Box
                   component="span"
@@ -301,12 +504,14 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
                   sx={{
                     position: "absolute",
                     top: 0,
-                    right: 8,
+                    right: IMPORT.batch.badgeRightPx,
                     bgcolor: STATUS_BG[status],
-                    borderRadius: "4px",
-                    px: 0.75,
-                    fontSize: 12,
-                    lineHeight: "18px",
+                    color: IMPORT.batch.badgeColor,
+                    borderRadius: `${IMPORT.batch.badgeRadiusPx}px`,
+                    px: `${IMPORT.batch.badgePadXPx}px`,
+                    py: `${IMPORT.batch.badgePadYPx}px`,
+                    fontSize: IMPORT.helperSizePx,
+                    lineHeight: `${IMPORT.helperLineHeightPx}px`,
                     zIndex: 1,
                   }}
                 >
@@ -314,14 +519,32 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
                 </Box>
                 <Box
                   sx={{
-                    border: "1px solid #d1d5dc",
-                    borderRadius: "8px",
-                    px: 1.5,
-                    py: 1.25,
+                    position: "absolute",
+                    top: IMPORT.batch.cardOffsetTopPx,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    bgcolor: "#ffffff",
+                    border: `1px solid ${IMPORT.batch.border}`,
+                    borderRadius: `${IMPORT.batch.radiusPx}px`,
+                    pl: `${IMPORT.batch.padLeftPx}px`,
+                    pr: `${IMPORT.batch.padRightPx}px`,
+                    py: `${IMPORT.batch.padYPx}px`,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: `${IMPORT.batch.gapPx}px`,
+                    boxSizing: "border-box",
+                    overflow: "hidden",
                   }}
                 >
                   <Typography
-                    sx={{ color: "text.secondary", fontSize: 12, mb: 0.5 }}
+                    sx={{
+                      m: 0,
+                      color: IMPORT.helperColor,
+                      fontSize: IMPORT.helperSizePx,
+                      lineHeight: "16px",
+                      fontWeight: IMPORT.batch.metaWeight,
+                    }}
                   >
                     {formatBatchMeta(batch.sampleCount, batch.importedAt)}
                   </Typography>
@@ -329,30 +552,63 @@ export function ImportScreen({ recordCount, batches }: ImportScreenProps) {
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
-                      gap: 1,
                       alignItems: "center",
+                      gap: 1,
+                      width: "100%",
                     }}
                   >
                     <Typography
                       data-testid="import-batch-filename"
-                      sx={{ fontSize: 12 }}
+                      title={batch.originalFilename ?? undefined}
+                      sx={{
+                        m: 0,
+                        fontSize: IMPORT.helperSizePx,
+                        lineHeight: "16px",
+                        color: IMPORT.textColor,
+                        minWidth: 0,
+                        overflow: IMPORT.filename.overflow,
+                        textOverflow: IMPORT.filename.textOverflow,
+                        whiteSpace: IMPORT.filename.whiteSpace,
+                      }}
                     >
                       {batch.originalFilename ?? "—"}
                     </Typography>
-                    <Button
-                      size="small"
+                    <Box
+                      component="button"
+                      type="button"
                       onClick={() => onDelete(batch.id)}
+                      aria-label={
+                        armed
+                          ? IMPORT_COPY["import.entry.confirm_delete"]
+                          : IMPORT_COPY["import.entry.delete"]
+                      }
                       sx={{
-                        minHeight: 44,
-                        color: armed ? CONFIRM_DELETE : "text.secondary",
-                        fontWeight: armed ? 700 : 500,
-                        textTransform: "none",
+                        position: "relative",
+                        flexShrink: 0,
+                        m: 0,
+                        p: 0,
+                        border: "none",
+                        background: "none",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        fontSize: IMPORT.helperSizePx,
+                        fontWeight: 400,
+                        lineHeight: "16px",
+                        color: armed
+                          ? IMPORT.batch.confirmDeleteColor
+                          : IMPORT.batch.deleteColor,
+                        whiteSpace: "nowrap",
+                        "&::after": {
+                          content: '""',
+                          position: "absolute",
+                          inset: "-12px -8px",
+                        },
                       }}
                     >
                       {armed
                         ? IMPORT_COPY["import.entry.confirm_delete"]
                         : IMPORT_COPY["import.entry.delete"]}
-                    </Button>
+                    </Box>
                   </Box>
                 </Box>
               </Box>

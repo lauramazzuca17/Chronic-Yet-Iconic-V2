@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
   Box,
   Button,
-  Chip,
   MenuItem,
-  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -31,23 +29,30 @@ import {
   LOG_COPY,
 } from "@/log/copy";
 import { getCreateActionLabel } from "@/log/form-meta";
+import {
+  formatEntryEyebrow,
+  formatEntrySummary,
+  MANUAL_TYPE_LABEL,
+} from "@/log/entry-display";
+import {
+  LOG_BLOCKED_MESSAGE,
+  LOG_BODY_PAD_BOTTOM_PX,
+  LOG_CARD,
+  LOG_CHIP,
+  LOG_CTA,
+  LOG_ENTRY_CARD,
+  LOG_FIELD,
+  LOG_STAT_PILL,
+} from "@/log/layout";
+import { LogOutlinedField } from "@/log/LogOutlinedField";
+import { LogEntryCard } from "@/log/LogEntryCard";
+import { TakenBadge } from "@/components/TakenBadge";
 import type { ManualLogEntry, MoodValue, SymptomSeverity } from "@/log/store";
 import { getManualLogTypes, type ManualLogType } from "@/log/types";
 import { datetimeLocalNowInNewYork } from "@/log/timezone";
+import { SHELL_CONTENT_GUTTER_PX } from "@/shell/chrome";
 
-const CONFIRM_DELETE_COLOR = "#d95c1c";
-const ACCENT = "#f08429";
-const TEAL = "#0B4041";
-
-const TYPE_LABEL: Record<ManualLogType, string> = {
-  symptom: LOG_COPY["log.type.symptom"],
-  blood_pressure: LOG_COPY["log.type.blood_pressure"],
-  medication: LOG_COPY["log.type.medication"],
-  water: LOG_COPY["log.type.water"],
-  electrolyte: LOG_COPY["log.type.electrolyte"],
-  mood: LOG_COPY["log.type.mood"],
-  event: LOG_COPY["log.type.event"],
-};
+const TYPE_LABEL = MANUAL_TYPE_LABEL;
 
 const SEVERITIES: { value: SymptomSeverity; label: string }[] = [
   { value: "usual", label: LOG_COPY["log.severity.usual"] },
@@ -66,58 +71,144 @@ const MOODS: { value: MoodValue; label: string }[] = [
   { value: "great", label: LOG_COPY["log.mood.great"] },
 ];
 
-function entrySummary(entry: ManualLogEntry): string {
-  switch (entry.type) {
-    case "water":
-      return `${entry.amountOz} oz`;
-    case "blood_pressure":
-      return `${entry.systolic}/${entry.diastolic} · HR ${entry.heartRate}`;
-    case "symptom":
-      return entry.symptomName;
-    case "medication":
-      return `${entry.medicationName} · ${entry.dose}`;
-    case "electrolyte":
-      return LOG_COPY["log.field.taken"];
-    case "mood": {
-      const mood = MOODS.find((m) => m.value === entry.mood);
-      return mood?.label ?? entry.mood;
-    }
-    case "event":
-      return entry.note;
-  }
-}
-
-function entryTimeLabel(recordedAt: string): string {
-  return recordedAt.slice(11, 16);
-}
-
-const submitSx = {
-  bgcolor: ACCENT,
-  minHeight: 44,
-  "&:hover": { bgcolor: ACCENT },
+const formCardSx = {
+  boxSizing: "border-box" as const,
+  bgcolor: "#ffffff",
+  borderRadius: `${LOG_CARD.radiusPx}px`,
+  px: `${LOG_CARD.padXPx}px`,
+  py: `${LOG_CARD.padYPx}px`,
+  width: "100%",
+  display: "flex",
+  flexDirection: "column" as const,
+  gap: `${LOG_CARD.stackGapPx}px`,
 };
+
+const todayCardSx = {
+  boxSizing: "border-box" as const,
+  bgcolor: "#ffffff",
+  borderRadius: `${LOG_CARD.radiusPx}px`,
+  px: `${LOG_CARD.padXPx}px`,
+  py: `${LOG_CARD.padYPx}px`,
+  width: "100%",
+  display: "flex",
+  flexDirection: "column" as const,
+  gap: `${LOG_CARD.listGapPx}px`,
+};
+
+/** Figma row: stat pill bottom-aligned with the field beside it. */
+const statRowSx = {
+  display: "flex",
+  gap: `${LOG_STAT_PILL.rowGapPx}px`,
+  alignItems: "flex-end",
+  width: "100%",
+  pt: `${LOG_FIELD.topOffsetPx}px`,
+};
+
+const statPillSx = {
+  boxSizing: "border-box" as const,
+  flexShrink: 0,
+  bgcolor: LOG_STAT_PILL.bg,
+  borderRadius: `${LOG_STAT_PILL.radiusPx}px`,
+  px: `${LOG_STAT_PILL.padXPx}px`,
+  py: `${LOG_STAT_PILL.padYPx}px`,
+  // Match the 56px field height so the row bottom-aligns cleanly.
+  minHeight: LOG_FIELD.heightPx,
+  display: "flex",
+  flexDirection: "column" as const,
+  alignItems: "flex-start",
+  gap: `${LOG_STAT_PILL.gapPx}px`,
+};
+
+const statPillLabelSx = {
+  m: 0,
+  color: LOG_STAT_PILL.labelColor,
+  fontSize: LOG_STAT_PILL.labelSizePx,
+  fontWeight: 400,
+  lineHeight: `${LOG_STAT_PILL.labelLineHeightPx}px`,
+};
+
+const statPillValueSx = {
+  m: 0,
+  color: LOG_STAT_PILL.valueColor,
+  fontSize: LOG_STAT_PILL.valueSizePx,
+  fontWeight: LOG_STAT_PILL.valueWeight,
+  lineHeight: `${LOG_STAT_PILL.valueLineHeightPx}px`,
+};
+
+const blockedMessageSx = {
+  m: 0,
+  color: LOG_BLOCKED_MESSAGE.color,
+  fontSize: LOG_BLOCKED_MESSAGE.sizePx,
+  fontWeight: 400,
+  lineHeight: `${LOG_BLOCKED_MESSAGE.lineHeightPx}px`,
+};
+
+const ctaSx = {
+  position: "relative" as const,
+  alignSelf: "flex-start",
+  bgcolor: LOG_CTA.bg,
+  color: LOG_CTA.color,
+  borderRadius: `${LOG_CTA.radiusPx}px`,
+  px: `${LOG_CTA.padXPx}px`,
+  py: `${LOG_CTA.padYPx}px`,
+  minWidth: 0,
+  minHeight: LOG_CTA.visualMinHeightPx,
+  height: "auto",
+  fontSize: LOG_CTA.fontSizePx,
+  fontWeight: LOG_CTA.fontWeight,
+  lineHeight: `${LOG_CTA.lineHeightPx}px`,
+  letterSpacing: `${LOG_CTA.letterSpacingPx}px`,
+  textTransform: "none" as const,
+  boxShadow: "none",
+  fontFamily: "inherit",
+  "&:hover": { bgcolor: LOG_CTA.bg, boxShadow: "none" },
+  // ≥44px hit without inflating Figma visual size.
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    inset: `${(LOG_CTA.visualMinHeightPx - LOG_CTA.minHitHeightPx) / 2}px -8px`,
+  },
+};
+
+function FormCard({
+  children,
+  onSubmit,
+  sx,
+}: {
+  children: ReactNode;
+  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  sx?: typeof formCardSx;
+}) {
+  return (
+    <Box component="form" onSubmit={onSubmit} sx={sx ?? formCardSx}>
+      {children}
+    </Box>
+  );
+}
 
 export type LogScreenProps = {
   entries: ManualLogEntry[];
   waterTotalOz: number;
   electrolyteBlocked: boolean;
+  /** Server-provided default so Date & Time does not hydrate-mismatch. */
+  initialRecordedAt: string;
 };
 
 export function LogScreen({
   entries,
   waterTotalOz,
   electrolyteBlocked,
+  initialRecordedAt,
 }: LogScreenProps) {
   const router = useRouter();
   const [selectedType, setSelectedType] =
     useState<ManualLogType>("symptom");
-  const [recordedAt, setRecordedAt] = useState(datetimeLocalNowInNewYork);
+  const [recordedAt, setRecordedAt] = useState(initialRecordedAt);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [armedDeleteId, setArmedDeleteId] = useState<string | null>(null);
 
-  // Controlled fields
   const [symptomName, setSymptomName] = useState(SYMPTOM_CATALOG_NAMES[0]);
   const [severity, setSeverity] = useState<SymptomSeverity>("usual");
   const [notes, setNotes] = useState("");
@@ -168,77 +259,163 @@ export function LogScreen({
     router.refresh();
   }
 
-  const dateTimeField = (
-    <TextField
+  /** `inRow` drops the pt-8 wrapper so the field can flex beside a stat pill. */
+  const renderDateTimeField = (inRow = false) => (
+    <LogOutlinedField
+      withTopOffset={!inRow}
       name="recordedAt"
       label={LOG_COPY["log.field.date_time"]}
       type="datetime-local"
       value={recordedAt}
       onChange={(e) => setRecordedAt(e.target.value)}
       required
-      slotProps={{ inputLabel: { shrink: true } }}
       disabled={selectedType === "electrolyte" && electrolyteBlocked}
+      sx={inRow ? { flex: 1, minWidth: 0 } : undefined}
     />
+  );
+
+  const dateTimeField = renderDateTimeField();
+
+  const isCompactLayout = entries.length === 0;
+  const mainStackGapPx = isCompactLayout
+    ? LOG_CARD.compactStackGapPx
+    : LOG_CARD.stackGapPx;
+  const chipPadYPx = isCompactLayout
+    ? LOG_CHIP.compactPadYPx
+    : LOG_CHIP.padYPx;
+  const todayCardLayoutSx = {
+    ...todayCardSx,
+    py: `${isCompactLayout ? LOG_CARD.compactPadYPx : LOG_CARD.padYPx}px`,
+  };
+  const symptomFormCardSx = isCompactLayout
+    ? {
+        ...formCardSx,
+        py: "12px",
+        gap: "12px",
+      }
+    : formCardSx;
+
+  const submitButton = (type: ManualLogType) => (
+    <Button
+      type="submit"
+      variant="contained"
+      disableElevation
+      disabled={
+        submitting ||
+        (type === "electrolyte" && electrolyteBlocked)
+      }
+      sx={{
+        ...ctaSx,
+        opacity:
+          submitting || (type === "electrolyte" && electrolyteBlocked)
+            ? 0.65
+            : 1,
+      }}
+    >
+      {getCreateActionLabel(type)}
+    </Button>
   );
 
   return (
     <Box
       component="main"
       sx={{
-        px: 2,
-        pb: 3,
+        px: `${SHELL_CONTENT_GUTTER_PX}px`,
+        pb: `${isCompactLayout ? 5 : LOG_BODY_PAD_BOTTOM_PX}px`,
         display: "flex",
         flexDirection: "column",
-        gap: 2,
+        gap: `${mainStackGapPx}px`,
         maxWidth: 430,
         mx: "auto",
+        boxSizing: "border-box",
+        width: "100%",
       }}
       onClick={() => {
         if (armedDeleteId) setArmedDeleteId(null);
       }}
     >
+      {/* Figma chip strip: horizontal scroll, orange selected / white idle */}
       <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 1,
-          position: "sticky",
-          top: 0,
-          zIndex: 1,
-          py: 1,
-          bgcolor: "rgba(255,255,255,0.92)",
-        }}
         role="group"
         aria-label="Log type"
+        sx={{
+          display: "flex",
+          flexWrap: "nowrap",
+          gap: `${LOG_CHIP.gapPx}px`,
+          overflowX: "auto",
+          overflowY: "hidden",
+          WebkitOverflowScrolling: "touch",
+          mx: `-${SHELL_CONTENT_GUTTER_PX}px`,
+          px: `${LOG_CHIP.padLeftPx}px`,
+          py: `${chipPadYPx}px`,
+          position: "sticky",
+          top: 0,
+          zIndex: 2,
+          bgcolor: LOG_CHIP.stripBg,
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
       >
-        {getManualLogTypes().map((type) => (
-          <Chip
-            key={type}
-            label={TYPE_LABEL[type]}
-            clickable
-            color={selectedType === type ? "primary" : "default"}
-            onClick={() => setSelectedType(type)}
-            sx={{ minHeight: 44 }}
-          />
-        ))}
+        {getManualLogTypes().map((type) => {
+          const selected = selectedType === type;
+          return (
+            <Box
+              key={type}
+              component="button"
+              type="button"
+              onClick={() => setSelectedType(type)}
+              sx={{
+                position: "relative",
+                flex: "0 0 auto",
+                boxSizing: "border-box",
+                border: "none",
+                borderRadius: `${LOG_CHIP.radiusPx}px`,
+                bgcolor: selected
+                  ? LOG_CHIP.selectedBg
+                  : LOG_CHIP.unselectedBg,
+                color: selected
+                  ? LOG_CHIP.selectedColor
+                  : LOG_CHIP.unselectedColor,
+                px: `${LOG_CHIP.padXPx}px`,
+                py: `${LOG_CHIP.padChipYPx}px`,
+                minHeight: LOG_CHIP.visualMinHeightPx,
+                fontFamily: "inherit",
+                fontSize: LOG_CHIP.fontSizePx,
+                fontWeight: 400,
+                lineHeight: `${LOG_CHIP.lineHeightPx}px`,
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                boxShadow: selected ? "none" : LOG_CHIP.unselectedShadow,
+                "&::after": {
+                  content: '""',
+                  position: "absolute",
+                  inset: `${(LOG_CHIP.visualMinHeightPx - LOG_CHIP.minHeightPx) / 2}px -4px`,
+                },
+              }}
+            >
+              {TYPE_LABEL[type]}
+            </Box>
+          );
+        })}
       </Box>
 
       {selectedType === "symptom" ? (
-        <Box
-          component="form"
+        <FormCard
           onSubmit={(e) =>
             submit(e, createSymptomAction, () => {
               setNotes("");
             })
           }
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
+          sx={symptomFormCardSx}
         >
-          <TextField
+          <LogOutlinedField
             name="symptomName"
             label={LOG_COPY["log.field.symptom_name"]}
             select
             value={symptomName}
-            onChange={(e) => setSymptomName(e.target.value as typeof symptomName)}
+            onChange={(e) =>
+              setSymptomName(e.target.value as typeof symptomName)
+            }
             required
           >
             {SYMPTOM_CATALOG_NAMES.map((name) => (
@@ -246,8 +423,8 @@ export function LogScreen({
                 {name}
               </MenuItem>
             ))}
-          </TextField>
-          <TextField
+          </LogOutlinedField>
+          <LogOutlinedField
             name="severity"
             label={LOG_COPY["log.field.severity"]}
             select
@@ -260,31 +437,21 @@ export function LogScreen({
                 {s.label}
               </MenuItem>
             ))}
-          </TextField>
+          </LogOutlinedField>
           {dateTimeField}
-          <TextField
+          <LogOutlinedField
             name="notes"
             label={LOG_COPY["log.field.notes"]}
             placeholder={LOG_COPY["log.field.notes_placeholder"]}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            multiline
-            minRows={2}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("symptom")}
-          </Button>
-        </Box>
+          {submitButton("symptom")}
+        </FormCard>
       ) : null}
 
       {selectedType === "blood_pressure" ? (
-        <Box
-          component="form"
+        <FormCard
           onSubmit={(e) =>
             submit(e, createBloodPressureAction, () => {
               setSystolic("");
@@ -292,10 +459,18 @@ export function LogScreen({
               setHeartRate("");
             })
           }
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
         >
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-            <TextField
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "flex-end",
+              pt: "8px",
+              width: "100%",
+            }}
+          >
+            <LogOutlinedField
+              withTopOffset={false}
               name="systolic"
               label={LOG_COPY["log.field.systolic"]}
               type="number"
@@ -304,7 +479,8 @@ export function LogScreen({
               required
               sx={{ flex: 1 }}
             />
-            <TextField
+            <LogOutlinedField
+              withTopOffset={false}
               name="diastolic"
               label={LOG_COPY["log.field.diastolic"]}
               type="number"
@@ -315,9 +491,16 @@ export function LogScreen({
             />
             <Box
               aria-hidden
-              sx={{ width: 2, height: 40, bgcolor: ACCENT, borderRadius: 1 }}
+              sx={{
+                width: 2,
+                height: 40,
+                bgcolor: LOG_CTA.bg,
+                borderRadius: 1,
+                mb: 1,
+              }}
             />
-            <TextField
+            <LogOutlinedField
+              withTopOffset={false}
               name="heartRate"
               label={LOG_COPY["log.field.heart_rate"]}
               type="number"
@@ -328,29 +511,21 @@ export function LogScreen({
             />
           </Box>
           {dateTimeField}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("blood_pressure")}
-          </Button>
-        </Box>
+          {submitButton("blood_pressure")}
+        </FormCard>
       ) : null}
 
       {selectedType === "medication" ? (
-        <Box
-          component="form"
+        <FormCard
           onSubmit={(e) =>
             submit(e, createMedicationAction, () => {
               setDose("");
             })
           }
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
         >
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <TextField
+          <Box sx={{ display: "flex", gap: 1, width: "100%", pt: "8px" }}>
+            <LogOutlinedField
+              withTopOffset={false}
               name="medicationName"
               label={LOG_COPY["log.field.medication_name"]}
               select
@@ -366,8 +541,9 @@ export function LogScreen({
                   {name}
                 </MenuItem>
               ))}
-            </TextField>
-            <TextField
+            </LogOutlinedField>
+            <LogOutlinedField
+              withTopOffset={false}
               name="dose"
               label={LOG_COPY["log.field.dose"]}
               value={dose}
@@ -377,41 +553,34 @@ export function LogScreen({
             />
           </Box>
           {dateTimeField}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("medication")}
-          </Button>
-        </Box>
+          {submitButton("medication")}
+        </FormCard>
       ) : null}
 
       {selectedType === "water" ? (
-        <Box
-          component="form"
+        <FormCard
           onSubmit={(e) =>
             submit(e, createWaterAction, () => {
               setAmountOz("");
             })
           }
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
         >
-          <Box sx={{ display: "flex", gap: 2, alignItems: "flex-end" }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="caption" color="text.secondary">
+          {/* Figma Input Row `62906:2155`: Today's Total pill + Add Ounces */}
+          <Box sx={statRowSx}>
+            <Box sx={{ ...statPillSx, width: LOG_STAT_PILL.waterWidthPx }}>
+              <Typography component="span" sx={statPillLabelSx}>
                 {LOG_COPY["log.water_total_label"]}
               </Typography>
               <Typography
+                component="span"
                 data-testid="water-total"
-                variant="h6"
-                sx={{ color: TEAL, fontWeight: 600 }}
+                sx={statPillValueSx}
               >
                 {formatWaterTotal(waterTotalOz)}
               </Typography>
             </Box>
-            <TextField
+            <LogOutlinedField
+              withTopOffset={false}
               name="amountOz"
               label={LOG_COPY["log.field.amount_oz"]}
               placeholder={LOG_COPY["log.field.amount_oz_placeholder"]}
@@ -420,60 +589,41 @@ export function LogScreen({
               type="number"
               slotProps={{ htmlInput: { min: 1, step: "any" } }}
               required
-              sx={{ flex: 1 }}
+              sx={{ flex: 1, minWidth: 0 }}
             />
           </Box>
           {dateTimeField}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("water")}
-          </Button>
-        </Box>
+          {/* Figma Button Row also has "Reset total" — hidden for v1 per product lock. */}
+          {submitButton("water")}
+        </FormCard>
       ) : null}
 
       {selectedType === "electrolyte" ? (
-        <Box
-          component="form"
-          onSubmit={(e) => submit(e, createElectrolyteAction)}
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
-        >
-          <Chip
-            label={LOG_COPY["log.field.taken"]}
-            color="primary"
-            data-testid="electrolyte-taken"
-            sx={{ alignSelf: "flex-start", minHeight: 44 }}
-          />
-          {dateTimeField}
+        <FormCard onSubmit={(e) => submit(e, createElectrolyteAction)}>
+          {/* Figma `62907:5537` (not taken) / `62907:2282` (taken) */}
+          <Box sx={statRowSx}>
+            <TakenBadge
+              taken={electrolyteBlocked}
+              label={LOG_COPY["log.field.taken"]}
+              testId="electrolyte-taken"
+              alignItems="flex-start"
+              minHeightPx={LOG_FIELD.heightPx}
+            />
+            {renderDateTimeField(true)}
+          </Box>
           {electrolyteBlocked ? (
-            <Typography role="status" color="text.secondary">
+            <Typography role="status" sx={blockedMessageSx}>
               {LOG_COPY["log.electrolytes.blocked"]}
             </Typography>
-          ) : null}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting || electrolyteBlocked}
-            sx={{
-              ...submitSx,
-              opacity: submitting || electrolyteBlocked ? 0.65 : 1,
-            }}
-          >
-            {getCreateActionLabel("electrolyte")}
-          </Button>
-        </Box>
+          ) : (
+            submitButton("electrolyte")
+          )}
+        </FormCard>
       ) : null}
 
       {selectedType === "mood" ? (
-        <Box
-          component="form"
-          onSubmit={(e) => submit(e, createMoodAction)}
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
-        >
-          <TextField
+        <FormCard onSubmit={(e) => submit(e, createMoodAction)}>
+          <LogOutlinedField
             name="mood"
             label={LOG_COPY["log.field.mood"]}
             select
@@ -486,30 +636,21 @@ export function LogScreen({
                 {m.label}
               </MenuItem>
             ))}
-          </TextField>
+          </LogOutlinedField>
           {dateTimeField}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("mood")}
-          </Button>
-        </Box>
+          {submitButton("mood")}
+        </FormCard>
       ) : null}
 
       {selectedType === "event" ? (
-        <Box
-          component="form"
+        <FormCard
           onSubmit={(e) =>
             submit(e, createEventAction, () => {
               setNote("");
             })
           }
-          sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
         >
-          <TextField
+          <LogOutlinedField
             name="note"
             label={LOG_COPY["log.field.note"]}
             placeholder={LOG_COPY["log.field.note_placeholder"]}
@@ -520,77 +661,61 @@ export function LogScreen({
             minRows={3}
           />
           {dateTimeField}
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={submitting}
-            sx={{ ...submitSx, opacity: submitting ? 0.65 : 1 }}
-          >
-            {getCreateActionLabel("event")}
-          </Button>
-        </Box>
+          {submitButton("event")}
+        </FormCard>
       ) : null}
 
       {success ? (
-        <Typography role="status">{LOG_COPY["log.save_success"]}</Typography>
+        <Typography role="status" sx={{ color: "#ffffff" }}>
+          {LOG_COPY["log.save_success"]}
+        </Typography>
       ) : null}
       {error ? (
-        <Typography role="alert" color="error">
+        <Typography role="alert" sx={{ color: LOG_ENTRY_CARD.confirmDeleteColor }}>
           {error}
         </Typography>
       ) : null}
 
-      <Box>
-        <Typography variant="h6" component="h2" sx={{ color: TEAL }}>
-          {LOG_COPY["log.today_heading"]}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          {formatEntriesCount(entries.length)}
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          {entries.map((entry) => {
-            const armed = armedDeleteId === entry.id;
-            return (
-              <Box
-                key={entry.id}
-                data-testid="log-entry"
-                sx={{
-                  py: 1.5,
-                  borderBottom: "1px solid rgba(11,64,65,0.15)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 1,
-                  alignItems: "flex-start",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Box>
-                  <Typography
-                    variant="overline"
-                    sx={{ color: TEAL, letterSpacing: 0.6 }}
-                  >
-                    {TYPE_LABEL[entry.type]} ·{" "}
-                    {entryTimeLabel(entry.recordedAt)}
-                  </Typography>
-                  <Typography>{entrySummary(entry)}</Typography>
-                </Box>
-                <Button
-                  size="small"
-                  onClick={() => onDelete(entry.id)}
-                  sx={{
-                    minHeight: 44,
-                    color: armed ? CONFIRM_DELETE_COLOR : "text.secondary",
-                    fontWeight: armed ? 700 : 500,
-                  }}
-                >
-                  {armed
-                    ? LOG_COPY["log.entry.confirm_delete"]
-                    : LOG_COPY["log.entry.delete"]}
-                </Button>
-              </Box>
-            );
-          })}
+      {/* Today list — Figma py 18 (no form field top offset) */}
+      <Box sx={todayCardLayoutSx}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          <Typography
+            component="h2"
+            sx={{
+              m: 0,
+              color: LOG_CARD.titleColor,
+              fontSize: LOG_CARD.titleSizePx,
+              fontWeight: LOG_CARD.titleWeight,
+              lineHeight: `${LOG_CARD.titleLineHeightPx}px`,
+            }}
+          >
+            {LOG_COPY["log.today_heading"]}
+          </Typography>
+          <Typography
+            sx={{
+              m: 0,
+              color: LOG_CARD.countColor,
+              fontSize: LOG_CARD.countSizePx,
+              fontWeight: 400,
+              lineHeight: `${LOG_CARD.countLineHeightPx}px`,
+            }}
+          >
+            {formatEntriesCount(entries.length)}
+          </Typography>
         </Box>
+
+        {entries.map((entry) => (
+          <LogEntryCard
+            key={entry.id}
+            summary={formatEntrySummary(entry)}
+            eyebrow={formatEntryEyebrow(
+              TYPE_LABEL[entry.type],
+              entry.recordedAt
+            )}
+            armed={armedDeleteId === entry.id}
+            onDelete={() => onDelete(entry.id)}
+          />
+        ))}
       </Box>
     </Box>
   );

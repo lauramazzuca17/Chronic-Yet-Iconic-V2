@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: operations
 status: working-draft
-updated: 2026-08-10
+updated: 2026-08-15
 ---
 
 # Content and Release Operations
@@ -33,5 +33,23 @@ Catalog labels (symptoms, medications) stay consistent so analytics remain compa
 ## Release workflow
 1. **Research / change:** update docs (requirements/data model) when behavior or catalogs change.
 2. **Review:** owner confirms.
-3. **Publish:** merge to GitHub; Vercel production deploy; Turso migrations applied as documented in AGENTS.md (when filled).
+3. **Publish:** merge to GitHub; Vercel production deploy; Turso schema applied on first `getDb()` (Drizzle migrator reads `drizzle/` at runtime — no separate migrate job in v1).
 4. **Re-check cadence:** personal app — review seed lists when meds/symptoms change in real life.
+
+## Vercel + Turso env (v0.1.1+)
+
+Set these on the Vercel project (**Production**; optionally **Preview** with a separate Turso DB):
+
+| Variable | Notes |
+| --- | --- |
+| `TURSO_DATABASE_URL` | `libsql://…` from Turso dashboard |
+| `TURSO_AUTH_TOKEN` | DB token from Turso (password manager) |
+| `SESSION_SECRET` | ≥32 random chars (iron-session) |
+| `SEED_PASSWORD_LAURA` | Strong unique password; password manager |
+| `SEED_PASSWORD_DEMO` | Strong unique password; password manager |
+
+Do **not** set `ALLOW_TEST_RESET` in Production. Do **not** set `CYI_DB_MODE=memory` on Vercel.
+
+**First boot:** migrate + upsert Laura/Demo + catalogs run inside `getDb()` when seed env is present.
+
+**Local:** leave `TURSO_*` empty to use `.data/local.db`; or copy Production Turso URL/token into `.env.local` to hit the same DB (careful).

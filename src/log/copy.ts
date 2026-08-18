@@ -32,7 +32,7 @@ export const LOG_COPY = {
   "log.field.severity": "Severity",
   "log.field.mood": "Mood",
   "log.type.symptom": "Symptom",
-  "log.type.blood_pressure": "Blood pressure",
+  "log.type.blood_pressure": "Blood Pressure",
   "log.type.medication": "Medication",
   "log.type.water": "Water",
   "log.type.electrolyte": "Electrolytes",

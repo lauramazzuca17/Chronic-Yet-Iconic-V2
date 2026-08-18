@@ -516,6 +516,28 @@ describe("FEAT-004 manual logging", () => {
     });
   });
 
+  it("UI: Log datetime default is server-provided (avoids nav hydration toast)", async () => {
+    // Regression: client `useState(datetimeLocalNowInNewYork)` mismatched SSR
+    // and raised Next.js “1 Issue”, which covered the Log footer link.
+    const source = await import("node:fs/promises").then((fs) =>
+      fs.readFile(
+        new URL("../src/log/LogScreen.tsx", import.meta.url),
+        "utf8"
+      )
+    );
+    expect(source).toMatch(/initialRecordedAt/);
+    expect(source).not.toMatch(
+      /useState\(\s*datetimeLocalNowInNewYork\s*\)/
+    );
+    const pageSource = await import("node:fs/promises").then((fs) =>
+      fs.readFile(
+        new URL("../src/app/(shell)/log/page.tsx", import.meta.url),
+        "utf8"
+      )
+    );
+    expect(pageSource).toMatch(/initialRecordedAt=\{datetimeLocalNowInNewYork/);
+  });
+
   it("UI: each log type has a create CTA from the copy deck", async () => {
     const { getCreateActionLabel } = await import("../src/log/form-meta");
     const { getManualLogTypes } = await import("../src/log/types");

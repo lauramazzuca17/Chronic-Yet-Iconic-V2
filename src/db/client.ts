@@ -1,7 +1,7 @@
 import { createClient, type Client } from "@libsql/client";
 import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import { migrate } from "drizzle-orm/libsql/migrator";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import * as schema from "./schema";
 
@@ -25,7 +25,7 @@ export function setTestDbOverride(db: AppDb | null): void {
  * - else → local file libSQL (next.dev / Playwright)
  */
 export function resolveDbMode(
-  env: NodeJS.ProcessEnv = process.env,
+  env: Record<string, string | undefined> = process.env,
   hasTestOverride = false
 ): DbMode {
   if (hasTestOverride) return "memory";
@@ -63,8 +63,25 @@ function createLibsqlClient(mode: DbMode): Client {
   return createClient({ url: `file:${path}` });
 }
 
+/** Prefer cwd; fall back to paths Vercel/Next may use for traced files. */
+export function resolveMigrationsFolder(): string {
+  const candidates = [
+    join(process.cwd(), "drizzle"),
+    join(__dirname, "..", "..", "drizzle"),
+    join(__dirname, "..", "..", "..", "drizzle"),
+  ];
+  for (const folder of candidates) {
+    if (existsSync(join(folder, "meta", "_journal.json"))) {
+      return folder;
+    }
+  }
+  throw new Error(
+    `Drizzle migrations not found (looked for meta/_journal.json under: ${candidates.join(", ")})`
+  );
+}
+
 export async function migrateDb(db: AppDb): Promise<void> {
-  await migrate(db, { migrationsFolder: join(process.cwd(), "drizzle") });
+  await migrate(db, { migrationsFolder: resolveMigrationsFolder() });
 }
 
 /** Fresh in-memory DB with migrations applied (unit tests). */

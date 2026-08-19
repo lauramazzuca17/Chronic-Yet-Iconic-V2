@@ -52,7 +52,8 @@ Personal health tool: **calm, grounded, direct**. Material Design 3 language via
 | 2026-08-18 | TakenBadge extract | — | Shared Home + Log electrolytes pill (`src/components/TakenBadge.tsx`) |
 | 2026-08-18 | Import filename ellipsis | briefs/FEAT-007-brief.md | Chosen CSV names truncate in-column; `title` keeps full name |
 | 2026-08-17 | Import visual fidelity | briefs/FEAT-007-brief.md | Figma `62939:4277` / Main `62946:4425`; sage summary + file-waveform |
-| 2026-08-17 | Analytics visual fidelity | briefs/analytics-page-brief.md | Chips + Medication + Cardiovascular + Recovery + Electrolytes; koi favicon PNG |
+| 2026-08-18 | Favicon | briefs/analytics-page-brief.md | Lotus on lily pad PNG (replaces koi tab icon) |
+| 2026-08-17 | Analytics visual fidelity | briefs/analytics-page-brief.md | Chips + Medication + Cardiovascular + Recovery + Electrolytes |
 | 2026-08-16 | Home visual fidelity | briefs/home-page-brief.md | Figma `62795:75` + `62920:2588`; 16px gutters; hide Health records; fix header/nav/50-50 overlap |
 | 2026-08-15 | Login visual fidelity | briefs/login-page-brief.md | Figma `62827:29846` + error `62829:31133`; koi OK, rest diverges; card fluid width (38px side margins, not fixed 314px) |
 | 2026-08-13 | FEAT-006 | briefs/FEAT-006-brief.md | Calendar states: past day list, today, empty, scroll header |

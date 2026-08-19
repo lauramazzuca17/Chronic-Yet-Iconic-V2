@@ -43,7 +43,7 @@ updated: 2026-08-18
 | Import visual | Cards + summary | tests/import-visual-layout.test.ts | Upload radius 8 / History radius 12; sage Database Summary + 18×24 file-waveform (`62946:4425`) | ✅ passing |
 | Import visual | Screen wiring | tests/import-visual-layout.test.ts | ImportScreen uses IMPORT tokens; compact Choose File / Start import (not 44px visual) | ✅ passing |
 | Import visual | Filename overflow | tests/import-visual-layout.test.ts | Chosen Summary/Detailed names ellipsis-truncate (`IMPORT.filename`); full name on `title` | ✅ passing |
-| Shell visual | Favicon | tests/log-visual-layout.test.ts | `public/favicon.png` (owner koi, black background) exists | ✅ passing |
+| Shell visual | Favicon | tests/log-visual-layout.test.ts | `public/favicon.png` (owner lotus on lily pad, black background) exists | ✅ passing |
 | FEAT-003 | Header layout | tests/feat-003-shell-polish.test.ts | header layout: Figma type sizes, 16px gutter, logout icon asset | ✅ passing |
 | FEAT-003 | Nav layout | tests/feat-003-shell-polish.test.ts | nav layout: 64px bar and label medium tokens | ✅ passing |
 | FEAT-003 | Nav fixed | tests/feat-003-shell-polish.test.ts | nav layout: fixed bar so Log (and siblings) stay tappable | ✅ passing |

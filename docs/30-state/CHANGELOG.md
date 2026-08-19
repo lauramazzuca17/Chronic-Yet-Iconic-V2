@@ -3,6 +3,9 @@ type: changelog
 ---
 # Changelog
 
+## 2026-08-18 (favicon)
+- **Favicon** — owner lotus-on-lily-pad PNG at `public/favicon.png`.
+
 ## 2026-08-18 (analytics client chunk)
 - **Vercel `next build`** failed because Medication Impact chart value-imported `medication-series` / `medication-impact` (Turso stores → `node:fs`). Helpers now live in client-safe `src/analytics/medication-chart.ts`.
 

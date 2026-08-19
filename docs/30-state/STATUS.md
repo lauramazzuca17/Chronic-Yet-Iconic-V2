@@ -12,19 +12,17 @@ Visual fidelity: **v1 owner-approved** for Home, Log, Import, and Analytics (all
 None.
 
 ## In flight / uncommitted
-- Vercel `2b13c28` build fix: client chart helpers in `src/analytics/medication-chart.ts` so Analytics does not bundle `node:fs`. Needs commit/push.
+- Favicon: owner lotus-on-lily-pad PNG at `public/favicon.png` (replaces koi tab icon).
 
 ## Built and tested
 - **FEAT-001**–**FEAT-009**.
-- Visual fidelity + Next.js 16.3.1 + Import hang fix — on `main`.
-- **Medication Impact iterate** — on `main` (`2b13c28`); Vercel build failed until this client-chunk fix.
-- **Analytics client-safe helpers (local)** — `medication-chart.ts`; unit 131 passed.
+- Visual fidelity + Next.js 16.3.1 + Import hang + Medication Impact iterate + Analytics client-chunk fix (`23765f0`) — on `main`.
 
 ## Not yet built
 - Health records Home card (deferred).
 
 ## Session notes / uncommitted
-- Client `charts.tsx` must not value-import `medication-series` / `medication-impact` (those pull Turso stores → Node builtins). Same class of bug as the earlier `node:crypto` client break.
+- Client `charts.tsx` must not value-import `medication-series` / `medication-impact` (those pull Turso stores → Node builtins).
 
 ## Known local hazards
 - No ESLint CLI yet. `next lint` was removed in Next 16; `npm run lint` currently runs `tsc --noEmit`.
@@ -32,7 +30,7 @@ None.
 - Remaining `npm audit` findings are **dev-only** (drizzle-kit / vite → esbuild). Do not `audit fix --force` (it wants to *downgrade* drizzle-kit).
 
 ## Next actions
-1. Commit + push the Analytics `node:fs` client-chunk fix so Vercel can deploy `2b13c28`’s Medication Impact work.
+1. Commit + push the lotus favicon when ready.
 
 ## Test status (2026-08-18)
 - Unit: **131 passed** (1 todo).
@@ -40,8 +38,9 @@ None.
 - E2E / full `next build` not re-run locally this pass (`.next` collision with `npm run dev`).
 
 ## Resolved 2026-08-18
-- Vercel deploy of Medication Impact iterate failed: Analytics client bundled `node:fs`. Helpers extracted to `medication-chart.ts` (local, not pushed).
-- Medication Impact: empty window copy; date-field calendar; tooltip colon; y-axis min−30/max+30. New koi favicon.
+- Favicon swapped to lotus on lily pad (local, not pushed).
+- Vercel deploy of Medication Impact iterate failed: Analytics client bundled `node:fs`. Helpers extracted to `medication-chart.ts` (`23765f0`).
+- Medication Impact: empty window copy; date-field calendar; tooltip colon; y-axis min−30/max+30.
 - Production Import hung on Start import “Processing” — chunked inserts + error copy (deployed `dc71dd7`).
 - Import picker filenames overflowing between Summary/Detailed columns — ellipsis-truncate; owner approved the Import page look.
 - Next.js 15 postcss/sharp npm audit highs — upgraded to Next 16.3.1; production audit clean.

@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: copy-deck
 status: design-contract
-updated: 2026-08-18
+updated: 2026-08-31
 ---
 # Copy Deck — canonical user-facing strings
 
@@ -74,9 +74,19 @@ updated: 2026-08-18
 | analytics.range.last_7 | Last 7 Days | Figma (not “Past 7 days”) |
 | analytics.range.last_30 | Last 30 Days | Figma |
 | analytics.cardio.chart3.title | Tachycardia Burden | Figma 62953-4604 |
-| analytics.cardio.chart3.helper | Percent of heart rate readings ≥ 100 bpm | Owner lock ≥100 (overrides Figma `>`) |
+| analytics.cardio.chart3.helper | Share of heart rate readings in each bpm range | Owner 2026-08-31 stacked bands (was ≥100) |
+| analytics.cardio.chart3.band.low | 0–69 | Stacked bar (green) |
+| analytics.cardio.chart3.band.mid | 70–84 | Stacked bar (yellow) |
+| analytics.cardio.chart3.band.high | 85–95 | Stacked bar (orange) |
+| analytics.cardio.chart3.band.tachy | 96+ | Stacked bar (red) |
 | analytics.cardio.chart3.disclaimer_title | Data Disclaimer | Figma 62953-4604 |
-| analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the percentage of heart rate readings that were at or above the 100 bpm threshold. | ≥100 lock |
+| analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the share of that day's heart rate readings in each bpm range (0–69, 70–84, 85–95, and 96+). | Owner 2026-08-31 stacked bands |
+| analytics.cardio.chart3_day.title | Tachycardia Burden | Owner 2026-08-31 daily pie (same title as 7-day) |
+| analytics.cardio.chart3_day.helper | Share of that day's heart rate readings in each bpm range | Owner 2026-08-31 daily pie |
+| analytics.cardio.chart3_day.empty | No heart rate readings for this day. | Daily pie empty |
+| analytics.cardio.chart3_day.prev_day | Previous day | a11y |
+| analytics.cardio.chart3_day.next_day | Next day | a11y |
+| analytics.cardio.chart3_day.pick_date | Choose date | a11y for date-field calendar |
 | analytics.recovery.hrv.title | Heart Rate Variability | Figma 62957-4735 |
 | analytics.recovery.hrv.helper | HRV measures the changes in time between your heartbeats. | Figma 62957-4735 |
 | analytics.recovery.hrv.info_title | What your HRV shows | Figma info callout |

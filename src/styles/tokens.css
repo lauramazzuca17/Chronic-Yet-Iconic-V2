@@ -58,4 +58,10 @@
   --cyi-log-entry-border: #d1d5dc;
   --cyi-log-zinc: #71717b;
   --cyi-log-body-bg: #b7cc87;
+
+  /* Chart 3 HR bands (Cardiovascular stacked bar) */
+  --cyi-hr-band-low: #367057;
+  --cyi-hr-band-mid: #e3b23c;
+  --cyi-hr-band-high: #f08429;
+  --cyi-hr-band-tachy: #d91c1c;
 }

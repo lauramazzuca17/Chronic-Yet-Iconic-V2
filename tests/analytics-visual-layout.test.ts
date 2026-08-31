@@ -112,7 +112,7 @@ describe("Analytics visual layout", () => {
     expect(source).toContain("displayEmpty");
     expect(source).toContain("selectEmptyLabel");
     expect(source).toContain('type="date"');
-    expect(source).toContain("analytics-med-date-picker");
+    expect(source).toContain('testIdPrefix="analytics-med"');
   });
 
   it("cardiovascular range switch matches Figma 62953:4603", async () => {

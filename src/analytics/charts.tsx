@@ -11,6 +11,9 @@ import {
   CartesianGrid,
   BarChart,
   Bar,
+  LabelList,
+  PieChart,
+  Pie,
   Cell,
 } from "recharts";
 import { Box, Typography } from "@mui/material";
@@ -20,6 +23,17 @@ import {
   medicationImpactPlottedValues,
   medicationImpactYDomain,
 } from "@/analytics/medication-chart";
+import {
+  BP_HR_OVERLAY_SHOW_DOTS,
+  HR_BURDEN_BANDS,
+  buildBpHrOverlayChartView,
+  formatBpHrOverlayTooltipLabel,
+  formatHrBurdenAxisTick,
+  formatHrBurdenBarLabel,
+  hrBurdenBarLabelFill,
+  hrBurdenPieSlices,
+} from "@/analytics/cardio-chart";
+import type { HrBurdenBandId, HrBurdenBandPercents } from "@/analytics/cardio-chart";
 import type { MedicationImpactSeries } from "@/analytics/medication-series";
 import type { BpHrOverlaySeries, TachycardiaBurdenSeries } from "@/analytics/cardiovascular";
 import type { RecoverySeries } from "@/analytics/recovery";
@@ -209,22 +223,10 @@ function MedicationImpactSlotFallback({
 }
 
 export function BpHrOverlayChart({ series }: { series: BpHrOverlaySeries }) {
-  const byTime = new Map<string, { t: string; bp?: number; hr?: number }>();
-  for (const p of series.bp) {
-    const row = byTime.get(p.recordedAt) ?? { t: p.recordedAt.slice(11, 16) };
-    row.bp = p.value;
-    byTime.set(p.recordedAt, row);
-  }
-  for (const p of series.hr) {
-    const row = byTime.get(p.recordedAt) ?? { t: p.recordedAt.slice(11, 16) };
-    row.hr = p.value;
-    byTime.set(p.recordedAt, row);
-  }
-  const data = [...byTime.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([, row]) => row);
+  const view = buildBpHrOverlayChartView(series);
+  const tickLabel = new Map(view.ticks.map((t) => [t.x, t.label]));
 
-  if (data.length === 0) {
+  if (view.rows.length === 0) {
     return (
       <ChartFrame testId="analytics-cardio-chart2" label="Blood pressure and heart rate chart">
         <EmptyChartNote text="No BP or HR readings in this range." />
@@ -236,19 +238,31 @@ export function BpHrOverlayChart({ series }: { series: BpHrOverlaySeries }) {
     <ChartFrame testId="analytics-cardio-chart2" label="Blood pressure and heart rate chart">
       <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <LineChart data={view.rows} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
-            <XAxis dataKey="t" tick={{ fontSize: 10, fill: MUTED }} />
+            <XAxis
+              type="number"
+              dataKey="x"
+              domain={[view.xMin, view.xMax]}
+              ticks={view.ticks.map((t) => t.x)}
+              tickFormatter={(x: number) => tickLabel.get(x) ?? ""}
+              interval={0}
+              tick={{ fontSize: 10, fill: MUTED }}
+            />
             <YAxis domain={[50, 190]} tick={{ fontSize: 11, fill: MUTED }} width={36} />
-            <Tooltip />
+            <Tooltip
+              labelFormatter={(label) =>
+                formatBpHrOverlayTooltipLabel(Number(label), series.range)
+              }
+            />
             <Line
               type="monotone"
               dataKey="bp"
               name="BP"
               stroke={TEAL}
               strokeWidth={2}
-              connectNulls={false}
-              dot={{ r: 3 }}
+              connectNulls
+              dot={BP_HR_OVERLAY_SHOW_DOTS}
             />
             <Line
               type="monotone"
@@ -256,8 +270,8 @@ export function BpHrOverlayChart({ series }: { series: BpHrOverlaySeries }) {
               name="HR"
               stroke={ACCENT}
               strokeWidth={2}
-              connectNulls={false}
-              dot={{ r: 3 }}
+              connectNulls
+              dot={BP_HR_OVERLAY_SHOW_DOTS}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -273,34 +287,215 @@ export function TachycardiaBurdenChart({
 }) {
   const data = series.days.map((d) => ({
     weekday: d.weekday,
-    percent: d.percent,
+    low: d.bands?.low ?? 0,
+    mid: d.bands?.mid ?? 0,
+    high: d.bands?.high ?? 0,
+    tachy: d.bands?.tachy ?? 0,
   }));
+  const lastBand = HR_BURDEN_BANDS[HR_BURDEN_BANDS.length - 1]!;
 
   return (
-    <ChartFrame testId="analytics-cardio-chart3" label="Tachycardia burden chart">
-      <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 16, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
-            <XAxis dataKey="weekday" tick={{ fontSize: 11, fill: MUTED }} />
-            <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: MUTED }} width={36} unit="%" />
-            <Tooltip
-              formatter={(value) =>
-                value == null ? ["—", "% ≥100"] : [`${value}%`, "% ≥100"]
-              }
-            />
-            <Bar dataKey="percent" name="% ≥100" radius={[4, 4, 0, 0]}>
-              {data.map((d, i) => (
-                <Cell
-                  key={d.weekday + i}
-                  fill={d.percent == null ? "#d1d1d6" : TEAL}
-                />
+    <Box>
+      <ChartFrame testId="analytics-cardio-chart3" label="Tachycardia burden chart">
+        <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ top: 16, right: 8, left: 8, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#d1d1d6" />
+              <XAxis dataKey="weekday" tick={{ fontSize: 11, fill: MUTED }} />
+              <YAxis
+                domain={[0, 100]}
+                ticks={[0, 25, 50, 75, 100]}
+                tickFormatter={formatHrBurdenAxisTick}
+                tick={{ fontSize: 11, fill: MUTED }}
+                width={48}
+                allowDecimals={false}
+              />
+              <Tooltip
+                formatter={(value, name) => [
+                  `${Math.round(Number(value ?? 0))}%`,
+                  String(name),
+                ]}
+              />
+              {HR_BURDEN_BANDS.map((band) => (
+                <Bar
+                  key={band.id}
+                  dataKey={band.id}
+                  name={band.label}
+                  stackId="hr"
+                  fill={band.color}
+                  radius={band.id === lastBand.id ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                >
+                  <LabelList
+                    dataKey={band.id}
+                    position="center"
+                    formatter={formatHrBurdenBarLabel}
+                    fill={hrBurdenBarLabelFill(band.id)}
+                    fontSize={10}
+                    fontWeight={600}
+                  />
+                </Bar>
               ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+            </BarChart>
+          </ResponsiveContainer>
+        </Box>
+      </ChartFrame>
+      <HrBurdenLegend testId="analytics-cardio-chart3-legend" />
+    </Box>
+  );
+}
+
+function HrBurdenLegend({ testId }: { testId: string }) {
+  return (
+    <Box
+      data-testid={testId}
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        mt: "8px",
+      }}
+    >
+      {HR_BURDEN_BANDS.map((band) => (
+        <Box
+          key={band.id}
+          sx={{ display: "flex", alignItems: "center", gap: "6px" }}
+        >
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: "2px",
+              bgcolor: band.color,
+              flexShrink: 0,
+            }}
+          />
+          <Typography sx={{ fontSize: 11, lineHeight: "14px", color: MUTED }}>
+            {band.label}
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
+function HrBurdenPieLabel(props: {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
+  payload?: { id?: HrBurdenBandId };
+}) {
+  const { cx, cy, midAngle, innerRadius, outerRadius, percent, payload } =
+    props;
+  const bandId = payload?.id;
+  if (
+    bandId == null ||
+    typeof cx !== "number" ||
+    typeof cy !== "number" ||
+    typeof midAngle !== "number" ||
+    typeof innerRadius !== "number" ||
+    typeof outerRadius !== "number"
+  ) {
+    return null;
+  }
+  const text = formatHrBurdenBarLabel((percent ?? 0) * 100);
+  if (!text) return null;
+  const radian = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.58;
+  const x = cx + radius * Math.cos(-midAngle * radian);
+  const y = cy + radius * Math.sin(-midAngle * radian);
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={hrBurdenBarLabelFill(bandId)}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={11}
+      fontWeight={600}
+    >
+      {text}
+    </text>
+  );
+}
+
+export function TachycardiaDayPieChart({
+  bands,
+  emptyText,
+}: {
+  bands: HrBurdenBandPercents | null;
+  emptyText: string;
+}) {
+  const slices = hrBurdenPieSlices(bands);
+
+  if (slices.length === 0) {
+    return (
+      <Box>
+        <ChartFrame
+          testId="analytics-cardio-chart3-pie"
+          label="Tachycardia burden pie chart"
+        >
+          <EmptyChartNote text={emptyText} />
+        </ChartFrame>
+        <HrBurdenLegend testId="analytics-cardio-chart3-pie-legend" />
       </Box>
-    </ChartFrame>
+    );
+  }
+
+  return (
+    <Box>
+      <ChartFrame
+        testId="analytics-cardio-chart3-pie"
+        label="Tachycardia burden pie chart"
+      >
+        <Box sx={{ width: "100%", height: ANALYTICS_CHART_FRAME.heightPx }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={slices}
+                dataKey="value"
+                nameKey="label"
+                cx="50%"
+                cy="50%"
+                outerRadius={86}
+                label={HrBurdenPieLabel}
+                labelLine={false}
+              >
+                {slices.map((slice) => (
+                  <Cell key={slice.id} fill={slice.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value) => `${Math.round(Number(value ?? 0))}%`}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Box>
+        <Box
+          component="ul"
+          sx={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            m: -1,
+            p: 0,
+            overflow: "hidden",
+            clip: "rect(0 0 0 0)",
+            whiteSpace: "nowrap",
+            border: 0,
+          }}
+        >
+          {slices.map((slice) => (
+            <li key={slice.id}>
+              {slice.label}: {Math.round(slice.value)}%
+            </li>
+          ))}
+        </Box>
+      </ChartFrame>
+      <HrBurdenLegend testId="analytics-cardio-chart3-pie-legend" />
+    </Box>
   );
 }
 

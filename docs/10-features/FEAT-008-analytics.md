@@ -6,7 +6,7 @@ implements: [REQ-16, REQ-17, REQ-20, NFR-01, NFR-06]
 depends_on: [FEAT-001, FEAT-002, FEAT-003, FEAT-004, FEAT-007]
 tests: [tests/feat-008-analytics.test.ts, e2e/feat-008-analytics-journey.spec.ts]
 created: 2026-08-14
-updated: 2026-08-18
+updated: 2026-08-31
 ---
 # FEAT-008 — Analytics (all tabs)
 
@@ -40,7 +40,8 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 - [x] AC-8: Account-scoped — Demo cannot read Laura analytics inputs (NFR-01).
 
 ### Cardiovascular / Recovery / Electrolytes
-- [x] AC-9: Cardiovascular tab: Chart 2 (BP & HR) + Chart 3 (Tachycardia Burden) per REQ-17 + Figma `62953:4603` / `62953:4604`.
+- [x] AC-9: Cardiovascular tab: Chart 3 (Tachycardia Burden, stacked HR bands) **first**, then Chart 2 (BP & HR) per REQ-17.
+- [x] AC-13: Daily Tachycardia Burden **pie** below Data Disclaimer: date picker (prev / native calendar / next); one America/New_York day (default **yesterday**); same bpm bands and HR sources as the 7-day stack.
 - [x] AC-10: Recovery tab: Chart 4 (HRV) Figma `62957:4735` + Chart 5 (walking HR) Figma `62959:4803` per REQ-17.
 - [x] AC-11: Electrolytes tab: With/Without comparison cards per REQ-20 + Figma `62967:5991`.
 
@@ -102,9 +103,17 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | analytics.range.last_7 | Last 7 Days | locked (Figma; REQ said “Past 7 days”) |
 | analytics.range.last_30 | Last 30 Days | locked |
 | analytics.cardio.chart3.title | Tachycardia Burden | locked Figma 62953:4604 |
-| analytics.cardio.chart3.helper | Percent of heart rate readings ≥ 100 bpm | locked — math + UI ≥100 (overrides Figma `>`) |
+| analytics.cardio.chart3.helper | Share of heart rate readings in each bpm range | locked — owner 2026-08-31 stacked bands |
+| analytics.cardio.chart3.band.low | 0–69 | locked |
+| analytics.cardio.chart3.band.mid | 70–84 | locked |
+| analytics.cardio.chart3.band.high | 85–95 | locked |
+| analytics.cardio.chart3.band.tachy | 96+ | locked |
 | analytics.cardio.chart3.disclaimer_title | Data Disclaimer | locked |
-| analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the percentage of heart rate readings that were at or above the 100 bpm threshold. | locked |
+| analytics.cardio.chart3.disclaimer_body | This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the share of that day's heart rate readings in each bpm range (0–69, 70–84, 85–95, and 96+). | locked — owner 2026-08-31 stacked bands |
+| analytics.cardio.chart3_day.title | Tachycardia Burden | locked — owner 2026-08-31 daily pie |
+| analytics.cardio.chart3_day.helper | Share of that day's heart rate readings in each bpm range | locked |
+| analytics.cardio.chart3_day.empty | No heart rate readings for this day. | locked |
+| analytics.cardio.chart3_day.prev_day / next_day / pick_date | Previous day / Next day / Choose date | a11y |
 | analytics.recovery.hrv.title | Heart Rate Variability | locked Figma 62957:4735 |
 | analytics.recovery.hrv.helper | HRV measures the changes in time between your heartbeats. | locked |
 | analytics.recovery.hrv.info_title | What your HRV shows | locked |
@@ -162,3 +171,8 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | 2026-08-17 | Compare select stays enabled with “Medication” empty label; date caps white per owner screenshot; pills clamp at 122px | Owner visual pass |
 | 2026-08-18 | Empty window copy (`No HR/BP logged during this timeframe`); native date picker on the date field; tooltip without leading colon; y-axis plotted min−30 / max+30 | Owner |
 | 2026-08-18 | Client chart helpers moved to `medication-chart.ts` so Analytics does not bundle `node:fs` | Vercel `next build` |
+| 2026-08-31 | Chart 2 Last 7/30 x-axis is calendar days spanning the window; overlay lines have no point dots | Owner — Laura Vercel: HH:MM ticks + dots hid the line |
+| 2026-08-31 | Chart 3 first on Cardiovascular; 100% stacked bands 0–69 / 70–84 / 85–95 / 96+ (replaces ≥100 single bar) | Owner |
+| 2026-08-31 | Chart 3 Y-axis + in-bar % | Tick string `100%` (no Recharts `unit="%"`); LabelList on segments ≥8% | Owner: Y-axis showed `001%` |
+| 2026-08-31 | Last 7 / Last 30 end yesterday (today excluded); Chart 3 matches last_7 | Owner — current day rarely has import data |
+| 2026-08-31 | AC-13 — daily Tachycardia Burden pie + date picker below Data Disclaimer | Owner |

@@ -68,13 +68,23 @@ test.describe("FEAT-008 AC-12 Analytics Medication journey", () => {
     // Remaining tabs (UI finish)
     await page.getByTestId("analytics-tab-cardiovascular").click();
     await expect(
-      page.getByRole("heading", { name: "Blood Pressure and Heart Rate" })
-    ).toBeVisible({ timeout: 15_000 });
-    await expect(
       page.getByRole("heading", { name: "Tachycardia Burden" })
+    ).toHaveCount(2, { timeout: 15_000 });
+    await expect(
+      page.getByRole("heading", { name: "Blood Pressure and Heart Rate" })
     ).toBeVisible();
+    const panel = page.getByTestId("analytics-cardiovascular-panel");
     await expect(page.getByTestId("analytics-cardio-chart2")).toBeVisible();
     await expect(page.getByTestId("analytics-cardio-chart3")).toBeVisible();
+    await expect(page.getByTestId("analytics-cardio-chart3-pie")).toBeVisible();
+    await expect(page.getByTestId("analytics-cardio-pie-date-picker")).toBeVisible();
+    const html = await panel.innerHTML();
+    expect(html.indexOf("analytics-cardio-chart3")).toBeLessThan(
+      html.indexOf("analytics-cardio-chart3-pie")
+    );
+    expect(html.indexOf("analytics-cardio-chart3-pie")).toBeLessThan(
+      html.indexOf("analytics-cardio-chart2")
+    );
     await page.getByTestId("analytics-cardio-range-last_7").click();
     await expect(page.getByTestId("analytics-cardio-range-last_7")).toHaveAttribute(
       "aria-pressed",

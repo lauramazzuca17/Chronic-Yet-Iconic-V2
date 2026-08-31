@@ -11,12 +11,16 @@ import {
   type ManualLogEntry,
 } from "../log/store";
 import { wallClockToUtcMs } from "./medication-series";
+import {
+  HR_BURDEN_BANDS,
+  hrBurdenBandPercents,
+  shiftCalendarDate,
+} from "./cardio-chart";
+
+export { shiftCalendarDate };
 
 export const CARDIO_RANGE_IDS = ["today", "last_7", "last_30"] as const;
 export type CardioRangeId = (typeof CARDIO_RANGE_IDS)[number];
-
-/** Owner lock: tachycardia = HR ≥ 100 bpm. */
-export const TACHYCARDIA_THRESHOLD_BPM = 100;
 
 const COPY = {
   "analytics.cardio.chart2.title": "Blood Pressure and Heart Rate",
@@ -27,10 +31,17 @@ const COPY = {
   "analytics.range.last_30": "Last 30 Days",
   "analytics.cardio.chart3.title": "Tachycardia Burden",
   "analytics.cardio.chart3.helper":
-    "Percent of heart rate readings ≥ 100 bpm",
+    "Share of heart rate readings in each bpm range",
   "analytics.cardio.chart3.disclaimer_title": "Data Disclaimer",
   "analytics.cardio.chart3.disclaimer_body":
-    "This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the percentage of heart rate readings that were at or above the 100 bpm threshold.",
+    "This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the share of that day's heart rate readings in each bpm range (0–69, 70–84, 85–95, and 96+).",
+  "analytics.cardio.chart3_day.title": "Tachycardia Burden",
+  "analytics.cardio.chart3_day.helper":
+    "Share of that day's heart rate readings in each bpm range",
+  "analytics.cardio.chart3_day.empty": "No heart rate readings for this day.",
+  "analytics.cardio.chart3_day.prev_day": "Previous day",
+  "analytics.cardio.chart3_day.next_day": "Next day",
+  "analytics.cardio.chart3_day.pick_date": "Choose date",
 } as const;
 
 export type CardioRangeOption = {
@@ -52,6 +63,18 @@ export type Chart3Card = {
   helper: string;
   disclaimerTitle: string;
   disclaimerBody: string;
+  bands: typeof HR_BURDEN_BANDS;
+  chartLibrary: "recharts";
+};
+
+export type Chart3DayCard = {
+  title: string;
+  helper: string;
+  empty: string;
+  prevDayLabel: string;
+  nextDayLabel: string;
+  pickDateLabel: string;
+  bands: typeof HR_BURDEN_BANDS;
   chartLibrary: "recharts";
 };
 
@@ -74,9 +97,13 @@ export type TachycardiaDay = {
   calendarDate: string;
   /** Weekday short label (e.g. Sun). */
   weekday: string;
-  /** 0–100; null when no eligible HR readings that day. */
-  percent: number | null;
-  numerator: number;
+  /** Percent 0–100 per band; null when no eligible HR readings that day. */
+  bands: {
+    low: number;
+    mid: number;
+    high: number;
+    tachy: number;
+  } | null;
   denominator: number;
 };
 
@@ -86,27 +113,18 @@ export type TachycardiaBurdenSeries = {
   days: TachycardiaDay[];
 };
 
-function pad2(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-function toCalendarDate(y: number, m: number, d: number): string {
-  return `${String(y).padStart(4, "0")}-${pad2(m)}-${pad2(d)}`;
-}
-
-export function shiftCalendarDate(
-  calendarDate: string,
-  deltaDays: number
-): string {
-  const [ys, ms, ds] = calendarDate.split("-").map(Number);
-  const noon = new Date(Date.UTC(ys, ms - 1, ds, 12));
-  noon.setUTCDate(noon.getUTCDate() + deltaDays);
-  return toCalendarDate(
-    noon.getUTCFullYear(),
-    noon.getUTCMonth() + 1,
-    noon.getUTCDate()
-  );
-}
+export type TachycardiaDayPieSeries = {
+  accountId: string;
+  calendarDate: string;
+  dateDisplay: string;
+  bands: {
+    low: number;
+    mid: number;
+    high: number;
+    tachy: number;
+  } | null;
+  denominator: number;
+};
 
 function rangeDayCount(range: CardioRangeId): number {
   if (range === "today") return 1;
@@ -114,15 +132,21 @@ function rangeDayCount(range: CardioRangeId): number {
   return 30;
 }
 
-/** Inclusive window ending on `today` (America/New_York calendar dates). */
+/** Inclusive window on America/New_York calendar dates.
+ *  `today` is only that day. `last_7` / `last_30` end yesterday — imports
+ *  are not realtime, so the current date is usually empty. */
 export function rangeWindow(
   range: CardioRangeId,
   today: string
 ): { startDate: string; endDate: string } {
+  if (range === "today") {
+    return { startDate: today, endDate: today };
+  }
   const days = rangeDayCount(range);
+  const endDate = shiftCalendarDate(today, -1);
   return {
-    startDate: shiftCalendarDate(today, -(days - 1)),
-    endDate: today,
+    startDate: shiftCalendarDate(endDate, -(days - 1)),
+    endDate,
   };
 }
 
@@ -169,8 +193,32 @@ export function getChart3Card(): Chart3Card {
     helper: COPY["analytics.cardio.chart3.helper"],
     disclaimerTitle: COPY["analytics.cardio.chart3.disclaimer_title"],
     disclaimerBody: COPY["analytics.cardio.chart3.disclaimer_body"],
+    bands: HR_BURDEN_BANDS,
     chartLibrary: "recharts",
   };
+}
+
+export function getChart3DayCard(): Chart3DayCard {
+  return {
+    title: COPY["analytics.cardio.chart3_day.title"],
+    helper: COPY["analytics.cardio.chart3_day.helper"],
+    empty: COPY["analytics.cardio.chart3_day.empty"],
+    prevDayLabel: COPY["analytics.cardio.chart3_day.prev_day"],
+    nextDayLabel: COPY["analytics.cardio.chart3_day.next_day"],
+    pickDateLabel: COPY["analytics.cardio.chart3_day.pick_date"],
+    bands: HR_BURDEN_BANDS,
+    chartLibrary: "recharts",
+  };
+}
+
+/** Default daily-pie day is yesterday — imports are not realtime. */
+export function defaultTachycardiaPieDate(today: string): string {
+  return shiftCalendarDate(today, -1);
+}
+
+function formatPieDateDisplay(calendarDate: string): string {
+  const [y, m, d] = calendarDate.split("-");
+  return `${m}/${d}/${y}`;
 }
 
 function sortByTime(points: OverlayPoint[]): OverlayPoint[] {
@@ -244,33 +292,42 @@ async function hrReadingsForDay(
   return [...manual, ...imported];
 }
 
-/** Last 6 days + today (7 bars). Percent of HR readings ≥ 100; null if none. */
+/** Last 7 complete days (yesterday back 6). 100% stacked HR-band shares. */
 export async function buildTachycardiaBurdenSeries(input: {
   accountId: string;
   today: string;
 }): Promise<TachycardiaBurdenSeries> {
+  const { startDate, endDate } = rangeWindow("last_7", input.today);
   const days: TachycardiaDay[] = [];
-  for (let i = 6; i >= 0; i -= 1) {
-    const calendarDate = shiftCalendarDate(input.today, -i);
-    const readings = await hrReadingsForDay(input.accountId, calendarDate);
-    const denominator = readings.length;
-    const numerator = readings.filter(
-      (v) => v >= TACHYCARDIA_THRESHOLD_BPM
-    ).length;
+  let cursor = startDate;
+  while (cursor <= endDate) {
+    const readings = await hrReadingsForDay(input.accountId, cursor);
     days.push({
-      calendarDate,
-      weekday: weekdayShort(calendarDate),
-      percent:
-        denominator === 0
-          ? null
-          : Math.round((numerator / denominator) * 100),
-      numerator,
-      denominator,
+      calendarDate: cursor,
+      weekday: weekdayShort(cursor),
+      bands: hrBurdenBandPercents(readings),
+      denominator: readings.length,
     });
+    cursor = shiftCalendarDate(cursor, 1);
   }
   return {
     accountId: input.accountId,
     today: input.today,
     days,
+  };
+}
+
+/** One America/New_York day's HR-band shares for the daily pie. */
+export async function buildTachycardiaDayPieSeries(input: {
+  accountId: string;
+  calendarDate: string;
+}): Promise<TachycardiaDayPieSeries> {
+  const readings = await hrReadingsForDay(input.accountId, input.calendarDate);
+  return {
+    accountId: input.accountId,
+    calendarDate: input.calendarDate,
+    dateDisplay: formatPieDateDisplay(input.calendarDate),
+    bands: hrBurdenBandPercents(readings),
+    denominator: readings.length,
   };
 }

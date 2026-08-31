@@ -3,7 +3,7 @@ project: "Chronic Yet Iconic V2"
 type: product-requirements
 status: approved
 approved: 2026-08-10
-updated: 2026-08-15
+updated: 2026-08-31
 ---
 
 # Product Requirements (master)
@@ -96,27 +96,29 @@ Four tabs on the analytics page (Figma chips): **Medication** | **Cardiovascular
 
 ### Analytics — Heart Trends tab: Chart 2 — BP & HR over time (binding)
 - **Type:** two-line **overlay** on one chart (not side-by-side) to show interaction between BP and HR.
-- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62953:4603).
-- **X-axis:** time across the selected range.
+- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62953:4603). **Today** = the current calendar day. **Last 7 / Last 30** = that many complete days **ending yesterday** (current date excluded — imports are not realtime).
+- **X-axis:** time across the selected range. **Today** uses clock-hour ticks; **Last 7 Days** ticks each of the seven calendar days; **Last 30 Days** ticks calendar days across that window (not per-reading clock times). Overlay lines have **no point dots**.
 - **Y-axis:** shared numeric scale **50–190** (fixed). Plots **systolic** (manual BP) and **HR** (manual BP-log HR + detailed CSV **`heart_rate`**) as two lines — intentional shared axis so patterns (HR up when BP up/down) are visible together. POTS variability is the point: use point **`heart_rate`**, not resting.
 - **Style:** both lines **semi-faded** by default; on hover/focus of a line, that line goes to **full opacity** (other stays faded).
 - **BP** line: manual only.
 - **HR** line: manual BP-log HR + imported detailed **`heart_rate`** (not resting).
 ### Analytics — Heart Trends tab: Chart 3 — Tachycardia reading burden (binding)
-- **Goal:** Show the clinician this is not occasional spikes — a substantial share of HR readings are ≥100 bpm. (Total time-in-tachycardia is out of scope.)
-- **Type:** bar chart (horizontal OK: days on one axis, % on the other).
-- **Day axis:** last **6 days + today** (7 bars), America/New_York, weekday labels ending with today.
-- **Value:** **percentage (0–100)** of that day’s HR readings that are **≥ 100** bpm (owner lock; overrides Figma `>` wording).
-- **UI (Figma 62953:4604):** title Tachycardia Burden; helper; bar chart for last 6 days + today; Data Disclaimer callout (copy deck — helper/disclaimer use ≥ / “at or above”).
+- **Goal:** Show how a day’s HR readings split across bpm ranges — not a single ≥100 cut, and not total time-in-tachycardia (out of scope).
+- **Type:** **100% stacked** bar chart (one bar per day).
+- **Order on tab:** Chart 3 is **first** on Cardiovascular (7-day stacked bars, then Data Disclaimer, then daily pie); Chart 2 (BP & HR) is below that.
+- **Day axis:** last **7 complete days ending yesterday** (not including today), America/New_York, weekday labels.
+- **Bands (bottom → top of each bar):** **0–69** green, **70–84** yellow, **85–95** orange, **96+** red (owner 2026-08-31; 70–84 is 70–845 typo correction). Value = **percentage (0–100)** of that day’s eligible HR readings in the band. Bands are inclusive on both ends except 96+ (open-ended).
+- **UI:** title Tachycardia Burden; helper + band legend; stacked bars with **% on each segment** (hidden on slivers under 8%); Y-axis ticks `0%`…`100%`; Data Disclaimer callout (copy deck).
+- **Daily pie (below Data Disclaimer):** same bands and HR sources; one America/New_York calendar day via date picker (prev / native calendar / next, same control as Medication Impact). Default day = **yesterday**. Pie of that day’s band shares (0% slices omitted). Empty copy when no eligible HR that day. Does not replace the 7-day stacked bars. Chart 2 stays below this pie.
 - **Data sources (Chart 3 only):** **manual BP-log HR** + imported detailed **`heart_rate`**. Not resting HR.
-- Denominator = all Chart-3-eligible HR readings that day; numerator = those **≥ 100**. If denominator is 0, show empty/zero state for that day (no divide-by-zero).
+- Denominator = all Chart-3-eligible HR readings that day. If denominator is 0, show empty/zero state for that day (no divide-by-zero).
 
 ### Analytics — Recovery tab (binding)
 Two charts on this tab.
 
 #### Chart 4 — HRV over time
 - **Type:** line chart.
-- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62957:4735).
+- **Range control (UI):** `Today` | `Last 7 Days` | `Last 30 Days` (America/New_York; Figma 62957:4735). Last 7 / Last 30 end **yesterday** (same as Chart 2).
 - **X-axis:** time across the selected range.
 - **Y-axis:** Heart Rate Variability (ms).
 - **Data source:** imported **`heart_rate_variability`** (`hrv_sdnn` in detailed CSV) only.
@@ -124,7 +126,7 @@ Two charts on this tab.
 
 #### Chart 5 — Average walking HR over time
 - **Type:** line chart.
-- **Range control (UI):** `Last 7 Days` | `Last 30 Days` only — **no Today** (Figma 62959:4803; overrides earlier three-option range).
+- **Range control (UI):** `Last 7 Days` | `Last 30 Days` only — **no Today** (Figma 62959:4803; overrides earlier three-option range). Windows end **yesterday**.
 - **X-axis:** time across the selected range.
 - **Y-axis:** Walking Heart Rate Average (count/min).
 - **Data source:** imported **`walking_heart_rate_average`** (`walking_heart_rate_avg` in detailed CSV) only.
@@ -244,3 +246,5 @@ For the current America/New_York calendar day, show:
 | 2026-08-15 | Electrolytes comparison UI: With/Without cards + Avg HR/Resting/Walking/BP | Owner Figma 62967:5991 |
 | 2026-08-15 | REQ-15 → per-file Import History cards + per-file delete (Figma 62946:4447); REQ-12 pair upload unchanged | Owner grill FEAT-009 |
 | 2026-08-15 | NFR-07 Turso durability + local file fallback for dev/Playwright | Owner grill FEAT-009 |
+| 2026-08-31 | Last 7 / Last 30 exclude today (end yesterday); Chart 3 uses that 7-day window | Owner — current day rarely has import data |
+| 2026-08-31 | Chart 3: 100% stacked HR bands 0–69 / 70–84 / 85–95 / 96+; first on Cardiovascular tab (replaces single ≥100 bar) | Owner |

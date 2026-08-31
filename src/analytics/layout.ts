@@ -122,7 +122,7 @@ export const ANALYTICS_RANGE_SWITCH = {
   segmentPadYPx: 4,
 } as const;
 
-/** Chart 3 Data Disclaimer `62953:4575`. Keep ≥100 copy (owner lock). */
+/** Chart 3 Data Disclaimer `62953:4575`. */
 export const ANALYTICS_DISCLAIMER = {
   bg: "#f2f5ed",
   radiusPx: 8,

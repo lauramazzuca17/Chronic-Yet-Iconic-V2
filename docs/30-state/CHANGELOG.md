@@ -3,6 +3,21 @@ type: changelog
 ---
 # Changelog
 
+## 2026-08-31 (Chart 3 daily pie)
+- **Tachycardia Burden daily pie** sits below Data Disclaimer. Date picker (same control as Medication Impact) picks one America/New_York day (defaults to **yesterday**). Same bpm bands as the 7-day stack.
+
+## 2026-08-31 (Last 7/30 exclude today)
+- **Last 7 Days / Last 30 Days** end yesterday (current date omitted — imports aren’t realtime). Tachycardia Burden uses the same 7 complete days. The **Today** chip is unchanged.
+
+## 2026-08-31 (Chart 3 labels)
+- **Tachycardia Burden Y-axis** formats `100%` as one tick string (Recharts `unit="%"` was rendering `001%`). Each stack segment ≥8% shows its percent on the bar.
+
+## 2026-08-31 (Chart 3 stacked bands)
+- **Tachycardia Burden** is first on Cardiovascular. 100% stacked bars: 0–69 green, 70–84 yellow, 85–95 orange, 96+ red (replaces the single ≥100 % bar).
+
+## 2026-08-31 (Chart 2 axis + dots)
+- **BP & HR chart** — Last 7 Days / Last 30 Days x-axis is calendar days across the window (not per-reading clock times). Overlay lines have no point dots so dense imported HR is readable.
+
 ## 2026-08-18 (favicon)
 - **Favicon** — owner lotus-on-lily-pad PNG at `public/favicon.png`.
 

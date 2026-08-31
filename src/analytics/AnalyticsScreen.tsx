@@ -39,7 +39,9 @@ import {
   MedicationImpactChart,
   RecoveryLineChart,
   TachycardiaBurdenChart,
+  TachycardiaDayPieChart,
 } from "@/analytics/charts";
+import { shiftCalendarDate } from "@/analytics/cardio-chart";
 
 const CARD_RADIUS = `${ANALYTICS_CARD.radiusPx}px`;
 const CARD_SX = {
@@ -149,6 +151,178 @@ function SelectChevron(props: { className?: string }) {
       drawWidthPx={ANALYTICS_PILL_SELECT.chevronDrawWidthPx}
       drawHeightPx={ANALYTICS_PILL_SELECT.chevronDrawHeightPx}
     />
+  );
+}
+
+function AnalyticsDateControl({
+  dateDisplay,
+  calendarDate,
+  prevLabel,
+  nextLabel,
+  pickLabel,
+  testIdPrefix,
+  disabled,
+  maxDate,
+  nextDisabled,
+  onPrev,
+  onNext,
+  onPick,
+}: {
+  dateDisplay: string;
+  calendarDate: string;
+  prevLabel: string;
+  nextLabel: string;
+  pickLabel: string;
+  testIdPrefix: string;
+  disabled: boolean;
+  maxDate?: string;
+  nextDisabled?: boolean;
+  onPrev: () => void;
+  onNext: () => void;
+  onPick: (value: string) => void;
+}) {
+  const capSx = {
+    position: "relative",
+    flex: "0 0 auto",
+    width: ANALYTICS_DATE_CONTROL.endCapWidthPx,
+    m: 0,
+    p: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    bgcolor: ANALYTICS_DATE_CONTROL.endCapBg,
+    border: "none",
+    appearance: "none",
+    color: "inherit",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      inset: "-6px",
+    },
+  } as const;
+
+  return (
+    <Box
+      data-testid={`${testIdPrefix}-date-control`}
+      sx={{
+        display: "flex",
+        alignItems: "stretch",
+        width: "100%",
+        height: ANALYTICS_DATE_CONTROL.heightPx,
+        boxSizing: "border-box",
+        border: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
+        borderRadius: `${ANALYTICS_DATE_CONTROL.radiusPx}px`,
+        overflow: "hidden",
+        bgcolor: ANALYTICS_DATE_CONTROL.fieldBg,
+      }}
+    >
+      <Box
+        component="button"
+        type="button"
+        aria-label={prevLabel}
+        data-testid={`${testIdPrefix}-prev-day`}
+        onClick={onPrev}
+        disabled={disabled}
+        sx={{
+          ...capSx,
+          cursor: disabled ? "default" : "pointer",
+        }}
+      >
+        <FigmaClipIcon
+          src={ANALYTICS_DATE_CONTROL.chevronBackSrc}
+          clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
+          drawWidthPx={ANALYTICS_DATE_CONTROL.chevronDrawWidthPx}
+          drawHeightPx={ANALYTICS_DATE_CONTROL.chevronDrawHeightPx}
+        />
+      </Box>
+      <Box
+        sx={{
+          position: "relative",
+          flex: 1,
+          minWidth: 0,
+          display: "flex",
+          alignItems: "center",
+          bgcolor: ANALYTICS_DATE_CONTROL.fieldBg,
+          borderLeft: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
+          borderRight: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
+          px: `${ANALYTICS_DATE_CONTROL.fieldPadXPx}px`,
+          py: `${ANALYTICS_DATE_CONTROL.fieldPadYPx}px`,
+          boxSizing: "border-box",
+        }}
+      >
+        <FigmaClipIcon
+          src={ANALYTICS_DATE_CONTROL.calendarSrc}
+          clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
+          drawWidthPx={ANALYTICS_DATE_CONTROL.calendarDrawWidthPx}
+          drawHeightPx={ANALYTICS_DATE_CONTROL.calendarDrawHeightPx}
+        />
+        <Typography
+          data-testid={`${testIdPrefix}-date`}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            m: 0,
+            textAlign: "center",
+            fontSize: ANALYTICS_DATE_CONTROL.dateSizePx,
+            lineHeight: `${ANALYTICS_DATE_CONTROL.dateLineHeightPx}px`,
+            color: ANALYTICS_DATE_CONTROL.dateColor,
+            fontWeight: 400,
+          }}
+        >
+          {dateDisplay}
+        </Typography>
+        <Box
+          component="input"
+          type="date"
+          value={calendarDate}
+          max={maxDate}
+          onChange={(e) => onPick(e.target.value)}
+          disabled={disabled}
+          aria-label={pickLabel}
+          data-testid={`${testIdPrefix}-date-picker`}
+          sx={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0,
+            width: "100%",
+            height: "100%",
+            m: 0,
+            p: 0,
+            border: "none",
+            cursor: disabled ? "default" : "pointer",
+            "&::-webkit-calendar-picker-indicator": {
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              margin: 0,
+              padding: 0,
+              cursor: disabled ? "default" : "pointer",
+              opacity: 0,
+            },
+          }}
+        />
+      </Box>
+      <Box
+        component="button"
+        type="button"
+        aria-label={nextLabel}
+        data-testid={`${testIdPrefix}-next-day`}
+        onClick={onNext}
+        disabled={disabled || nextDisabled}
+        sx={{
+          ...capSx,
+          cursor: disabled || nextDisabled ? "default" : "pointer",
+        }}
+      >
+        <FigmaClipIcon
+          src={ANALYTICS_DATE_CONTROL.chevronForwardSrc}
+          clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
+          drawWidthPx={ANALYTICS_DATE_CONTROL.chevronDrawWidthPx}
+          drawHeightPx={ANALYTICS_DATE_CONTROL.chevronDrawHeightPx}
+        />
+      </Box>
+    </Box>
   );
 }
 
@@ -455,8 +629,34 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
 
   function onCardioRange(range: CardioRangeId) {
     startTransition(async () => {
-      setCardio(await loadCardiovascularView({ range }));
+      setCardio(
+        await loadCardiovascularView({
+          range,
+          burdenDay: cardio?.dayPie.calendarDate,
+        })
+      );
     });
+  }
+
+  function onPieDate(calendarDate: string) {
+    if (!cardio || !/^\d{4}-\d{2}-\d{2}$/.test(calendarDate)) return;
+    startTransition(async () => {
+      setCardio(
+        await loadCardiovascularView({
+          range: cardio.range,
+          burdenDay: calendarDate,
+        })
+      );
+    });
+  }
+
+  function onShiftPieDate(direction: "prev" | "next") {
+    if (!cardio) return;
+    const next = shiftCalendarDate(
+      cardio.dayPie.calendarDate,
+      direction === "next" ? 1 : -1
+    );
+    onPieDate(next);
   }
 
   function onHrvRange(hrvRange: HrvRangeId) {
@@ -589,158 +789,18 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
                 width: "100%",
               }}
             >
-              <Box
-                data-testid="analytics-med-date-control"
-                sx={{
-                  display: "flex",
-                  alignItems: "stretch",
-                  width: "100%",
-                  height: ANALYTICS_DATE_CONTROL.heightPx,
-                  boxSizing: "border-box",
-                  border: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
-                  borderRadius: `${ANALYTICS_DATE_CONTROL.radiusPx}px`,
-                  overflow: "hidden",
-                  bgcolor: ANALYTICS_DATE_CONTROL.fieldBg,
-                }}
-              >
-                <Box
-                  component="button"
-                  type="button"
-                  aria-label={med.card.prevDayLabel}
-                  data-testid="analytics-med-prev-day"
-                  onClick={() => onShiftDate("prev")}
-                  disabled={pending}
-                  sx={{
-                    position: "relative",
-                    flex: "0 0 auto",
-                    width: ANALYTICS_DATE_CONTROL.endCapWidthPx,
-                    m: 0,
-                    p: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: ANALYTICS_DATE_CONTROL.endCapBg,
-                    border: "none",
-                    appearance: "none",
-                    color: "inherit",
-                    cursor: pending ? "default" : "pointer",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      inset: "-6px",
-                    },
-                  }}
-                >
-                  <FigmaClipIcon
-                    src={ANALYTICS_DATE_CONTROL.chevronBackSrc}
-                    clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
-                    drawWidthPx={ANALYTICS_DATE_CONTROL.chevronDrawWidthPx}
-                    drawHeightPx={ANALYTICS_DATE_CONTROL.chevronDrawHeightPx}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    position: "relative",
-                    flex: 1,
-                    minWidth: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    bgcolor: ANALYTICS_DATE_CONTROL.fieldBg,
-                    borderLeft: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
-                    borderRight: `1px solid ${ANALYTICS_DATE_CONTROL.border}`,
-                    px: `${ANALYTICS_DATE_CONTROL.fieldPadXPx}px`,
-                    py: `${ANALYTICS_DATE_CONTROL.fieldPadYPx}px`,
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <FigmaClipIcon
-                    src={ANALYTICS_DATE_CONTROL.calendarSrc}
-                    clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
-                    drawWidthPx={ANALYTICS_DATE_CONTROL.calendarDrawWidthPx}
-                    drawHeightPx={ANALYTICS_DATE_CONTROL.calendarDrawHeightPx}
-                  />
-                  <Typography
-                    data-testid="analytics-med-date"
-                    sx={{
-                      flex: 1,
-                      minWidth: 0,
-                      m: 0,
-                      textAlign: "center",
-                      fontSize: ANALYTICS_DATE_CONTROL.dateSizePx,
-                      lineHeight: `${ANALYTICS_DATE_CONTROL.dateLineHeightPx}px`,
-                      color: ANALYTICS_DATE_CONTROL.dateColor,
-                      fontWeight: 400,
-                    }}
-                  >
-                    {med.dateDisplay}
-                  </Typography>
-                  <Box
-                    component="input"
-                    type="date"
-                    value={med.calendarDate}
-                    onChange={(e) => onPickDate(e.target.value)}
-                    disabled={pending}
-                    aria-label={med.card.pickDateLabel}
-                    data-testid="analytics-med-date-picker"
-                    sx={{
-                      position: "absolute",
-                      inset: 0,
-                      opacity: 0,
-                      width: "100%",
-                      height: "100%",
-                      m: 0,
-                      p: 0,
-                      border: "none",
-                      cursor: pending ? "default" : "pointer",
-                      "&::-webkit-calendar-picker-indicator": {
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        margin: 0,
-                        padding: 0,
-                        cursor: pending ? "default" : "pointer",
-                        opacity: 0,
-                      },
-                    }}
-                  />
-                </Box>
-                <Box
-                  component="button"
-                  type="button"
-                  aria-label={med.card.nextDayLabel}
-                  data-testid="analytics-med-next-day"
-                  onClick={() => onShiftDate("next")}
-                  disabled={pending}
-                  sx={{
-                    position: "relative",
-                    flex: "0 0 auto",
-                    width: ANALYTICS_DATE_CONTROL.endCapWidthPx,
-                    m: 0,
-                    p: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: ANALYTICS_DATE_CONTROL.endCapBg,
-                    border: "none",
-                    appearance: "none",
-                    color: "inherit",
-                    cursor: pending ? "default" : "pointer",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      inset: "-6px",
-                    },
-                  }}
-                >
-                  <FigmaClipIcon
-                    src={ANALYTICS_DATE_CONTROL.chevronForwardSrc}
-                    clipPx={ANALYTICS_DATE_CONTROL.iconClipPx}
-                    drawWidthPx={ANALYTICS_DATE_CONTROL.chevronDrawWidthPx}
-                    drawHeightPx={ANALYTICS_DATE_CONTROL.chevronDrawHeightPx}
-                  />
-                </Box>
-              </Box>
+              <AnalyticsDateControl
+                dateDisplay={med.dateDisplay}
+                calendarDate={med.calendarDate}
+                prevLabel={med.card.prevDayLabel}
+                nextLabel={med.card.nextDayLabel}
+                pickLabel={med.card.pickDateLabel}
+                testIdPrefix="analytics-med"
+                disabled={pending}
+                onPrev={() => onShiftDate("prev")}
+                onNext={() => onShiftDate("next")}
+                onPick={onPickDate}
+              />
 
               <Box
                 sx={{
@@ -846,21 +906,6 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
           ) : (
             <>
               <Box sx={CARDIO_CARD_SX}>
-                <IntroWithRange
-                  title={cardio.chart2.title}
-                  helper={cardio.chart2.helper}
-                >
-                  <RangeChips
-                    options={cardio.chart2.ranges}
-                    value={cardio.range}
-                    onChange={(id) => onCardioRange(id as CardioRangeId)}
-                    disabled={pending}
-                    testIdPrefix="analytics-cardio-range"
-                  />
-                </IntroWithRange>
-                <BpHrOverlayChart series={cardio.overlay} />
-              </Box>
-              <Box sx={CARDIO_CARD_SX}>
                 <CardTitle
                   title={cardio.chart3.title}
                   helper={cardio.chart3.helper}
@@ -874,6 +919,47 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
                     {cardio.chart3.disclaimerBody}
                   </Typography>
                 </SageCallout>
+              </Box>
+              <Box sx={CARDIO_CARD_SX}>
+                <CardTitle
+                  title={cardio.chart3Day.title}
+                  helper={cardio.chart3Day.helper}
+                />
+                <AnalyticsDateControl
+                  dateDisplay={cardio.dayPie.dateDisplay}
+                  calendarDate={cardio.dayPie.calendarDate}
+                  prevLabel={cardio.chart3Day.prevDayLabel}
+                  nextLabel={cardio.chart3Day.nextDayLabel}
+                  pickLabel={cardio.chart3Day.pickDateLabel}
+                  testIdPrefix="analytics-cardio-pie"
+                  disabled={pending}
+                  maxDate={cardio.overlay.today}
+                  nextDisabled={
+                    cardio.dayPie.calendarDate >= cardio.overlay.today
+                  }
+                  onPrev={() => onShiftPieDate("prev")}
+                  onNext={() => onShiftPieDate("next")}
+                  onPick={onPieDate}
+                />
+                <TachycardiaDayPieChart
+                  bands={cardio.dayPie.bands}
+                  emptyText={cardio.chart3Day.empty}
+                />
+              </Box>
+              <Box sx={CARDIO_CARD_SX}>
+                <IntroWithRange
+                  title={cardio.chart2.title}
+                  helper={cardio.chart2.helper}
+                >
+                  <RangeChips
+                    options={cardio.chart2.ranges}
+                    value={cardio.range}
+                    onChange={(id) => onCardioRange(id as CardioRangeId)}
+                    disabled={pending}
+                    testIdPrefix="analytics-cardio-range"
+                  />
+                </IntroWithRange>
+                <BpHrOverlayChart series={cardio.overlay} />
               </Box>
             </>
           )}

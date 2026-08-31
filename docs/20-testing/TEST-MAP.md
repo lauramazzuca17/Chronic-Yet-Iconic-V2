@@ -1,6 +1,6 @@
 ---
 type: test-map
-updated: 2026-08-18
+updated: 2026-08-31
 ---
 # Test Map — acceptance criteria ↔ tests
 
@@ -125,6 +125,15 @@ updated: 2026-08-18
 | FEAT-008 | AC-7 | tests/feat-008-analytics.test.ts | AC-7: tooltips BP / HR | ✅ passing |
 | FEAT-008 | AC-8 | tests/feat-008-analytics.test.ts | AC-8: Demo cannot read Laura analytics | ✅ passing |
 | FEAT-008 | AC-9 | tests/feat-008-analytics.test.ts | AC-9: Cardiovascular Chart 2 + Chart 3 | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 3 HR bands are 0–69 / 70–84 / 85–95 / 96+ | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Last 7 Days and Last 30 Days windows exclude today (end yesterday) | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 3 Y-axis formats 100% (not unit suffix) and labels stack segments | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Cardiovascular tab renders Tachycardia Burden above BP & HR | ✅ passing |
+| FEAT-008 | AC-13 | tests/feat-008-analytics.test.ts | AC-13: daily Tachycardia Burden pie + date picker below Data Disclaimer | ✅ passing |
+
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 2 Last 7 Days x-axis is the seven calendar days, not per-reading clock times | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 2 Today x-axis uses clock hours across that day | ✅ passing |
+| FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 2 overlay lines omit point dots (line readable with dense HR) | ✅ passing |
 | FEAT-008 | AC-10 | tests/feat-008-analytics.test.ts | AC-10: Recovery Chart 4 + Chart 5 | ✅ passing |
 | FEAT-008 | AC-11 | tests/feat-008-analytics.test.ts | AC-11: Electrolytes Lifestyle cards | ✅ passing |
 | FEAT-008 | AC-12 | e2e/feat-008-analytics-journey.spec.ts | Laura opens Analytics Medication, date/metric, chart area; visits Cardio/Recovery/Electrolytes tabs; electrolytes With/Without cards | ✅ passing |

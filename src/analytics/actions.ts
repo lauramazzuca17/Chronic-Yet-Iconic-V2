@@ -15,11 +15,15 @@ import {
 import {
   buildBpHrOverlaySeries,
   buildTachycardiaBurdenSeries,
+  buildTachycardiaDayPieSeries,
+  defaultTachycardiaPieDate,
   getChart2Card,
   getChart3Card,
+  getChart3DayCard,
   type BpHrOverlaySeries,
   type CardioRangeId,
   type TachycardiaBurdenSeries,
+  type TachycardiaDayPieSeries,
 } from "@/analytics/cardiovascular";
 import {
   buildHrvSeries,
@@ -52,9 +56,11 @@ export type MedicationImpactView = {
 export type CardiovascularView = {
   chart2: ReturnType<typeof getChart2Card>;
   chart3: ReturnType<typeof getChart3Card>;
+  chart3Day: ReturnType<typeof getChart3DayCard>;
   range: CardioRangeId;
   overlay: BpHrOverlaySeries;
   burden: TachycardiaBurdenSeries;
+  dayPie: TachycardiaDayPieSeries;
 };
 
 export type RecoveryView = {
@@ -129,13 +135,16 @@ export async function shiftMedicationImpactDateAction(
 
 export async function loadCardiovascularView(input?: {
   range?: CardioRangeId;
+  burdenDay?: string;
 }): Promise<CardiovascularView> {
   const session = await requireSession();
   const today = calendarDateInNewYork();
   const range = input?.range ?? "today";
+  const burdenDay = input?.burdenDay ?? defaultTachycardiaPieDate(today);
   return {
     chart2: getChart2Card(),
     chart3: getChart3Card(),
+    chart3Day: getChart3DayCard(),
     range,
     overlay: await buildBpHrOverlaySeries({
       accountId: session.accountId,
@@ -145,6 +154,10 @@ export async function loadCardiovascularView(input?: {
     burden: await buildTachycardiaBurdenSeries({
       accountId: session.accountId,
       today,
+    }),
+    dayPie: await buildTachycardiaDayPieSeries({
+      accountId: session.accountId,
+      calendarDate: burdenDay,
     }),
   };
 }

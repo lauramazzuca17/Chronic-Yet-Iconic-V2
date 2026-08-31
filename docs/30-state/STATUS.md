@@ -1,6 +1,6 @@
 ---
 type: status
-updated: 2026-08-18
+updated: 2026-08-31
 tier: full
 ---
 # Project Status — session handoff
@@ -12,7 +12,7 @@ Visual fidelity: **v1 owner-approved** for Home, Log, Import, and Analytics (all
 None.
 
 ## In flight / uncommitted
-- Favicon: owner lotus-on-lily-pad PNG at `public/favicon.png` (replaces koi tab icon).
+- Demo showcase generator still uncommitted from 2026-08-19.
 
 ## Built and tested
 - **FEAT-001**–**FEAT-009**.
@@ -22,20 +22,28 @@ None.
 - Health records Home card (deferred).
 
 ## Session notes / uncommitted
-- Client `charts.tsx` must not value-import `medication-series` / `medication-impact` (those pull Turso stores → Node builtins).
+- Client `charts.tsx` must not value-import `medication-series` / `medication-impact` (those pull Turso stores → Node builtins). Chart 2/3 helpers live in client-safe `cardio-chart.ts`.
+- Showcase is **not** part of `seedDatabase`; re-apply with `npm run seed:demo-showcase` if Demo is wiped (script still uncommitted).
 
 ## Known local hazards
 - No ESLint CLI yet. `next lint` was removed in Next 16; `npm run lint` currently runs `tsc --noEmit`.
 - Playwright's dev server shares `.next` with `npm run dev`; running E2E or `next build` while dev is up can 500 the running server. Stop dev first (or give E2E its own `distDir`).
 - Remaining `npm audit` findings are **dev-only** (drizzle-kit / vite → esbuild). Do not `audit fix --force` (it wants to *downgrade* drizzle-kit).
+- Local `npm run dev` is on **3001** (port 3000 may still be held by an old Node process).
 
 ## Next actions
-1. Commit + push the lotus favicon when ready.
+1. Confirm Vercel deploy of Cardiovascular Chart 2/3 + daily pie.
 
-## Test status (2026-08-18)
-- Unit: **131 passed** (1 todo).
-- Production `npm audit --omit=dev`: **0**.
-- E2E / full `next build` not re-run locally this pass (`.next` collision with `npm run dev`).
+## Test status (2026-08-31)
+- Unit: **144 passed** (1 todo).
+- Chart 2 axis/dots + Chart 3 stacked bands + daily pie + Last 7/30 exclude today — tests green.
+
+## Resolved 2026-08-31
+- Chart 3 daily pie below Data Disclaimer: date picker, one day, same 0–69 / 70–84 / 85–95 / 96+ bands. Default day is yesterday.
+- Last 7 / Last 30 end yesterday (today excluded — imports aren’t realtime). Chart 3 uses that 7-day window.
+- Chart 3 Y-axis showed `001%` (Recharts `unit="%"`); now `100%`. In-bar labels on segments ≥8%.
+- Chart 3: first on Cardiovascular; 100% stacked 0–69 / 70–84 / 85–95 / 96+ (owner typed 70-845 → 70–84). Replaces single ≥100 bar.
+- Chart 2 Last 7 Days x-axis was per-reading HH:MM; now calendar days spanning the window. Overlay dots removed.
 
 ## Resolved 2026-08-18
 - Favicon swapped to lotus on lily pad (local, not pushed).

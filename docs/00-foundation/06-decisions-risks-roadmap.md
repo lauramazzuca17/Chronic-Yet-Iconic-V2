@@ -2,7 +2,7 @@
 project: "Chronic Yet Iconic V2"
 type: planning
 status: living-document
-updated: 2026-08-18
+updated: 2026-08-31
 ---
 
 # Decisions, Risks, and Roadmap
@@ -24,6 +24,11 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-08-31 | Chart 3 daily pie | Second Tachycardia Burden chart below Data Disclaimer: Recharts **pie**, date picker (same control as Medication Impact), default **yesterday**. Same 0–69 / 70–84 / 85–95 / 96+ bands and HR sources as the 7-day stack. 0% slices omitted. | Owner: one-day view; imports aren’t realtime so default is not today |
+| 2026-08-31 | Last 7 / Last 30 window | End **yesterday** (7 or 30 complete days). `Today` chip still = current day. Chart 3 uses last_7. | Owner: current date rarely has import data |
+| 2026-08-31 | Chart 3 Y-axis ticks | Single `tickFormatter` string (`100%`); do not use Recharts `unit="%"` | Owner saw `001%` |
+| 2026-08-31 | Chart 3 stacked HR bands | 100% stacked bars: 0–69 green, 70–84 yellow, 85–95 orange, 96+ red. Chart 3 **first** on Cardiovascular. Replaces single ≥100 % bar. | Owner; typed “70-845” treated as **70–84** |
+| 2026-08-31 | Chart 2 multi-day x-axis | Numeric time domain spanning the selected window; Last 7 = one tick per calendar day (`M/D`); Last 30 = every 5 days + end; Today = 12 AM / 6 AM / 12 PM / 6 PM. Overlay **lines have no point dots**. | Owner: Laura Vercel Last 7 Days labeled every reading as HH:MM and dots hid the line |
 | 2026-08-18 | Medication Impact y-axis | Plotted min−30 / max+30 (BP uses systolic as the plotted value; diastolic is tooltip-only) | Owner: 97/69 and 107/77 → 67–137 |
 | 2026-08-18 | Import payload + ingest | Server-action body **4mb**; sample rows insert in **chunks of 100** with `ON CONFLICT DO NOTHING`; UI shows `import.failed` instead of hanging on Processing | Owner hit a 4+ min hang on Vercel: one Turso round-trip per sample + no try/finally. Vercel request bodies cap ~4.5mb. |
 | 2026-08-18 | Next.js 16 upgrade | **16.3.1** + React 19.2.8; `src/middleware.ts` → `src/proxy.ts`; `next lint` removed (lint aliases typecheck) | Owner asked; clears Next→postcss/sharp highs; `npm audit --omit=dev` is 0 |

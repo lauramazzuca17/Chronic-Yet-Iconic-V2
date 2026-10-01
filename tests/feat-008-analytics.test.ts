@@ -841,6 +841,114 @@ describe("FEAT-008 analytics", () => {
     );
   });
 
+  it("AC-14: 7-day Tachycardia Burden window slides one day and defaults to ending yesterday", async () => {
+    const { getChart3Card, buildTachycardiaBurdenSeries } = await import(
+      "../src/analytics/cardiovascular"
+    );
+    const {
+      defaultTachycardiaBurdenEndDate,
+      shiftTachycardiaBurdenEndDate,
+      clampTachycardiaBurdenEndDate,
+      tachycardiaBurdenWindow,
+      formatTachycardiaBurdenWindow,
+    } = await import("../src/analytics/cardio-chart");
+
+    const card = getChart3Card();
+    expect(card.prevWeekLabel).toBe("Previous day");
+    expect(card.nextWeekLabel).toBe("Next day");
+
+    expect(defaultTachycardiaBurdenEndDate("2026-08-01")).toBe("2026-07-31");
+    expect(tachycardiaBurdenWindow("2026-07-31")).toEqual({
+      startDate: "2026-07-25",
+      endDate: "2026-07-31",
+    });
+    expect(shiftTachycardiaBurdenEndDate("2026-07-31", "prev")).toBe(
+      "2026-07-30"
+    );
+    expect(tachycardiaBurdenWindow("2026-07-30")).toEqual({
+      startDate: "2026-07-24",
+      endDate: "2026-07-30",
+    });
+    expect(shiftTachycardiaBurdenEndDate("2026-07-30", "next")).toBe(
+      "2026-07-31"
+    );
+    expect(
+      clampTachycardiaBurdenEndDate("2026-08-01", "2026-08-01")
+    ).toBe("2026-07-31");
+    expect(formatTachycardiaBurdenWindow("2026-07-25", "2026-07-31")).toBe(
+      "07/25 – 07/31"
+    );
+
+    const {
+      resetManualLogs,
+      createBloodPressureLog,
+    } = await import("../src/log/store");
+    await resetManualLogs();
+    const accountId = "acct-laura";
+    await createBloodPressureLog({
+      accountId,
+      systolic: 120,
+      diastolic: 80,
+      heartRate: 100,
+      recordedAt: "2026-07-20T12:00:00",
+    });
+
+    const latest = await buildTachycardiaBurdenSeries({
+      accountId,
+      today: "2026-08-01",
+    });
+    expect(latest.startDate).toBe("2026-07-25");
+    expect(latest.endDate).toBe("2026-07-31");
+    expect(latest.latestEndDate).toBe("2026-07-31");
+    expect(latest.windowDisplay).toBe("07/25 – 07/31");
+    expect(latest.days.map((d) => d.calendarDate)).toEqual([
+      "2026-07-25",
+      "2026-07-26",
+      "2026-07-27",
+      "2026-07-28",
+      "2026-07-29",
+      "2026-07-30",
+      "2026-07-31",
+    ]);
+
+    const earlier = await buildTachycardiaBurdenSeries({
+      accountId,
+      today: "2026-08-01",
+      endDate: "2026-07-24",
+    });
+    expect(earlier.startDate).toBe("2026-07-18");
+    expect(earlier.endDate).toBe("2026-07-24");
+    expect(earlier.windowDisplay).toBe("07/18 – 07/24");
+    expect(
+      earlier.days.find((d) => d.calendarDate === "2026-07-20")?.bands
+    ).toEqual({
+      low: 0,
+      mid: 0,
+      high: 0,
+      tachy: 100,
+    });
+    expect(
+      earlier.days.find((d) => d.calendarDate === "2026-07-30")
+    ).toBeUndefined();
+  });
+
+  it("AC-14: 7-day chart exposes prev/next arrows above the stacked bars", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const screen = await readFile(
+      new URL("../src/analytics/AnalyticsScreen.tsx", import.meta.url),
+      "utf8"
+    );
+    const panel = screen.slice(
+      screen.indexOf("analytics-cardiovascular-panel"),
+      screen.indexOf("analytics-recovery-panel")
+    );
+    const weekControl = panel.indexOf('testIdPrefix="analytics-cardio-burden"');
+    expect(weekControl).toBeGreaterThan(-1);
+    expect(weekControl).toBeLessThan(panel.indexOf("TachycardiaBurdenChart"));
+    expect(panel).toContain("onShiftBurden");
+    expect(panel).toContain("enablePicker={false}");
+  });
+
   it("AC-13: daily Tachycardia Burden pie uses the same bands for one picked day", async () => {
     const {
       resetManualLogs,

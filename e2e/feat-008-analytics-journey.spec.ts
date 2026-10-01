@@ -76,6 +76,9 @@ test.describe("FEAT-008 AC-12 Analytics Medication journey", () => {
     const panel = page.getByTestId("analytics-cardiovascular-panel");
     await expect(page.getByTestId("analytics-cardio-chart2")).toBeVisible();
     await expect(page.getByTestId("analytics-cardio-chart3")).toBeVisible();
+    await expect(page.getByTestId("analytics-cardio-burden-prev-day")).toBeVisible();
+    await expect(page.getByTestId("analytics-cardio-burden-next-day")).toBeVisible();
+    await expect(page.getByTestId("analytics-cardio-burden-date")).toBeVisible();
     await expect(page.getByTestId("analytics-cardio-chart3-pie")).toBeVisible();
     await expect(page.getByTestId("analytics-cardio-pie-date-picker")).toBeVisible();
     const html = await panel.innerHTML();

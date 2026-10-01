@@ -13,8 +13,12 @@ import {
 import { wallClockToUtcMs } from "./medication-series";
 import {
   HR_BURDEN_BANDS,
+  clampTachycardiaBurdenEndDate,
+  defaultTachycardiaBurdenEndDate,
+  formatTachycardiaBurdenWindow,
   hrBurdenBandPercents,
   shiftCalendarDate,
+  tachycardiaBurdenWindow,
 } from "./cardio-chart";
 
 export { shiftCalendarDate };
@@ -32,6 +36,8 @@ const COPY = {
   "analytics.cardio.chart3.title": "Tachycardia Burden",
   "analytics.cardio.chart3.helper":
     "Share of heart rate readings in each bpm range",
+  "analytics.cardio.chart3.prev_week": "Previous day",
+  "analytics.cardio.chart3.next_week": "Next day",
   "analytics.cardio.chart3.disclaimer_title": "Data Disclaimer",
   "analytics.cardio.chart3.disclaimer_body":
     "This chart is not a complete measure of tachycardia burden. Your Apple Watch does not provide continuous heart rate monitoring, and might not be worn at all times. Because of this, total time spent in tachycardia cannot be calculated.\n\nInstead, this chart shows the share of that day's heart rate readings in each bpm range (0–69, 70–84, 85–95, and 96+).",
@@ -61,6 +67,8 @@ export type Chart2Card = {
 export type Chart3Card = {
   title: string;
   helper: string;
+  prevWeekLabel: string;
+  nextWeekLabel: string;
   disclaimerTitle: string;
   disclaimerBody: string;
   bands: typeof HR_BURDEN_BANDS;
@@ -110,6 +118,10 @@ export type TachycardiaDay = {
 export type TachycardiaBurdenSeries = {
   accountId: string;
   today: string;
+  startDate: string;
+  endDate: string;
+  latestEndDate: string;
+  windowDisplay: string;
   days: TachycardiaDay[];
 };
 
@@ -191,6 +203,8 @@ export function getChart3Card(): Chart3Card {
   return {
     title: COPY["analytics.cardio.chart3.title"],
     helper: COPY["analytics.cardio.chart3.helper"],
+    prevWeekLabel: COPY["analytics.cardio.chart3.prev_week"],
+    nextWeekLabel: COPY["analytics.cardio.chart3.next_week"],
     disclaimerTitle: COPY["analytics.cardio.chart3.disclaimer_title"],
     disclaimerBody: COPY["analytics.cardio.chart3.disclaimer_body"],
     bands: HR_BURDEN_BANDS,
@@ -292,12 +306,18 @@ async function hrReadingsForDay(
   return [...manual, ...imported];
 }
 
-/** Last 7 complete days (yesterday back 6). 100% stacked HR-band shares. */
+/** Seven complete days ending `endDate` (default yesterday). 100% stacked HR-band shares. */
 export async function buildTachycardiaBurdenSeries(input: {
   accountId: string;
   today: string;
+  endDate?: string;
 }): Promise<TachycardiaBurdenSeries> {
-  const { startDate, endDate } = rangeWindow("last_7", input.today);
+  const latestEndDate = defaultTachycardiaBurdenEndDate(input.today);
+  const endDate = clampTachycardiaBurdenEndDate(
+    input.endDate ?? latestEndDate,
+    input.today
+  );
+  const { startDate } = tachycardiaBurdenWindow(endDate);
   const days: TachycardiaDay[] = [];
   let cursor = startDate;
   while (cursor <= endDate) {
@@ -313,6 +333,10 @@ export async function buildTachycardiaBurdenSeries(input: {
   return {
     accountId: input.accountId,
     today: input.today,
+    startDate,
+    endDate,
+    latestEndDate,
+    windowDisplay: formatTachycardiaBurdenWindow(startDate, endDate),
     days,
   };
 }

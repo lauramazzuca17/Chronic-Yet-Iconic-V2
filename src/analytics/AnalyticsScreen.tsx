@@ -41,7 +41,7 @@ import {
   TachycardiaBurdenChart,
   TachycardiaDayPieChart,
 } from "@/analytics/charts";
-import { shiftCalendarDate } from "@/analytics/cardio-chart";
+import { shiftCalendarDate, shiftTachycardiaBurdenEndDate } from "@/analytics/cardio-chart";
 
 const CARD_RADIUS = `${ANALYTICS_CARD.radiusPx}px`;
 const CARD_SX = {
@@ -164,6 +164,7 @@ function AnalyticsDateControl({
   disabled,
   maxDate,
   nextDisabled,
+  enablePicker = true,
   onPrev,
   onNext,
   onPick,
@@ -177,6 +178,7 @@ function AnalyticsDateControl({
   disabled: boolean;
   maxDate?: string;
   nextDisabled?: boolean;
+  enablePicker?: boolean;
   onPrev: () => void;
   onNext: () => void;
   onPick: (value: string) => void;
@@ -271,6 +273,7 @@ function AnalyticsDateControl({
         >
           {dateDisplay}
         </Typography>
+        {enablePicker ? (
         <Box
           component="input"
           type="date"
@@ -302,6 +305,7 @@ function AnalyticsDateControl({
             },
           }}
         />
+        ) : null}
       </Box>
       <Box
         component="button"
@@ -633,6 +637,7 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
         await loadCardiovascularView({
           range,
           burdenDay: cardio?.dayPie.calendarDate,
+          burdenEndDate: cardio?.burden.endDate,
         })
       );
     });
@@ -645,6 +650,7 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
         await loadCardiovascularView({
           range: cardio.range,
           burdenDay: calendarDate,
+          burdenEndDate: cardio.burden.endDate,
         })
       );
     });
@@ -657,6 +663,23 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
       direction === "next" ? 1 : -1
     );
     onPieDate(next);
+  }
+
+  function onShiftBurden(direction: "prev" | "next") {
+    if (!cardio) return;
+    const next = shiftTachycardiaBurdenEndDate(
+      cardio.burden.endDate,
+      direction
+    );
+    startTransition(async () => {
+      setCardio(
+        await loadCardiovascularView({
+          range: cardio.range,
+          burdenDay: cardio.dayPie.calendarDate,
+          burdenEndDate: next,
+        })
+      );
+    });
   }
 
   function onHrvRange(hrvRange: HrvRangeId) {
@@ -909,6 +932,22 @@ export function AnalyticsScreen({ initial }: AnalyticsScreenProps) {
                 <CardTitle
                   title={cardio.chart3.title}
                   helper={cardio.chart3.helper}
+                />
+                <AnalyticsDateControl
+                  dateDisplay={cardio.burden.windowDisplay}
+                  calendarDate={cardio.burden.endDate}
+                  prevLabel={cardio.chart3.prevWeekLabel}
+                  nextLabel={cardio.chart3.nextWeekLabel}
+                  pickLabel={cardio.chart3.prevWeekLabel}
+                  testIdPrefix="analytics-cardio-burden"
+                  disabled={pending}
+                  nextDisabled={
+                    cardio.burden.endDate >= cardio.burden.latestEndDate
+                  }
+                  enablePicker={false}
+                  onPrev={() => onShiftBurden("prev")}
+                  onNext={() => onShiftBurden("next")}
+                  onPick={() => {}}
                 />
                 <TachycardiaBurdenChart series={cardio.burden} />
                 <SageCallout

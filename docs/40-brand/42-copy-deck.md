@@ -75,6 +75,8 @@ updated: 2026-08-31
 | analytics.range.last_30 | Last 30 Days | Figma |
 | analytics.cardio.chart3.title | Tachycardia Burden | Figma 62953-4604 |
 | analytics.cardio.chart3.helper | Share of heart rate readings in each bpm range | Owner 2026-08-31 stacked bands (was ≥100) |
+| analytics.cardio.chart3.prev_week | Previous day | a11y — 7-day window slides one day |
+| analytics.cardio.chart3.next_week | Next day | a11y — 7-day window slides one day |
 | analytics.cardio.chart3.band.low | 0–69 | Stacked bar (green) |
 | analytics.cardio.chart3.band.mid | 70–84 | Stacked bar (yellow) |
 | analytics.cardio.chart3.band.high | 85–95 | Stacked bar (orange) |

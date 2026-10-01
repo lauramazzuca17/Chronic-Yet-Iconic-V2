@@ -1,6 +1,6 @@
 ---
 type: status
-updated: 2026-08-31
+updated: 2026-10-01
 tier: full
 ---
 # Project Status — session handoff
@@ -32,11 +32,15 @@ None.
 - Local `npm run dev` is on **3001** (port 3000 may still be held by an old Node process).
 
 ## Next actions
-1. Confirm Vercel deploy of Cardiovascular Chart 2/3 + daily pie.
+1. Refresh Cardiovascular to check the 7-day arrows slide one day per click.
+2. Deploy when ready.
 
-## Test status (2026-08-31)
-- Unit: **144 passed** (1 todo).
-- Chart 2 axis/dots + Chart 3 stacked bands + daily pie + Last 7/30 exclude today — tests green.
+## Test status (2026-10-01)
+- Unit: **146 passed** (1 todo).
+- Chart 3 7-day window arrows (1-day slide) — tests green; not deployed yet.
+
+## Resolved 2026-10-01
+- Chart 3 7-day stacked bars: prev/next arrows slide the window one day (owner: 09/24–09/30 → prev → 09/23–09/29); default last 7 ending yesterday; next disabled on latest window.
 
 ## Resolved 2026-08-31
 - Chart 3 daily pie below Data Disclaimer: date picker, one day, same 0–69 / 70–84 / 85–95 / 96+ bands. Default day is yesterday.

@@ -130,6 +130,7 @@ updated: 2026-08-31
 | FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 3 Y-axis formats 100% (not unit suffix) and labels stack segments | ✅ passing |
 | FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Cardiovascular tab renders Tachycardia Burden above BP & HR | ✅ passing |
 | FEAT-008 | AC-13 | tests/feat-008-analytics.test.ts | AC-13: daily Tachycardia Burden pie + date picker below Data Disclaimer | ✅ passing |
+| FEAT-008 | AC-14 | tests/feat-008-analytics.test.ts | AC-14: 7-day Tachycardia Burden window slides one day and defaults to ending yesterday; AC-14: 7-day chart exposes prev/next arrows above the stacked bars | ✅ passing |
 
 | FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 2 Last 7 Days x-axis is the seven calendar days, not per-reading clock times | ✅ passing |
 | FEAT-008 | iterate | tests/feat-008-analytics.test.ts | Chart 2 Today x-axis uses clock hours across that day | ✅ passing |

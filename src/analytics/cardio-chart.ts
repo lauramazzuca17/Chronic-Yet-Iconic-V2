@@ -148,6 +148,48 @@ export function shiftCalendarDate(calendarDate: string, deltaDays: number): stri
   );
 }
 
+export const TACHYCARDIA_BURDEN_DAYS = 7;
+
+export function defaultTachycardiaBurdenEndDate(today: string): string {
+  return shiftCalendarDate(today, -1);
+}
+
+export function tachycardiaBurdenWindow(endDate: string): {
+  startDate: string;
+  endDate: string;
+} {
+  return {
+    startDate: shiftCalendarDate(endDate, -(TACHYCARDIA_BURDEN_DAYS - 1)),
+    endDate,
+  };
+}
+
+export function shiftTachycardiaBurdenEndDate(
+  endDate: string,
+  direction: "prev" | "next"
+): string {
+  return shiftCalendarDate(endDate, direction === "next" ? 1 : -1);
+}
+
+export function clampTachycardiaBurdenEndDate(
+  endDate: string,
+  today: string
+): string {
+  const latest = defaultTachycardiaBurdenEndDate(today);
+  return endDate > latest ? latest : endDate;
+}
+
+export function formatTachycardiaBurdenWindow(
+  startDate: string,
+  endDate: string
+): string {
+  const fmt = (calendarDate: string) => {
+    const [, month, day] = calendarDate.split("-");
+    return `${month}/${day}`;
+  };
+  return `${fmt(startDate)} – ${fmt(endDate)}`;
+}
+
 function listCalendarDays(startDate: string, endDate: string): string[] {
   const days: string[] = [];
   let cursor = startDate;

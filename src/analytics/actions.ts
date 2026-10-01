@@ -136,6 +136,7 @@ export async function shiftMedicationImpactDateAction(
 export async function loadCardiovascularView(input?: {
   range?: CardioRangeId;
   burdenDay?: string;
+  burdenEndDate?: string;
 }): Promise<CardiovascularView> {
   const session = await requireSession();
   const today = calendarDateInNewYork();
@@ -154,6 +155,7 @@ export async function loadCardiovascularView(input?: {
     burden: await buildTachycardiaBurdenSeries({
       accountId: session.accountId,
       today,
+      endDate: input?.burdenEndDate,
     }),
     dayPie: await buildTachycardiaDayPieSeries({
       accountId: session.accountId,

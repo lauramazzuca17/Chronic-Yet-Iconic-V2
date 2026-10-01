@@ -6,7 +6,7 @@ implements: [REQ-16, REQ-17, REQ-20, NFR-01, NFR-06]
 depends_on: [FEAT-001, FEAT-002, FEAT-003, FEAT-004, FEAT-007]
 tests: [tests/feat-008-analytics.test.ts, e2e/feat-008-analytics-journey.spec.ts]
 created: 2026-08-14
-updated: 2026-08-31
+updated: 2026-10-01
 ---
 # FEAT-008 — Analytics (all tabs)
 
@@ -42,6 +42,7 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 ### Cardiovascular / Recovery / Electrolytes
 - [x] AC-9: Cardiovascular tab: Chart 3 (Tachycardia Burden, stacked HR bands) **first**, then Chart 2 (BP & HR) per REQ-17.
 - [x] AC-13: Daily Tachycardia Burden **pie** below Data Disclaimer: date picker (prev / native calendar / next); one America/New_York day (default **yesterday**); same bpm bands and HR sources as the 7-day stack.
+- [x] AC-14: 7-day Tachycardia Burden stacked bars: prev/next arrows slide the 7-day window by one day (default last 7 ending yesterday; next disabled on that latest window).
 - [x] AC-10: Recovery tab: Chart 4 (HRV) Figma `62957:4735` + Chart 5 (walking HR) Figma `62959:4803` per REQ-17.
 - [x] AC-11: Electrolytes tab: With/Without comparison cards per REQ-20 + Figma `62967:5991`.
 
@@ -104,6 +105,8 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | analytics.range.last_30 | Last 30 Days | locked |
 | analytics.cardio.chart3.title | Tachycardia Burden | locked Figma 62953:4604 |
 | analytics.cardio.chart3.helper | Share of heart rate readings in each bpm range | locked — owner 2026-08-31 stacked bands |
+| analytics.cardio.chart3.prev_week | Previous day | a11y — owner 2026-10-01 window slides one day |
+| analytics.cardio.chart3.next_week | Next day | a11y |
 | analytics.cardio.chart3.band.low | 0–69 | locked |
 | analytics.cardio.chart3.band.mid | 70–84 | locked |
 | analytics.cardio.chart3.band.high | 85–95 | locked |
@@ -176,3 +179,5 @@ As a signed-in user, I want **Analytics** with four tabs so I can explore medica
 | 2026-08-31 | Chart 3 Y-axis + in-bar % | Tick string `100%` (no Recharts `unit="%"`); LabelList on segments ≥8% | Owner: Y-axis showed `001%` |
 | 2026-08-31 | Last 7 / Last 30 end yesterday (today excluded); Chart 3 matches last_7 | Owner — current day rarely has import data |
 | 2026-08-31 | AC-13 — daily Tachycardia Burden pie + date picker below Data Disclaimer | Owner |
+| 2026-10-01 | AC-14 — 7-day Tachycardia Burden prev/next pager | Owner |
+| 2026-10-01 | AC-14 arrows slide the window one day (not 7) | Owner: 09/24–09/30 → prev → 09/23–09/29 |

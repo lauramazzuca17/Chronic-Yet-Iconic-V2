@@ -3,6 +3,9 @@ type: changelog
 ---
 # Changelog
 
+## 2026-10-01 (Chart 3 7-day window arrows)
+- **Tachycardia Burden 7-day chart** has prev/next arrows that slide the 7-day window by **one day** (e.g. 09/24–09/30 → prev → 09/23–09/29). Labels: “Previous day” / “Next day”. Default is still the last 7 complete days ending yesterday; next is disabled on that latest window. The control shows `MM/DD – MM/DD`.
+
 ## 2026-08-31 (Chart 3 daily pie)
 - **Tachycardia Burden daily pie** sits below Data Disclaimer. Date picker (same control as Medication Impact) picks one America/New_York day (defaults to **yesterday**). Same bpm bands as the 7-day stack.
 

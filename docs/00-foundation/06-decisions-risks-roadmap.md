@@ -24,6 +24,7 @@ unless a contract doc carries its own binding log. -->
 
 | Date | Decision | Choice | Rationale |
 | --- | --- | --- | --- |
+| 2026-10-01 | Chart 3 7-day pager | Prev/next arrows slide the stacked-bar window by **one day** (owner rejected 7-day jumps). Default remains last 7 ending yesterday. Next disabled on that latest window. Center shows `MM/DD – MM/DD` (no calendar overlay). | Owner: inspect any prior 7-day period |
 | 2026-08-31 | Chart 3 daily pie | Second Tachycardia Burden chart below Data Disclaimer: Recharts **pie**, date picker (same control as Medication Impact), default **yesterday**. Same 0–69 / 70–84 / 85–95 / 96+ bands and HR sources as the 7-day stack. 0% slices omitted. | Owner: one-day view; imports aren’t realtime so default is not today |
 | 2026-08-31 | Last 7 / Last 30 window | End **yesterday** (7 or 30 complete days). `Today` chip still = current day. Chart 3 uses last_7. | Owner: current date rarely has import data |
 | 2026-08-31 | Chart 3 Y-axis ticks | Single `tickFormatter` string (`100%`); do not use Recharts `unit="%"` | Owner saw `001%` |
